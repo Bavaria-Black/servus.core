@@ -17,6 +17,10 @@ variables:
 steps:
 - task: NuGetToolInstaller@1
 
+- task: GitVersion@5
+  inputs:
+    runtime: 'core'
+    updateVersionProperties: true
 - task: NuGetCommand@2
   inputs:
     restoreSolution: '$(solution)'
@@ -31,3 +35,9 @@ steps:
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+
+- task: NuGetCommand@2
+  displayName: 'NuGet pack'
+  inputs:
+    command: custom
+    arguments: pack $(Build.SourcesDirectory)\src\DevTools.Core\DevTools.Core.nuspec -Version $(GitVersion.NuGetVersion) -OutputDirectory $(Build.ArtifactStagingDirectory) -Properties Configuration=$(BuildConfiguration) -NoDefaultExcludes
