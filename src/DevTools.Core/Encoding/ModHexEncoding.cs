@@ -12,49 +12,22 @@ namespace DevTools.Core.Encoding
             'c', 'b', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'n', 'r', 't', 'u', 'v'
         };
 
-        public static string EncodeFromAscii(string ascii)
+        private static readonly Lazy<ModHexEncoding> _lazyEncoding = new Lazy<ModHexEncoding>(() => new ModHexEncoding());
+        public static ModHexEncoding ModHex
         {
-            var bytes = System.Text.Encoding.ASCII.GetBytes(ascii);
-            return Encode(bytes);
+            get { return _lazyEncoding.Value; }
         }
 
-        public static string Encode(byte[] bytes)
+        public static string ConvertFromAscii(string ascii)
         {
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < bytes.Length; i++)
-            {
-                var i1 = (bytes[i] >> 4) & 0xf;
-                var i2 = bytes[i] & 0xf;
-
-                builder.Append(_alphabet[i1]);
-                builder.Append(_alphabet[i2]);
-            }
-
-            return builder.ToString();
+            var bytes = ASCII.GetBytes(ascii);
+            return ModHex.GetString(bytes);
         }
 
-        public static string DecodeToAscii(string modhex)
+        public static string ConvertToAscii(string modhex)
         {
-            var bytes = Decode(modhex);
+            var bytes = ModHex.GetBytes(modhex);
             return ASCII.GetString(bytes);
-        }
-
-        public static byte[] Decode(string modhex)
-        {
-            if (modhex.Length % 2 != 0)
-            {
-                throw new ArgumentException("modhex contains an invalid encoding");
-            }
-
-            byte[] value = new byte[modhex.Length / 2];
-            for (int i = 0; i < modhex.Length; i = i + 2)
-            {
-                var index1 = Array.IndexOf(_alphabet, modhex[i]);
-                var index2 = Array.IndexOf(_alphabet, modhex[i + 1]);
-                value[i / 2] = (byte)(index1 << 4 | index2);
-            }
-
-            return value;
         }
 
         public override int GetByteCount(char[] chars, int index, int count)
