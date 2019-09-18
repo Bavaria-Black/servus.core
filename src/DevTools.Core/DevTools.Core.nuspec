@@ -11,7 +11,7 @@
     <copyright>Copyright 2019</copyright>
   </metadata>
   <files>
-    <file src="bin\$configuration$\notcoreapp2.1\DevTools.Core.dll" target="lib\netstandard2.0"/>
-    <file src="bin\$configuration$\notcoreapp2.1\DevTools.Core.pdb" target="lib\netstandard2.0"/>
+    <file src="bin\$configuration$\netcoreapp2.1\DevTools.Core.dll" target="lib\netstandard2.0"/>
+    <file src="bin\$configuration$\netcoreapp2.1\DevTools.Core.pdb" target="lib\netstandard2.0"/>
   </files>
 </package>
