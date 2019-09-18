@@ -38,7 +38,7 @@ namespace DevTools.Core.Security.Hardware.Yubikey
             var rnd = new Random();
             byte[] nonce = new byte[16];
             rnd.NextBytes(nonce);
-            var nonceString = ModHex.Encode(nonce);
+            var nonceString = ModHexEncoding.Encode(nonce);
 
             Parallel.ForEach(_validationUrls, async (url) =>
             {

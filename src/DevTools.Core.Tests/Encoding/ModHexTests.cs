@@ -12,13 +12,20 @@ namespace DevTools.Core.Tests.Encoding
         [TestMethod]
         public void Encode()
         {
-            var result = ModHex.EncodeFromAscii("test");
+            var endcoding = new ModHexEncoding();
+            var bytes = endcoding.GetBytes("test");
+            var result = System.Text.Encoding.ASCII.GetString(bytes);
+
             Assert.AreEqual("ifhgieif", result);
         }
+
         [TestMethod]
         public void Decode()
         {
-            var result = ModHex.DecodeToAscii("ifhgieif");
+            var endcoding = new ModHexEncoding();
+            var bytes = System.Text.Encoding.ASCII.GetBytes("ifhgieif");
+            var result = endcoding.GetString(bytes);
+
             Assert.AreEqual("test", result);
         }
     }
