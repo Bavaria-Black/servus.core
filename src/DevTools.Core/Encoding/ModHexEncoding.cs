@@ -62,7 +62,7 @@ namespace DevTools.Core.Encoding
             var maxCount = byteCount + byteIndex;
             int counter = 0;
 
-            for (int i = byteIndex; i < maxCount; i = i + 2)
+            for (int i = byteIndex; i < maxCount; i += 2)
             {
                 var index1 = Array.IndexOf(_alphabet, (char)bytes[i]);
                 var index2 = Array.IndexOf(_alphabet, (char)bytes[i + 1]);
