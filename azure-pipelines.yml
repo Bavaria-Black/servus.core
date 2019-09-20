@@ -27,6 +27,7 @@ steps:
 - task: DotNetCoreCLI@2
   displayName: dotnet build
   inputs:
+    projects: $(solution)
     command: 'build'
     configuration: $(buildConfiguration)
 
@@ -34,7 +35,7 @@ steps:
   displayName: dotnet test
   inputs:
     command: test
-    projects: '**/*Test.csproj'
+    projects: '**/*Tests.csproj'
     arguments: '--configuration $(buildConfiguration) --logger trx --collect "Code coverage"'
     nobuild: true
 
