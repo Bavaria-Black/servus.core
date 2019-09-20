@@ -4,10 +4,10 @@
     <id>DevTools.Core</id>
     <version>$version$</version>
     <title>DevTools.Core</title>
-    <authors>Christian Dirnhofer</authors>
-    <owners>Christian Dirnhofer</owners>
+    <authors>Christian Dirnhofer, Andreas Huber</authors>
+    <owners>Christian Dirnhofer, Andreas Huber</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Library for common tools that most likely everyone implemented a few times on there own throughout the carrer</description>
+    <description>Library for standard tools that most likely everyone implemented on their own a few times throughout their career.</description>
     <copyright>Copyright 2019</copyright>
   </metadata>
   <files>
