@@ -13,6 +13,7 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
 
 steps:
 - task: NuGetToolInstaller@1
@@ -21,21 +22,21 @@ steps:
   inputs:
     runtime: 'core'
     updateVersionProperties: true
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)'
 
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
 
-- task: VSTest@2
+- task: DotNetCoreCLI@2
+  displayName: dotnet build
   inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-    overrideTestrunParameters: '/Framework:FrameworkCore21'
+    command: 'build'
+    configuration: $(buildConfiguration)
+
+- task: DotNetCoreCLI@2
+  displayName: dotnet test
+  inputs:
+    command: test
+    projects: '**/*Test.csproj'
+    arguments: '--configuration $(buildConfiguration) --logger trx --collect "Code coverage"'
+    nobuild: true
 
 - task: NuGetCommand@2
   displayName: 'NuGet pack'
