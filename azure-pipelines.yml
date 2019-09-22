@@ -16,6 +16,12 @@ variables:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
 
 steps:
+- task: DotNetCoreInstaller@0
+  displayName: Install .NET core 2.1.13 (LTS)
+  inputs:
+    version: '2.1.802'
+  # Checkout .NET core versions here: https://dotnet.microsoft.com/download/dotnet-core/2.1
+
 - task: NuGetToolInstaller@1
 
 - task: GitVersion@5
