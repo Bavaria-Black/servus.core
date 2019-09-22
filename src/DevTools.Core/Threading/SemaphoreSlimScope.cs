@@ -18,7 +18,7 @@ namespace DevTools.Core.Threading
             _semaphoreSlim = semaphoreSlim;
         }
 
-        internal static async Task<IDisposable> WaitAsync(SemaphoreSlim semaphoreSlim, CancellationToken cancellationToken = default)
+        internal static async Task<IDisposable> WaitAsync(SemaphoreSlim semaphoreSlim, CancellationToken cancellationToken = default(CancellationToken))
         {
             var scope = new SemaphoreSlimScope(semaphoreSlim);
             await semaphoreSlim.WaitAsync(cancellationToken);

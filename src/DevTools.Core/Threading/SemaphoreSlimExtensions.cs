@@ -20,7 +20,7 @@ namespace DevTools.Core.Threading
         /// } // The semaphore is released here, even if an exception is thrown
         /// </code>
         /// </example>
-        public static async Task<IDisposable> WaitScopedAsync(this SemaphoreSlim semaphoreSlim, CancellationToken cancellationToken = default) => await SemaphoreSlimScope.WaitAsync(semaphoreSlim, cancellationToken);
+        public static async Task<IDisposable> WaitScopedAsync(this SemaphoreSlim semaphoreSlim, CancellationToken cancellationToken = default(CancellationToken)) => await SemaphoreSlimScope.WaitAsync(semaphoreSlim, cancellationToken);
 
         /// <summary>
         /// Can be used to wait on a semaphore within a using block.
