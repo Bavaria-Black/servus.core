@@ -9,7 +9,7 @@ namespace DevTools.Core.Tests.Parsing.Text
     [TestClass]
     public class LineKeyValueParserTests
     {
-        public LineKeyValueParser _parser { get; private set; }
+        private LineKeyValueParser _parser;
 
         [TestInitialize]
         public void Init()

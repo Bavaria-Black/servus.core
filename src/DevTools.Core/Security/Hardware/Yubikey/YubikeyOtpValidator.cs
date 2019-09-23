@@ -17,8 +17,7 @@ namespace DevTools.Core.Security.Hardware.Yubikey
         private readonly int _apiId;
         private readonly string _apiSecret;
 
-        string[] _validationUrls = new[]
-        {
+        readonly string[] _validationUrls = {
             "api.yubico.com",
             "api2.yubico.com",
             "api3.yubico.com",
@@ -62,9 +61,11 @@ namespace DevTools.Core.Security.Hardware.Yubikey
         internal string CalculateHash(string input)
         {
             var key = System.Text.Encoding.ASCII.GetBytes(_apiSecret);
-            HMACSHA1 myhmacsha1 = new HMACSHA1(key);
-            byte[] byteArray = System.Text.Encoding.ASCII.GetBytes(input);
-            return Convert.ToBase64String(myhmacsha1.ComputeHash(byteArray));
+            using (var myhmacsha1 = new HMACSHA1(key))
+            {
+                byte[] byteArray = System.Text.Encoding.ASCII.GetBytes(input);
+                return Convert.ToBase64String(myhmacsha1.ComputeHash(byteArray));
+            }
         }
 
         internal static string ExtractClientId(string otp)
