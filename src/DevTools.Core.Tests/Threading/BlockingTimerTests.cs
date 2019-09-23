@@ -10,34 +10,28 @@ namespace DevTools.Core.Tests.Threading
     public class BlockingTimerTests
     {
         [TestMethod]
-        [Timeout(60000)]
+        [Timeout(20000)]
         public async Task ActionIsFasterThenBlockingTimer()
         {
             //CTS with 2 second timeout
-            var cts = new CancellationTokenSource(1000);
+            var cts = new CancellationTokenSource(1500);
             int count = 0;
-            var countSemaphore = new SemaphoreSlim(0, 1);
-            var semaphore = new SemaphoreSlim(0, int.MaxValue);
+            var timeoutSemaphore = new SemaphoreSlim(0, int.MaxValue);
 
-            cts.Token.Register(async () =>
+            cts.Token.Register(() => timeoutSemaphore.Release());
+
+            var timer = new BlockingTimer(async () =>
             {
-                await semaphore.WaitAsync();
-                await semaphore.WaitAsync();
-                countSemaphore.Release();
-            });
-
-            var timer = new BlockingTimer(() => {
+                await Task.Delay(10);
                 count++;
-                semaphore.Release();
-            }, cts.Token, 60);
+            }, cts.Token, 600);
 
-            
-            await countSemaphore.WaitAsync();
+            await timeoutSemaphore.WaitAsync();
 
             Console.WriteLine($@"Count: {count}");
             Assert.IsTrue(cts.IsCancellationRequested);
             Assert.IsTrue(count > 1, $"Count is {count}");
-            Assert.IsTrue(count < 80, $"Count is {count}");
+            Assert.IsTrue(count < 3, $"Count is {count}");
         }
 
         [TestMethod]
