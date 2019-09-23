@@ -10,7 +10,7 @@ namespace DevTools.Core.Tests.Threading
     public class BlockingTimerTests
     {
         [TestMethod]
-        [Timeout(5000)]
+        [Timeout(60000)]
         public async Task ActionIsFasterThenBlockingTimer()
         {
             //CTS with 2 second timeout
