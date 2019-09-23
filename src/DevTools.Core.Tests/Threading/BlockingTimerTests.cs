@@ -23,7 +23,10 @@ namespace DevTools.Core.Tests.Threading
                 semaphore.Release();
             });
 
-            var timer = new BlockingTimer(() => count++, cts.Token, 60);
+            var timer = new BlockingTimer(async () => {
+                count++;
+                await Task.Delay(1);
+            }, cts.Token, 60);
 
             await semaphore.WaitAsync();
 
