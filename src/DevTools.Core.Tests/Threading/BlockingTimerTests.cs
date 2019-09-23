@@ -19,8 +19,10 @@ namespace DevTools.Core.Tests.Threading
             var countSemaphore = new SemaphoreSlim(0, 1);
             var semaphore = new SemaphoreSlim(0, int.MaxValue);
 
-            cts.Token.Register(() =>
+            cts.Token.Register(async () =>
             {
+                await semaphore.WaitAsync();
+                await semaphore.WaitAsync();
                 countSemaphore.Release();
             });
 
@@ -29,8 +31,7 @@ namespace DevTools.Core.Tests.Threading
                 semaphore.Release();
             }, cts.Token, 60);
 
-            await semaphore.WaitAsync();
-            await semaphore.WaitAsync();
+            
             await countSemaphore.WaitAsync();
 
             Console.WriteLine($@"Count: {count}");
