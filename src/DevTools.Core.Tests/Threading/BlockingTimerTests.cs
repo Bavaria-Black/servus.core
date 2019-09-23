@@ -29,8 +29,8 @@ namespace DevTools.Core.Tests.Threading
                 semaphore.Release();
             }, cts.Token, 60);
 
-            await semaphore.WaitAsync(cts.Token);
-            await semaphore.WaitAsync(cts.Token);
+            await semaphore.WaitAsync();
+            await semaphore.WaitAsync();
             await countSemaphore.WaitAsync();
 
             Console.WriteLine($@"Count: {count}");
