@@ -16,10 +16,16 @@ namespace DevTools.Core.Tests.Threading
             //CTS with 1 second timeout
             var cts = new CancellationTokenSource(1000);
             int count = 0;
+            var semaphore = new SemaphoreSlim(0, 1);
+
+            cts.Token.Register(() =>
+            {
+                semaphore.Release();
+            });
 
             var timer = new BlockingTimer(() => count++, cts.Token, 60);
 
-            await Task.Delay(2000, CancellationToken.None);
+            await semaphore.WaitAsync();
 
             Console.WriteLine($@"Count: {count}");
             Assert.IsTrue(cts.IsCancellationRequested);
