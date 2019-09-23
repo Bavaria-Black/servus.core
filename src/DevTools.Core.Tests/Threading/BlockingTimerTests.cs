@@ -42,6 +42,7 @@ namespace DevTools.Core.Tests.Threading
 
         [TestMethod]
         [Timeout(40000)]
+        [Ignore]
         public async Task ActionIsSlowerThenBlockingTimer()
         {
             //CTS with 1 second timeout
