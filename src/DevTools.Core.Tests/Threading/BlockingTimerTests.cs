@@ -32,21 +32,29 @@ namespace DevTools.Core.Tests.Threading
         public async Task ActionIsSlowerThenBlockingTimer()
         {
             //CTS with 1 second timeout
-            var cts = new CancellationTokenSource(1000);
             int count = 0;
+            int intervall = 10;
+            int runtime = 1000;
+            int maxRuns = runtime / intervall;
+            var cts = new CancellationTokenSource(runtime);
 
             var timer = new BlockingTimer(() =>
             {
-                Task.Delay(200, CancellationToken.None).Wait(CancellationToken.None);
-                count++;
-            }, cts.Token, 1d);
+                Task.Delay(intervall * 2, CancellationToken.None).Wait(CancellationToken.None);
+                if (count++ > maxRuns)
+                {
+                    cts.Cancel();
+                    Assert.Fail();
+                }
 
-            await Task.Delay(10000, CancellationToken.None);
+            }, cts.Token, intervall);
 
-            Console.WriteLine($"Count: {count}");
+            await Task.Delay(runtime, CancellationToken.None);
+
+            Console.WriteLine($"Count: {count}/{maxRuns}");
             Assert.IsTrue(cts.IsCancellationRequested);
-            Assert.IsTrue(count >= 1, $"Count is {count}");
-            Assert.IsTrue(count < 7, $"Count is {count}");
+            Assert.IsTrue(count >= 1, $"Count is {count}/{maxRuns}");
+            Assert.IsTrue(count < maxRuns, $"Count is {count}/{maxRuns}");
         }
     }
 }
