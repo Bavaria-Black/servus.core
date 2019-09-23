@@ -37,19 +37,24 @@ namespace DevTools.Core.Tests.Threading
             int runtime = 1000;
             int maxRuns = runtime / intervall;
             var cts = new CancellationTokenSource(runtime);
+            var semaphore = new SemaphoreSlim(0, 1);
 
-            var timer = new BlockingTimer(() =>
+            cts.Token.Register(() =>
             {
-                Task.Delay(intervall * 2, CancellationToken.None).Wait(CancellationToken.None);
+                semaphore.Release();
+            });
+
+            var timer = new BlockingTimer(async () =>
+            {
+                await Task.Delay(intervall * 2);
                 if (count++ > maxRuns)
                 {
                     cts.Cancel();
                     Assert.Fail();
                 }
-
             }, cts.Token, intervall);
 
-            await Task.Delay(runtime, CancellationToken.None);
+            await semaphore.WaitAsync();
 
             Console.WriteLine($"Count: {count}/{maxRuns}");
             Assert.IsTrue(cts.IsCancellationRequested);
