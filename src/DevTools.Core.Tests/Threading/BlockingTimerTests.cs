@@ -36,6 +36,7 @@ namespace DevTools.Core.Tests.Threading
         }
 
         [TestMethod]
+        [Ignore]
         [Timeout(40000)]
         public async Task ActionIsSlowerThenBlockingTimer()
         {
