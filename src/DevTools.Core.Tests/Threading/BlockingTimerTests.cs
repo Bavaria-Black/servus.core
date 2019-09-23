@@ -10,25 +10,28 @@ namespace DevTools.Core.Tests.Threading
     public class BlockingTimerTests
     {
         [TestMethod]
-        [Timeout(20000)]
+        [Timeout(5000)]
         public async Task ActionIsFasterThenBlockingTimer()
         {
-            //CTS with 1 second timeout
+            //CTS with 2 second timeout
             var cts = new CancellationTokenSource(1000);
             int count = 0;
-            var semaphore = new SemaphoreSlim(0, 1);
+            var countSemaphore = new SemaphoreSlim(0, 1);
+            var semaphore = new SemaphoreSlim(0, int.MaxValue);
 
             cts.Token.Register(() =>
             {
-                semaphore.Release();
+                countSemaphore.Release();
             });
 
-            var timer = new BlockingTimer(async () => {
+            var timer = new BlockingTimer(() => {
                 count++;
-                await Task.Delay(1);
+                semaphore.Release();
             }, cts.Token, 60);
 
-            await semaphore.WaitAsync();
+            await semaphore.WaitAsync(cts.Token);
+            await semaphore.WaitAsync(cts.Token);
+            await countSemaphore.WaitAsync();
 
             Console.WriteLine($@"Count: {count}");
             Assert.IsTrue(cts.IsCancellationRequested);
@@ -42,9 +45,9 @@ namespace DevTools.Core.Tests.Threading
         {
             //CTS with 1 second timeout
             int count = 0;
-            int intervall = 10;
+            int interval = 10;
             int runtime = 1000;
-            int maxRuns = runtime / intervall;
+            int maxRuns = runtime / interval;
             var cts = new CancellationTokenSource(runtime);
             var semaphore = new SemaphoreSlim(0, 1);
 
@@ -55,13 +58,13 @@ namespace DevTools.Core.Tests.Threading
 
             var timer = new BlockingTimer(async () =>
             {
-                await Task.Delay(intervall * 2);
+                await Task.Delay(interval * 2);
                 if (count++ > maxRuns)
                 {
                     cts.Cancel();
                     Assert.Fail();
                 }
-            }, cts.Token, intervall);
+            }, cts.Token, interval);
 
             await semaphore.WaitAsync();
 
