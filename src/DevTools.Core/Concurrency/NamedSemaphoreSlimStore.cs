@@ -31,7 +31,7 @@ namespace DevTools.Core.Concurrency
 
         private static void Semaphore_Disposing(object sender, EventArgs e)
         {
-            var semaphore = sender as NamedSemaphoreSlim;
+            var semaphore = (NamedSemaphoreSlim)sender;
             _store.Remove(semaphore.Name);
         }
     }
