@@ -1,11 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
 
-namespace DevTools.Core.Logic.Blocks
+namespace DevTools.Core.Flows.Blocks
 {
     public abstract class LogicBlock<T> where T : MessageBase, new()
     {
+        public Guid InstanceId { get; set; } = Guid.NewGuid();
+
+        [IgnoreDataMember]
+        public IFlowContext Context { get; internal set; }
+
         private readonly Dictionary<int, Output<T>> _outputs = new Dictionary<int, Output<T>>();
 
         public LogicBlock(int outputCount)
@@ -23,18 +29,19 @@ namespace DevTools.Core.Logic.Blocks
                 var a = input.Duplicate<T>();
                 var outputmessages = Run(input);
                 var count = Math.Max(outputmessages.Length, _outputs.Count);
-                for(int i = 0; i < count; i++)
+                for (int i = 0; i < count; i++)
                 {
                     var message = outputmessages[i];
                     if (message != default(T))
                     {
                         TriggerOutput(i, message);
                     }
-                }   
+                }
             }
-            catch
+            catch (Exception ex)
             {
                 // have to think about a solution
+                Console.WriteLine(ex);
             }
         }
 

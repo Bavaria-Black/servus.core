@@ -2,14 +2,20 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DevTools.Core.Logic.Blocks
+namespace DevTools.Core.Flows.Blocks
 {
     public class AddConstantBlock : LogicBlock<IntMessage>
     {
-        public int ConstantValue { get; }
+        public int ConstantValue { get; set; }
+
+        public AddConstantBlock()
+            : base(1)
+        {
+
+        }
 
         public AddConstantBlock(int constantValue)
-            : base(1)
+            : this()
         {
             ConstantValue = constantValue;
         }

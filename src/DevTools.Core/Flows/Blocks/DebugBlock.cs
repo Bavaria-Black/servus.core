@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DevTools.Core.Logic.Blocks
+namespace DevTools.Core.Flows.Blocks
 {
     public class DebugBlock : LogicBlock<IntMessage>
     {

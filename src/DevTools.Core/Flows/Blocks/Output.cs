@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace DevTools.Core.Logic.Blocks
+namespace DevTools.Core.Flows.Blocks
 {
     internal class Output<T> where T : MessageBase
     {

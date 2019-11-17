@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DevTools.Core.Logic
+namespace DevTools.Core.Flows
 {
     public abstract class MessageBase
     {
         private Dictionary<string, object> _valueStore = new Dictionary<string, object>();
 
-        protected T GetValue<T>(string key)
+        public T GetValue<T>(string key)
         {
             if(_valueStore.TryGetValue(key, out var value))
             {
@@ -18,7 +18,7 @@ namespace DevTools.Core.Logic
             return default;
         }
 
-        protected void SetValue<T>(string key, T value)
+        public void SetValue<T>(string key, T value)
         {
             _valueStore[key] = value;
         }
