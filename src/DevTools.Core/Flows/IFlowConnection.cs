@@ -4,8 +4,8 @@ using System.Text;
 
 namespace DevTools.Core.Flows
 {
-    public interface ILogicConnection<T> where T : MessageBase
+    public interface IFlowConnection
     {
-        void Trigger(T message);
+        void Trigger(MessageBase message);
     }
 }

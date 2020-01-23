@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DevTools.Core.Flows.Blocks
 {
-    public class DebugBlock : LogicBlock<IntMessage>
+    public class DebugBlock : BlockBase
     {
 
         public DebugBlock() 
@@ -12,9 +12,9 @@ namespace DevTools.Core.Flows.Blocks
         {
         }
 
-        protected override IntMessage[] Run(IntMessage input)
+        protected override MessageBase[] Run(MessageBase input)
         {
-            Console.WriteLine(input.Value);
+            Console.WriteLine(input.GetValue<object>("Value"));
             return new[] { input };
         }
     }

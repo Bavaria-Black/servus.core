@@ -4,17 +4,17 @@ using System.Text;
 
 namespace DevTools.Core.Flows.Blocks
 {
-    public class CompareBlock<T> : LogicBlock<T> where T : MessageBase, new()
+    public class CompareBlock : BlockBase
     {
-        private readonly Func<T, bool> _comparer;
+        private readonly Func<MessageBase, bool> _comparer;
 
-        public CompareBlock(Func<T, bool> comparer) 
+        public CompareBlock(Func<MessageBase, bool> comparer) 
             : base(2)
         {
             _comparer = comparer;
         }
 
-        protected override T[] Run(T input)
+        protected override MessageBase[] Run(MessageBase input)
         {
             if(_comparer(input))
             {

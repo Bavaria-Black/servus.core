@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DevTools.Core.Flows.Blocks
 {
-    public class ScriptBlock<T> : LogicBlock<T> where T : MessageBase, new()
+    public class ScriptBlock : BlockBase
     {
         public string Script { get; set; }
 
@@ -14,7 +14,7 @@ namespace DevTools.Core.Flows.Blocks
             Script = script;
         }
 
-        protected override T[] Run(T input)
+        protected override MessageBase[] Run(MessageBase input)
         {
             var runtime = Context.GetScriptRuntime("ps1");
 
@@ -29,10 +29,10 @@ namespace DevTools.Core.Flows.Blocks
                 var output = runtime.GetVariable("output");
                 if (output != null && output is Array array)
                 {
-                    List<T> outputMessages = new List<T>();
+                    var outputMessages = new List<MessageBase>();
                     foreach(var element in array)
                     {
-                        if(element is T message)
+                        if(element is MessageBase message)
                         {
                             outputMessages.Add(message);
                         }

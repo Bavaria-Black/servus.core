@@ -22,23 +22,23 @@ namespace DevTools.Core.Tests.Flows
             var add10Block = new AddConstantBlock(10);
             var debugBlock = new DebugBlock();
 
-            var compare = new CompareBlock<IntMessage>((m) =>
+            var compare = new CompareBlock((m) =>
             {
-                return m.Value == 5;
+                return m.GetValue<int>("Value") == 5;
             });
 
-            _ = new LogicConnection<IntMessage>(add5Block, 0, debugBlock);
-            _ = new LogicConnection<IntMessage>(add5Block, 0, compare);
+            _ = new FlowConnection(add5Block, 0, debugBlock);
+            _ = new FlowConnection(add5Block, 0, compare);
 
             // output 1 is only triggered when false
-            _ = new LogicConnection<IntMessage>(compare, 1, debugBlock);
+            _ = new FlowConnection(compare, 1, debugBlock);
 
             var msg = new IntMessage(0);
             add5Block.TriggerInput(msg);
             Assert.AreEqual(5, msg.Value);
 
             // output 0 is only triggered when true
-            _ = new LogicConnection<IntMessage>(compare, 0, add10Block);
+            _ = new FlowConnection(compare, 0, add10Block);
 
             // should result in 15 because comparer returned true
             msg = new IntMessage(0);
@@ -56,11 +56,11 @@ namespace DevTools.Core.Tests.Flows
         {
             bool customBlockReached = false;
             var msg = new IntMessage(5);
-            var flow = new Flow<IntMessage>();
+            var flow = new Flow();
             var add10Block = new AddConstantBlock(10);
-            var compareBlock = new CompareBlock<IntMessage>(m => m.Value == 3);
+            var compareBlock = new CompareBlock(m => m.GetValue<int>("Value") == 3);
             var debugBlock = new DebugBlock();
-            var customBlock = new FunctionBlock<IntMessage>(1, (m) =>
+            var customBlock = new FunctionBlock(1, (m) =>
             {
                 customBlockReached = true;
                 return new[] { m };
@@ -89,7 +89,7 @@ namespace DevTools.Core.Tests.Flows
         public void Serialize()
         {
             var msg = new IntMessage(5);
-            var flow = new Flow<IntMessage>();
+            var flow = new Flow();
             flow.Context.SetValue("test", 100);
 
             var add10Block = new AddConstantBlock(10);
@@ -105,7 +105,7 @@ namespace DevTools.Core.Tests.Flows
             var json = FlowFactory.Serialize(serializer, flow);
             Assert.IsFalse(string.IsNullOrEmpty(json));
 
-            var f1 = FlowFactory.Deserialize<IntMessage>(serializer, json);
+            var f1 = FlowFactory.Deserialize(serializer, json);
             Assert.AreEqual(100, f1.Context.GetValue<long>("test"));
 
             f1.Trigger(msg);
@@ -115,11 +115,11 @@ namespace DevTools.Core.Tests.Flows
         [TestMethod]
         public void ScriptFlow()
         {
-            var flow = new Flow<IntMessage>();
+            var flow = new Flow();
             flow.Context.RegisterScriptRuntimeProvider(new PowerShellRuntimeProvider());
-            var scriptBlock = new ScriptBlock<IntMessage>(1, 
+            var scriptBlock = new Core.Flows.Blocks.ScriptBlock(1, 
                 "$msg.SetValue(\"test\", 5); \r\n" +
-                "$msg.Value = 100; \r\n" +
+                "$msg.SetValue(\"Value\", 100); \r\n" +
                 "$output = @($msg); \r\n");
 
             flow.AddBlock(scriptBlock);

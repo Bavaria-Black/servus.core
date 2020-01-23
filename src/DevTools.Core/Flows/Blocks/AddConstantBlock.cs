@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DevTools.Core.Flows.Blocks
 {
-    public class AddConstantBlock : LogicBlock<IntMessage>
+    public class AddConstantBlock : BlockBase
     {
         public int ConstantValue { get; set; }
 
@@ -20,9 +20,11 @@ namespace DevTools.Core.Flows.Blocks
             ConstantValue = constantValue;
         }
 
-        protected override IntMessage[] Run(IntMessage input)
+        protected override MessageBase[] Run(MessageBase input)
         {
-            input.Value += ConstantValue;
+            var value = input.GetValue<int>("Value");
+            value += ConstantValue;
+            input.SetValue("Value", value);
             return new[] { input };
         }
     }

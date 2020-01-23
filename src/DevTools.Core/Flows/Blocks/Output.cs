@@ -4,15 +4,15 @@ using System.Threading.Tasks;
 
 namespace DevTools.Core.Flows.Blocks
 {
-    internal class Output<T> where T : MessageBase
+    internal class Output
     {
-        private readonly List<ILogicConnection<T>> _connetions = new List<ILogicConnection<T>>();
-        internal void Add(ILogicConnection<T> connection)
+        private readonly List<IFlowConnection> _connetions = new List<IFlowConnection>();
+        internal void Add(IFlowConnection connection)
         {
             _connetions.Add(connection);
         }
 
-        internal void Trigger(T message)
+        internal void Trigger(MessageBase message)
         {
             Parallel.ForEach(_connetions, (c) =>
             {

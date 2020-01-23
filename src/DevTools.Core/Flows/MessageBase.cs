@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DevTools.Core.Flows
 {
-    public abstract class MessageBase
+    public class MessageBase
     {
         private Dictionary<string, object> _valueStore = new Dictionary<string, object>();
 
@@ -28,9 +28,9 @@ namespace DevTools.Core.Flows
             _valueStore = valueStore;
         }
 
-        internal T Duplicate<T>() where T : MessageBase, new()
+        internal MessageBase Duplicate()
         {
-            var a = new T();
+            var a = new MessageBase();
             a.SetValueStore(new Dictionary<string, object>(_valueStore));
             return a;
         }

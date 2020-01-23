@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DevTools.Core.Flows
 {
-    public class Flow<T> where T : MessageBase, new()
+    public class Flow
     {
         public class SerializableConnection
         {
@@ -30,11 +30,11 @@ namespace DevTools.Core.Flows
 
         public IFlowContext Context = new FlowContext();
 
-        private readonly List<LogicConnection<T>> _connections  = new List<LogicConnection<T>>();
+        private readonly List<FlowConnection> _connections  = new List<FlowConnection>();
 
-        public List<LogicBlock<T>> Blocks { get; set; } = new List<LogicBlock<T>>();
+        public List<BlockBase> Blocks { get; set; } = new List<BlockBase>();
         public List<SerializableConnection> Connections { get; set; } = new List<SerializableConnection>();
-        public List<LogicBlock<T>> EntryBlocks { get; set; } = new List<LogicBlock<T>>();
+        public List<BlockBase> EntryBlocks { get; set; } = new List<BlockBase>();
 
         internal Flow()
         {
@@ -51,30 +51,30 @@ namespace DevTools.Core.Flows
             {
                 var source = Blocks.First(b => b.InstanceId == info.SourceId);
                 var target = Blocks.First(b => b.InstanceId == info.TargetId);
-                var connection = new LogicConnection<T>(source, info.SourceOutput, target);
+                var connection = new FlowConnection(source, info.SourceOutput, target);
                 _connections.Add(connection);
             }
         }
 
-        public void AddBlock(LogicBlock<T> block)
+        public void AddBlock(BlockBase block)
         {
             block.Context = Context;
             Blocks.Add(block);
         }
 
-        public void AddConnection(LogicBlock<T> source, int sourceOutput, LogicBlock<T> target)
+        public void AddConnection(BlockBase source, int sourceOutput, BlockBase target)
         {
-            var connection = new LogicConnection<T>(source, sourceOutput, target);
+            var connection = new FlowConnection(source, sourceOutput, target);
             AddConnection(connection);
         }
 
-        public void AddConnection(LogicConnection<T> connection)
+        public void AddConnection(FlowConnection connection)
         {
             Connections.Add(new SerializableConnection(connection.SourceId, connection.SourceOutput, connection.TargetId));
             _connections.Add(connection);
         }
 
-        public void Trigger(T msg)
+        public void Trigger(MessageBase msg)
         {
             Parallel.ForEach(EntryBlocks, (b) =>
             {
@@ -89,7 +89,7 @@ namespace DevTools.Core.Flows
             });
         }
 
-        public void AddEntryBlock(LogicBlock<T> block)
+        public void AddEntryBlock(BlockBase block)
         {
             EntryBlocks.Add(block);
         }

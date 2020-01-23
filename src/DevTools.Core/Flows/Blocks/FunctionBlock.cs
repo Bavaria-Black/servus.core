@@ -4,16 +4,16 @@ using System.Text;
 
 namespace DevTools.Core.Flows.Blocks
 {
-    public class FunctionBlock<T> : LogicBlock<T> where T : MessageBase, new()
+    public class FunctionBlock : BlockBase
     {
-        private readonly Func<T, T[]> _function;
+        private readonly Func<MessageBase, MessageBase[]> _function;
 
-        public FunctionBlock(int outputCount, Func<T, T[]> function)
+        public FunctionBlock(int outputCount, Func<MessageBase, MessageBase[]> function)
             : base(outputCount)
         {
             _function = function;
         }
 
-        protected override T[] Run(T input) => _function(input);
+        protected override MessageBase[] Run(MessageBase input) => _function(input);
     }
 }

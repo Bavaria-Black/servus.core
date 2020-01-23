@@ -5,34 +5,34 @@ using System.Text;
 
 namespace DevTools.Core.Flows.Blocks
 {
-    public abstract class LogicBlock<T> where T : MessageBase, new()
+    public abstract class BlockBase
     {
         public Guid InstanceId { get; set; } = Guid.NewGuid();
 
         [IgnoreDataMember]
         public IFlowContext Context { get; internal set; }
 
-        private readonly Dictionary<int, Output<T>> _outputs = new Dictionary<int, Output<T>>();
+        private readonly Dictionary<int, Output> _outputs = new Dictionary<int, Output>();
 
-        public LogicBlock(int outputCount)
+        public BlockBase(int outputCount)
         {
             for (int i = 0; i < outputCount; i++)
             {
-                _outputs.Add(i, new Output<T>());
+                _outputs.Add(i, new Output());
             }
         }
 
-        public void TriggerInput(T input)
+        public void TriggerInput(MessageBase input)
         {
             try
             {
-                var a = input.Duplicate<T>();
+                var a = input.Duplicate();
                 var outputmessages = Run(input);
                 var count = Math.Max(outputmessages.Length, _outputs.Count);
                 for (int i = 0; i < count; i++)
                 {
                     var message = outputmessages[i];
-                    if (message != default(T))
+                    if (message != default)
                     {
                         TriggerOutput(i, message);
                     }
@@ -45,14 +45,14 @@ namespace DevTools.Core.Flows.Blocks
             }
         }
 
-        protected abstract T[] Run(T input);
+        protected abstract MessageBase[] Run(MessageBase input);
 
-        private void TriggerOutput(int output, T message)
+        private void TriggerOutput(int output, MessageBase message)
         {
             _outputs[output].Trigger(message);
         }
 
-        internal void Connect(ILogicConnection<T> connection, int output)
+        internal void Connect(IFlowConnection connection, int output)
         {
             _outputs[output].Add(connection);
         }

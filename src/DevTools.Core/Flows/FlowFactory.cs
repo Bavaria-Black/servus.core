@@ -5,12 +5,12 @@ namespace DevTools.Core.Flows
 {
     public static class FlowFactory
     {
-        public static Flow<T> Create<T>() where T : MessageBase, new()
+        public static Flow Create()
         {
-            return new Flow<T>();
+            return new Flow();
         }
 
-        public static string Serialize<T>(ISerializer serializer, Flow<T> value) where T : MessageBase, new()
+        public static string Serialize(ISerializer serializer, Flow value)
         {
             using (var stream = new MemoryStream())
             using (var reader = new StreamReader(stream))
@@ -22,12 +22,12 @@ namespace DevTools.Core.Flows
             }
         }
 
-        public static void Serialize<T>(ISerializer serializer, StreamWriter writer, Flow<T> value) where T : MessageBase, new()
+        public static void Serialize(ISerializer serializer, StreamWriter writer, Flow value)
         {
             serializer.Serialize(writer, value);
         }
 
-        public static Flow<T> Deserialize<T>(ISerializer serializer, string data) where T : MessageBase, new()
+        public static Flow Deserialize(ISerializer serializer, string data)
         {
             using (var stream = new MemoryStream())
             using (var writer = new StreamWriter(stream, System.Text.Encoding.UTF8, 1024, true))
@@ -37,13 +37,13 @@ namespace DevTools.Core.Flows
                 writer.Flush();
 
                 stream.Position = 0;
-                return Deserialize<T>(serializer, reader);
+                return Deserialize(serializer, reader);
             }
         }
 
-        public static Flow<T> Deserialize<T>(ISerializer serializer, StreamReader reader) where T : MessageBase, new()
+        public static Flow Deserialize(ISerializer serializer, StreamReader reader)
         {
-            var flow = serializer.Deserialize<Flow<T>>(reader);
+            var flow = serializer.Deserialize<Flow>(reader);
             flow.Init();
 
             return flow;
