@@ -34,9 +34,9 @@ namespace DevTools.Core.Security.Hardware.Yubikey
         public async Task<bool> ValidateAsync(string otp)
         {
             var tcs = new TaskCompletionSource<bool>();
-            var rnd = new Random();
-            byte[] nonce = new byte[16];
-            rnd.NextBytes(nonce);
+            var rnd = RandomNumberGenerator.Create();
+            var nonce = new byte[16];
+            rnd.GetBytes(nonce);
             var nonceString = ModHexEncoding.ModHex.GetString(nonce);
 
             Parallel.ForEach(_validationUrls, async (url) =>
