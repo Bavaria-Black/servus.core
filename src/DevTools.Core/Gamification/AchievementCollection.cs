@@ -7,7 +7,7 @@ namespace DevTools.Core.Gamification
 {
     public class AchievementCollection
     {
-        private List<Achievement> _achievements = new List<Achievement>();
+        private readonly List<Achievement> _achievements = new List<Achievement>();
         public IEnumerable<Achievement> Achievements => _achievements;
 
         private readonly List<AchievementProperty> _properties = new List<AchievementProperty>();
