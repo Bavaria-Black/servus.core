@@ -5,6 +5,7 @@
 
 trigger:
 - master
+- develop
 
 pool:
   vmImage: 'windows-latest'
@@ -22,8 +23,14 @@ steps:
 - task: GitVersion@5
   inputs:
     runtime: 'core'
-    updateVersionProperties: true
 
+- task: SonarCloudPrepare@1
+  inputs:
+    SonarCloud: 'SonarCloud'
+    organization: 'bavaria-black'
+    scannerMode: 'MSBuild'
+    projectKey: 'DevTools'
+    projectName: 'DevTools'
 
 - task: DotNetCoreCLI@2
   displayName: dotnet build
@@ -40,8 +47,14 @@ steps:
     arguments: '--configuration $(buildConfiguration) --logger trx --collect "Code coverage"'
     nobuild: true
 
+- task: SonarCloudAnalyze@1
+
 - task: NuGetCommand@2
   displayName: 'NuGet pack'
   inputs:
     command: custom
     arguments: pack $(Build.SourcesDirectory)\src\DevTools.Core\DevTools.Core.nuspec -Version $(GitVersion.NuGetVersion) -OutputDirectory $(Build.ArtifactStagingDirectory) -Properties Configuration=$(BuildConfiguration) -NoDefaultExcludes
+
+- task: SonarCloudPublish@1
+  inputs:
+    pollingTimeoutSec: '300'

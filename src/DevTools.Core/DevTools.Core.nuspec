@@ -8,10 +8,10 @@
     <owners>Christian Dirnhofer, Andreas Huber</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Library for standard tools that most likely everyone implemented on their own a few times throughout their career.</description>
-    <copyright>Copyright 2019</copyright>
+    <copyright>Copyright 2020</copyright>
   </metadata>
   <files>
-    <file src="bin\$configuration$\netcoreapp2.1\DevTools.Core.dll" target="lib\netstandard2.0"/>
-    <file src="bin\$configuration$\netcoreapp2.1\DevTools.Core.pdb" target="lib\netstandard2.0"/>
+    <file src="bin\$configuration$\netcoreapp3.0\DevTools.Core.dll" target="lib\netstandard3.0"/>
+    <file src="bin\$configuration$\netcoreapp3.0\DevTools.Core.pdb" target="lib\netstandard3.0"/>
   </files>
 </package>
