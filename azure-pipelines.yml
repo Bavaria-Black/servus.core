@@ -13,31 +13,47 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
 
 steps:
+
 - task: NuGetToolInstaller@1
 
 - task: GitVersion@5
   inputs:
     runtime: 'core'
-    updateVersionProperties: true
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)'
 
-- task: VSBuild@1
+- task: SonarCloudPrepare@1
   inputs:
-    solution: '$(solution)'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    SonarCloud: 'SonarCloud'
+    organization: 'bavaria-black'
+    scannerMode: 'MSBuild'
+    projectKey: 'DevTools'
+    projectName: 'DevTools'
 
-- task: VSTest@2
+- task: DotNetCoreCLI@2
+  displayName: dotnet build
   inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    projects: $(solution)
+    command: 'build'
+    configuration: $(buildConfiguration)
+
+- task: DotNetCoreCLI@2
+  displayName: dotnet test
+  inputs:
+    command: test
+    projects: '**/*Tests.csproj'
+    arguments: '--configuration $(buildConfiguration) --logger trx --collect "Code coverage"'
+    nobuild: true
+
+- task: SonarCloudAnalyze@1
 
 - task: NuGetCommand@2
   displayName: 'NuGet pack'
   inputs:
     command: custom
     arguments: pack $(Build.SourcesDirectory)\src\DevTools.Core\DevTools.Core.nuspec -Version $(GitVersion.NuGetVersion) -OutputDirectory $(Build.ArtifactStagingDirectory) -Properties Configuration=$(BuildConfiguration) -NoDefaultExcludes
+
+- task: SonarCloudPublish@1
+  inputs:
+    pollingTimeoutSec: '300'
