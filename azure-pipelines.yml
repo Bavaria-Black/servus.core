@@ -56,5 +56,36 @@ steps:
     arguments: pack $(Build.SourcesDirectory)\src\DevTools.Core\DevTools.Core.nuspec -Version $(GitVersion.NuGetVersion) -OutputDirectory $(Build.ArtifactStagingDirectory) -Properties Configuration=$(BuildConfiguration) -NoDefaultExcludes
 
 - task: SonarCloudPublish@1
+  displayName: 'Publish quality gate (only CI builds)'
+  condition: ne(variables['System.PullRequest.PullRequestId'], variables['noSuch'])
   inputs:
     pollingTimeoutSec: '300'
+
+- task: PowerShell@2
+  displayName: 'Tag current version'
+  condition: and(succeeded(), eq(variables['System.PullRequest.PullRequestId'], variables['noSuch']))
+  env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+  inputs:
+    targetType: 'inline'
+    script: |
+      $name = "$(Build.RequestedFor)"
+      $email = "$(Build.RequestedForEmail)"
+
+      if($name.startswith("Project Collection Build Service"))
+      {
+        $name = "Build Bot"
+        $email = "buildbot@dirnhofer.net"
+      }
+
+      Write-Host "========================================================================================"
+      Write-Host "Name        : $name"
+      Write-Host "Email       : $email"
+      Write-Host "Tag version : $(GitVersion.NuGetVersion)"
+      Write-Host "========================================================================================"
+
+      git config --global user.name "$name"
+      git config --global user.email "$name"
+      git tag -a $(GitVersion.NuGetVersion) -m 'Version tag'
+      
+      git -c http.extraheader="AUTHORIZATION: bearer $env:SYSTEM_ACCESSTOKEN" push origin $(GitVersion.NuGetVersion) -q
