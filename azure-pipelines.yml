@@ -24,6 +24,20 @@ steps:
   inputs:
     runtime: 'core'
 
+- task: Assembly-Info-NetCore@2
+  displayName: "Set assembly version in .NET Standard and .NET Core projects"
+  inputs:
+    Path: '$(Build.SourcesDirectory)'
+    FileNames: '/*.csproj'
+    InsertAttributes: false
+    FileEncoding: 'auto'
+    WriteBOM: false
+    Company: 'Bavaria Black'
+    Copyright: "Bavaria Black"
+    VersionNumber: '$(Build.BuildNumber)'
+    FileVersionNumber: '$(Build.BuildNumber)'
+    InformationalVersion: '$(Build.BuildNumber)'
+    Product: '$(System.PullRequest.PullRequestId)-$(Build.SourceVersion)'
 
 - task: SonarCloudPrepare@1
   inputs:
