@@ -17,8 +17,8 @@ namespace DevTools.Core.Gamification
         public Achievement(string name, IEnumerable<AchievementProperty> properties)
         {
             Name = name;
-            _properties = properties;
-            foreach(var prop in properties)
+            _properties = properties.ToList();
+            foreach(var prop in _properties)
             {
                 prop.Activated += Prop_Activated;
             }
