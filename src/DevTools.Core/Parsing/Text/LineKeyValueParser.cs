@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace DevTools.Core.Parsing.Text
@@ -21,18 +21,14 @@ namespace DevTools.Core.Parsing.Text
 
         public IEnumerable<KeyValuePair<string, string>> Parse(string value)
         {
-            string[] lines = Regex.Split(value, "\r\n");
-            foreach (string line in lines)
-            {
-                yield return ParseLine(line);
-            }
+            return value.GetLines().Select(ParseLine);
         }
 
         public KeyValuePair<string, string> ParseLine(string value)
         {
             if (value.Contains('\n') || value.Contains('\r'))
             {
-                throw new ArgumentException("value must not contain linebreaks");
+                throw new ArgumentException("value shall not contain linebreaks.");
             }
 
             var result = Regex.Split(value, _splitRegex);
