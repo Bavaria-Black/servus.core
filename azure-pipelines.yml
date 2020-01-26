@@ -70,12 +70,6 @@ steps:
     command: custom
     arguments: pack $(Build.SourcesDirectory)\src\DevTools.Core\DevTools.Core.nuspec -Version $(GitVersion.NuGetVersion) -OutputDirectory $(Build.ArtifactStagingDirectory) -Properties Configuration=$(BuildConfiguration) -NoDefaultExcludes
 
-- task: SonarCloudPublish@1
-  displayName: 'Publish quality gate (only CI builds)'
-  condition: ne(variables['System.PullRequest.PullRequestId'], variables['noSuch'])
-  inputs:
-    pollingTimeoutSec: '300'
-
 - task: PowerShell@2
   displayName: 'Tag current version'
   condition: and(succeeded(), eq(variables['System.PullRequest.PullRequestId'], variables['noSuch']))
@@ -104,3 +98,20 @@ steps:
       git tag -a $(GitVersion.NuGetVersion) -m 'Version tag'
       
       git -c http.extraheader="AUTHORIZATION: bearer $env:SYSTEM_ACCESSTOKEN" push origin $(GitVersion.NuGetVersion) -q
+
+- task: SonarCloudPublish@1
+  displayName: 'Publish quality gate (only CI builds)'
+  condition: eq(variables['System.PullRequest.PullRequestId'], variables['noSuch'])
+  inputs:
+    pollingTimeoutSec: '300'
+
+- task: InvokeRESTAPI@1
+  displayName: 'Discord notification for CI builds'
+  condition: eq(variables['System.PullRequest.PullRequestId'], variables['noSuch'])
+  inputs:
+    connectionType: connectedServiceName
+    serviceConnection: 'Discord'
+    azureServiceConnection: ''
+    method: POST
+    body: '{"content" : "Build $(Build.BuildNumber) succeded! Ready for fast ring testers. Version: $(Build.BuildId)"}'
+    waitForCompletion: 'false'
