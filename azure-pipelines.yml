@@ -7,110 +7,119 @@ trigger:
 - master
 - develop
 
-pool:
-  vmImage: 'windows-latest'
+jobs:
+- job: build_windows
+  displayName: 'Build and test on Windows'
 
-variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  pool:
+    vmImage: 'windows-latest'
 
-steps:
+  variables:
+    solution: '**/*.sln'
+    buildPlatform: 'Any CPU'
+    buildConfiguration: 'Release'
+    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
 
-- task: NuGetToolInstaller@1
+  steps:
 
-- task: GitVersion@5
-  inputs:
-    runtime: 'core'
+  - task: NuGetToolInstaller@1
 
-- task: Assembly-Info-NetCore@2
-  displayName: "Set assembly version in .NET Standard and .NET Core projects"
-  inputs:
-    Path: '$(Build.SourcesDirectory)'
-    FileNames: '/*.csproj'
-    InsertAttributes: false
-    FileEncoding: 'auto'
-    WriteBOM: false
-    Company: 'Bavaria Black'
-    Copyright: "Bavaria Black"
-    VersionNumber: '$(Build.BuildNumber)'
-    FileVersionNumber: '$(Build.BuildNumber)'
-    InformationalVersion: '$(Build.BuildNumber)'
-    Product: '$(System.PullRequest.PullRequestId)-$(Build.SourceVersion)'
+  - task: GitVersion@5
+    inputs:
+      runtime: 'core'
 
-- task: SonarCloudPrepare@1
-  inputs:
-    SonarCloud: 'SonarCloud'
-    organization: 'bavaria-black'
-    scannerMode: 'MSBuild'
-    projectKey: 'DevTools'
-    projectName: 'DevTools'
+  - task: Assembly-Info-NetCore@2
+    displayName: "Set assembly version in .NET Standard and .NET Core projects"
+    inputs:
+      Path: '$(Build.SourcesDirectory)'
+      FileNames: '/*.csproj'
+      InsertAttributes: false
+      FileEncoding: 'auto'
+      WriteBOM: false
+      Company: 'Bavaria Black'
+      Copyright: "Bavaria Black"
+      VersionNumber: '$(Build.BuildNumber)'
+      FileVersionNumber: '$(Build.BuildNumber)'
+      InformationalVersion: '$(Build.BuildNumber)'
+      Product: '$(System.PullRequest.PullRequestId)-$(Build.SourceVersion)'
 
-- task: DotNetCoreCLI@2
-  displayName: dotnet build
-  inputs:
-    projects: $(solution)
-    command: 'build'
-    configuration: $(buildConfiguration)
+  - task: SonarCloudPrepare@1
+    inputs:
+      SonarCloud: 'SonarCloud'
+      organization: 'bavaria-black'
+      scannerMode: 'MSBuild'
+      projectKey: 'DevTools'
+      projectName: 'DevTools'
 
-- task: DotNetCoreCLI@2
-  displayName: dotnet test
-  inputs:
-    command: test
-    projects: '**/*Tests.csproj'
-    arguments: '--configuration $(buildConfiguration) --logger trx --collect "Code coverage"'
-    nobuild: true
+  - task: DotNetCoreCLI@2
+    displayName: dotnet build
+    inputs:
+      projects: $(solution)
+      command: 'build'
+      configuration: $(buildConfiguration)
 
-- task: SonarCloudAnalyze@1
+  - task: DotNetCoreCLI@2
+    displayName: dotnet test
+    inputs:
+      command: test
+      projects: '**/*Tests.csproj'
+      arguments: '--configuration $(buildConfiguration) --logger trx --collect "Code coverage"'
+      nobuild: true
 
-- task: NuGetCommand@2
-  displayName: 'NuGet pack'
-  inputs:
-    command: custom
-    arguments: pack $(Build.SourcesDirectory)\src\DevTools.Core\DevTools.Core.nuspec -Version $(GitVersion.NuGetVersion) -OutputDirectory $(Build.ArtifactStagingDirectory) -Properties Configuration=$(BuildConfiguration) -NoDefaultExcludes
+  - task: SonarCloudAnalyze@1
 
-- task: PowerShell@2
-  displayName: 'Tag current version'
-  condition: and(succeeded(), eq(variables['System.PullRequest.PullRequestId'], variables['noSuch']))
-  env:
-      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-  inputs:
-    targetType: 'inline'
-    script: |
-      $name = "$(Build.RequestedFor)"
-      $email = "$(Build.RequestedForEmail)"
+  - task: NuGetCommand@2
+    displayName: 'NuGet pack'
+    inputs:
+      command: custom
+      arguments: pack $(Build.SourcesDirectory)\src\DevTools.Core\DevTools.Core.nuspec -Version $(GitVersion.NuGetVersion) -OutputDirectory $(Build.ArtifactStagingDirectory) -Properties Configuration=$(BuildConfiguration) -NoDefaultExcludes
 
-      if($name.startswith("Project Collection Build Service"))
-      {
-        $name = "Build Bot"
-        $email = "buildbot@dirnhofer.net"
-      }
+  - task: PowerShell@2
+    displayName: 'Tag current version'
+    condition: and(succeeded(), eq(variables['System.PullRequest.PullRequestId'], variables['noSuch']))
+    env:
+        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+    inputs:
+      targetType: 'inline'
+      script: |
+        $name = "$(Build.RequestedFor)"
+        $email = "$(Build.RequestedForEmail)"
 
-      Write-Host "========================================================================================"
-      Write-Host "Name        : $name"
-      Write-Host "Email       : $email"
-      Write-Host "Tag version : $(GitVersion.NuGetVersion)"
-      Write-Host "========================================================================================"
+        if($name.startswith("Project Collection Build Service"))
+        {
+          $name = "Build Bot"
+          $email = "buildbot@dirnhofer.net"
+        }
 
-      git config --global user.name "$name"
-      git config --global user.email "$name"
-      git tag -a $(GitVersion.NuGetVersion) -m 'Version tag'
-      
-      git -c http.extraheader="AUTHORIZATION: bearer $env:SYSTEM_ACCESSTOKEN" push origin $(GitVersion.NuGetVersion) -q
+        Write-Host "========================================================================================"
+        Write-Host "Name        : $name"
+        Write-Host "Email       : $email"
+        Write-Host "Tag version : $(GitVersion.NuGetVersion)"
+        Write-Host "========================================================================================"
 
-- task: SonarCloudPublish@1
-  displayName: 'Publish quality gate (only CI builds)'
-  condition: eq(variables['System.PullRequest.PullRequestId'], variables['noSuch'])
-  inputs:
-    pollingTimeoutSec: '300'
+        git config --global user.name "$name"
+        git config --global user.email "$name"
+        git tag -a $(GitVersion.NuGetVersion) -m 'Version tag'
+        
+        git -c http.extraheader="AUTHORIZATION: bearer $env:SYSTEM_ACCESSTOKEN" push origin $(GitVersion.NuGetVersion) -q
 
-- task: InvokeRESTAPI@1
-  displayName: 'Discord notification for CI builds'
-  inputs:
-    connectionType: connectedServiceName
-    serviceConnection: 'Discord'
-    azureServiceConnection: ''
-    method: POST
-    body: '{"content" : "Build $(Build.BuildNumber) succeded! Ready for fast ring testers. Version: $(Build.BuildId)"}'
-    waitForCompletion: 'false'
+  - task: SonarCloudPublish@1
+    displayName: 'Publish quality gate (only CI builds)'
+    condition: eq(variables['System.PullRequest.PullRequestId'], variables['noSuch'])
+    inputs:
+      pollingTimeoutSec: '300'
+
+
+- job: 'discord_webhook'
+  displayName: 'Send notification to Discord channel'
+  dependsOn: build_windows
+  pool: server
+  steps:
+    - task: InvokeRESTAPI@1
+      inputs:
+       connectionType: connectedServiceName
+       serviceConnection: 'Discord'
+       azureServiceConnection: ''
+       method: POST
+       body: '{"content" : "Build $(Build.BuildNumber) succeded! Ready for fast ring testers. Version: $(Build.BuildId)"}'
+       waitForCompletion: 'false'
