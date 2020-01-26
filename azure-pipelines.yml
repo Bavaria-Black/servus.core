@@ -148,7 +148,7 @@ jobs:
 
 - job: 'discord_webhook'
   displayName: 'Send notification to Discord channel'
-  condition: succeeded()
+  condition: and(succeeded(), eq(variables['System.PullRequest.PullRequestId'], variables['noSuch']))
   dependsOn:
   - build_windows
   - build_ubuntu
@@ -160,5 +160,5 @@ jobs:
        serviceConnection: 'Discord'
        azureServiceConnection: ''
        method: POST
-       body: '{"content" : "Build $(Build.BuildNumber) queued by $(Build.QueuedBy) in branch $(Build.QueuedBy) completed. Version message: $(Build.SourceVersionMessage)"}'
+       body: '{"content" : "Build $(Build.BuildNumber) in branch $(Build.SourceBranchName) completed by $(Build.QueuedBy). Version message: $(Build.SourceVersionMessage)"}'
        waitForCompletion: 'false'
