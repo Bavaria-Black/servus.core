@@ -107,7 +107,6 @@ steps:
 
 - task: InvokeRESTAPI@1
   displayName: 'Discord notification for CI builds'
-  condition: eq(variables['System.PullRequest.PullRequestId'], variables['noSuch'])
   inputs:
     connectionType: connectedServiceName
     serviceConnection: 'Discord'
