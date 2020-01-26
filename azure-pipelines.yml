@@ -30,6 +30,7 @@ jobs:
       runtime: 'core'
 
   - task: Assembly-Info-NetCore@2
+    enabled: false
     displayName: "Set assembly version in .NET Standard and .NET Core projects"
     inputs:
       Path: '$(Build.SourcesDirectory)'
@@ -45,6 +46,7 @@ jobs:
       Product: '$(System.PullRequest.PullRequestId)-$(Build.SourceVersion)'
 
   - task: SonarCloudPrepare@1
+    enabled: false
     inputs:
       SonarCloud: 'SonarCloud'
       organization: 'bavaria-black'
@@ -100,6 +102,7 @@ jobs:
         Write-Host "Name        : $name"
         Write-Host "Email       : $email"
         Write-Host "Tag version : $(GitVersion.NuGetVersion)"
+        Write-Host "This is a script that could use $env:SYSTEM_ACCESSTOKEN"
         Write-Host "========================================================================================"
 
         git config --global user.name "$name"
