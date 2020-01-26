@@ -108,7 +108,7 @@ jobs:
         git config --global user.email "$name"
         git tag -a $(GitVersion.NuGetVersion) -m 'Version tag'
         
-        git -c http.extraheader="AUTHORIZATION: bearer $env:SYSTEM_ACCESSTOKEN" push origin $(GitVersion.NuGetVersion)
+        git -c http.extraheader="AUTHORIZATION: bearer $env:SYSTEM_ACCESSTOKEN" push origin $(GitVersion.NuGetVersion) --porcelain
 
   - task: SonarCloudPublish@1
     displayName: 'Publish quality gate (only CI builds)'
