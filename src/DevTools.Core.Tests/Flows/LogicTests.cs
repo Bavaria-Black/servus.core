@@ -2,12 +2,7 @@
 using DevTools.Core.Flows.Blocks;
 using DevTools.Core.Scripting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Management.Automation;
-using System.Text;
 
 namespace DevTools.Core.Tests.Flows
 {

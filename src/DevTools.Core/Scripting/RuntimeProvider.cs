@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DevTools.Core.Scripting
+﻿namespace DevTools.Core.Scripting
 {
     public interface IScriptRuntimeProvider
     {

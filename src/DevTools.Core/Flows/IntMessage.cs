@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DevTools.Core.Flows
+﻿namespace DevTools.Core.Flows
 {
     public class IntMessage : MessageBase
     {

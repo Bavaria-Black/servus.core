@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DevTools.Core.Gamification
+﻿namespace DevTools.Core.Gamification
 {
     public enum CompareRule
     {
