@@ -16,11 +16,11 @@ namespace DevTools.Core.Tests.Security.Hardware.Yubikey
         }
 
         [TestMethod]
-        public async Task ValidateAsync()
+        public void ValidateAsync()
         {
             var otp = "vvvvvvcurikvhjcvnlnbecbkubjvuittbifhndhn";
             var validator = new YubikeyOtpValidator(82, "asadfdsdfs");
-            var a = await validator.ValidateAsync(otp);
+            var a = validator.Validate(otp);
             Assert.IsTrue(a);
         }
     }

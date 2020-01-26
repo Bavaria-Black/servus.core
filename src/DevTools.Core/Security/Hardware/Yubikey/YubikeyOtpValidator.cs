@@ -28,7 +28,7 @@ namespace DevTools.Core.Security.Hardware.Yubikey
             _apiSecret = apiSecret;
         }
 
-        public async Task<bool> ValidateAsync(string otp)
+        public bool Validate(string otp)
         {
             var manualResetEvent = new ManualResetEvent(false);
             bool isValid = false;
