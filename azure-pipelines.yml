@@ -110,10 +110,48 @@ jobs:
       pollingTimeoutSec: '300'
 
 
+
+
+- job: build_ubuntu
+  displayName: 'Build and test on ubuntu'
+
+  pool:
+    vmImage: 'ubuntu-latest'
+
+  variables:
+    solution: '**/*.sln'
+    buildPlatform: 'Any CPU'
+    buildConfiguration: 'Release'
+    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+
+  steps:
+
+  - task: NuGetToolInstaller@1
+
+  - task: DotNetCoreCLI@2
+    displayName: dotnet build
+    inputs:
+      projects: $(solution)
+      command: 'build'
+      configuration: $(buildConfiguration)
+
+  - task: DotNetCoreCLI@2
+    displayName: dotnet test
+    inputs:
+      command: 'test'
+      projects: '**/*Tests.csproj'
+      arguments: '--configuration $(buildConfiguration) --logger trx'
+      publishTestResults: false
+
+
+
+
 - job: 'discord_webhook'
   displayName: 'Send notification to Discord channel'
   condition: and(succeeded(), eq(variables['System.PullRequest.PullRequestId'], variables['noSuch']))
-  dependsOn: build_windows
+  dependsOn:
+  - build_windows
+  - build_ubuntu
   pool: server
   steps:
     - task: InvokeRESTAPI@1
@@ -122,5 +160,5 @@ jobs:
        serviceConnection: 'Discord'
        azureServiceConnection: ''
        method: POST
-       body: '{"content" : "Build $(Build.BuildNumber) completed."}'
+       body: '{"content" : "Build $(Build.BuildNumber) queued by $(Build.QueuedBy) in branch $(Build.QueuedBy) completed. Version message: $(Build.SourceVersionMessage)"}'
        waitForCompletion: 'false'
