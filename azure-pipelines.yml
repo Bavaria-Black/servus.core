@@ -95,14 +95,14 @@ jobs:
         Write-Host "========================================================================================"
         Write-Host "Name        : $name"
         Write-Host "Email       : $email"
-        Write-Host "Tag version : $(GitVersion.NuGetVersion)"
+        Write-Host "Tag version : $(GitVersion.MajorMinorPatch)"
         Write-Host "========================================================================================"
 
         git config --global user.name "$name"
         git config --global user.email "$name"
-        git tag -a $(GitVersion.NuGetVersion) -m 'Version tag'
+        git tag -a $(GitVersion.MajorMinorPatch) -m 'Version tag'
         
-        git -c http.extraheader="AUTHORIZATION: bearer $env:SYSTEM_ACCESSTOKEN" push origin $(GitVersion.NuGetVersion) --porcelain
+        git -c http.extraheader="AUTHORIZATION: bearer $env:SYSTEM_ACCESSTOKEN" push origin $(GitVersion.MajorMinorPatch) --porcelain
 
   - task: SonarCloudPublish@1
     displayName: 'Publish quality gate (only CI builds)'
