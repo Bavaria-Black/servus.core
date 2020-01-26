@@ -23,6 +23,7 @@ jobs:
   steps:
 
   - task: NuGetToolInstaller@1
+    enabled: false
 
   - task: GitVersion@5
     inputs:
@@ -52,6 +53,7 @@ jobs:
       projectName: 'DevTools'
 
   - task: DotNetCoreCLI@2
+    enabled: false
     displayName: dotnet build
     inputs:
       projects: $(solution)
@@ -59,6 +61,7 @@ jobs:
       configuration: $(buildConfiguration)
 
   - task: DotNetCoreCLI@2
+    enabled: false
     displayName: dotnet test
     inputs:
       command: test
@@ -67,8 +70,10 @@ jobs:
       nobuild: true
 
   - task: SonarCloudAnalyze@1
+    enabled: false
 
   - task: NuGetCommand@2
+    enabled: false
     displayName: 'NuGet pack'
     inputs:
       command: custom
@@ -101,7 +106,7 @@ jobs:
         git config --global user.email "$name"
         git tag -a $(GitVersion.NuGetVersion) -m 'Version tag'
         
-        git -c http.extraheader="AUTHORIZATION: bearer $env:SYSTEM_ACCESSTOKEN" push origin $(GitVersion.NuGetVersion) -q
+        git -c http.extraheader="AUTHORIZATION: bearer $env:SYSTEM_ACCESSTOKEN" push origin $(GitVersion.NuGetVersion)
 
   - task: SonarCloudPublish@1
     displayName: 'Publish quality gate (only CI builds)'
