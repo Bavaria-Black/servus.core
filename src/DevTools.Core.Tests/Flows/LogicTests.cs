@@ -3,6 +3,8 @@ using DevTools.Core.Flows.Blocks;
 using DevTools.Core.Scripting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Linq;
+using System.Management.Automation;
 
 namespace DevTools.Core.Tests.Flows
 {
