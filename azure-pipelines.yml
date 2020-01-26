@@ -23,14 +23,12 @@ jobs:
   steps:
 
   - task: NuGetToolInstaller@1
-    enabled: false
 
   - task: GitVersion@5
     inputs:
       runtime: 'core'
 
   - task: Assembly-Info-NetCore@2
-    enabled: false
     displayName: "Set assembly version in .NET Standard and .NET Core projects"
     inputs:
       Path: '$(Build.SourcesDirectory)'
@@ -46,7 +44,6 @@ jobs:
       Product: '$(System.PullRequest.PullRequestId)-$(Build.SourceVersion)'
 
   - task: SonarCloudPrepare@1
-    enabled: false
     inputs:
       SonarCloud: 'SonarCloud'
       organization: 'bavaria-black'
@@ -55,7 +52,6 @@ jobs:
       projectName: 'DevTools'
 
   - task: DotNetCoreCLI@2
-    enabled: false
     displayName: dotnet build
     inputs:
       projects: $(solution)
@@ -63,7 +59,6 @@ jobs:
       configuration: $(buildConfiguration)
 
   - task: DotNetCoreCLI@2
-    enabled: false
     displayName: dotnet test
     inputs:
       command: test
@@ -75,7 +70,6 @@ jobs:
     enabled: false
 
   - task: NuGetCommand@2
-    enabled: false
     displayName: 'NuGet pack'
     inputs:
       command: custom
@@ -108,7 +102,7 @@ jobs:
         git config --global user.email "$name"
         git tag -a $(GitVersion.NuGetVersion) -m 'Version tag'
         
-        git -c http.extraheader="AUTHORIZATION: bearer $env:SYSTEM_ACCESSTOKEN" push origin $(GitVersion.NuGetVersion) --porcelain
+        git -c http.extraheader="AUTHORIZATION: bearer $env:SYSTEM_ACCESSTOKEN" push origin $(GitVersion.NuGetVersion)
 
   - task: SonarCloudPublish@1
     displayName: 'Publish quality gate (only CI builds)'
