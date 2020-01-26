@@ -148,7 +148,7 @@ jobs:
 
 - job: 'discord_webhook'
   displayName: 'Send notification to Discord channel'
-  condition: and(succeeded(), eq(variables['System.PullRequest.PullRequestId'], variables['noSuch']))
+  condition: succeeded()
   dependsOn:
   - build_windows
   - build_ubuntu
