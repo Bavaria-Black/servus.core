@@ -112,6 +112,7 @@ jobs:
 
 - job: 'discord_webhook'
   displayName: 'Send notification to Discord channel'
+  condition: and(succeeded(), eq(variables['System.PullRequest.PullRequestId'], variables['noSuch']))
   dependsOn: build_windows
   pool: server
   steps:
@@ -121,5 +122,5 @@ jobs:
        serviceConnection: 'Discord'
        azureServiceConnection: ''
        method: POST
-       body: '{"content" : "Build $(Build.BuildNumber) succeded! Ready for fast ring testers. Version: $(Build.BuildId)"}'
+       body: '{"content" : "Build $(Build.BuildNumber) completed."}'
        waitForCompletion: 'false'
