@@ -105,8 +105,7 @@ jobs:
         git -c http.extraheader="AUTHORIZATION: bearer $env:SYSTEM_ACCESSTOKEN" push origin $(GitVersion.MajorMinorPatch) --porcelain
 
   - task: SonarCloudPublish@1
-    displayName: 'Publish quality gate (only CI builds)'
-    condition: eq(variables['System.PullRequest.PullRequestId'], variables['noSuch'])
+    displayName: 'Publish quality gate'
     inputs:
       pollingTimeoutSec: '300'
 
