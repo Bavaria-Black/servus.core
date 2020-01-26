@@ -102,7 +102,6 @@ jobs:
         Write-Host "Name        : $name"
         Write-Host "Email       : $email"
         Write-Host "Tag version : $(GitVersion.NuGetVersion)"
-        Write-Host "This is a script that could use $env:SYSTEM_ACCESSTOKEN"
         Write-Host "========================================================================================"
 
         git config --global user.name "$name"
