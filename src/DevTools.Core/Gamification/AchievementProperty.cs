@@ -9,7 +9,18 @@ namespace DevTools.Core.Gamification
         public string Name { get; }
 
         private double _value;
-        public double Value { get => _value; set => SetValue(value); }
+        public double Value
+        {
+            get => _value;
+            set
+            {
+                if (_value != value)
+                {
+                    _value = value;
+                    OnValueChanged();
+                }
+            }
+        }
 
         public double TargetValue { get; }
         public CompareRule CompareRule { get; }
@@ -29,10 +40,8 @@ namespace DevTools.Core.Gamification
             Value = initialValue;
         }
 
-        public void SetValue(double value)
+        private void OnValueChanged()
         {
-            _value = value;
-
             if (!IsActive && Compare())
             {
                 IsActive = true;

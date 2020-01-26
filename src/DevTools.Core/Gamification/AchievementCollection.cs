@@ -37,7 +37,7 @@ namespace DevTools.Core.Gamification
         public void SetValue(string propertyName, double value)
         {
             var prop = _properties.First(p => p.Name == propertyName);
-            prop.SetValue(value);
+            prop.Value = value;
         }
     }
 }
