@@ -67,7 +67,6 @@ jobs:
       nobuild: true
 
   - task: SonarCloudAnalyze@1
-    enabled: false
 
   - task: NuGetCommand@2
     displayName: 'NuGet pack'
