@@ -25,7 +25,7 @@ namespace DevTools.Core.Flows.Blocks
                 var result = runtime.Invoke<object>();
                 foreach(var line in result)
                 {
-                    // think about a better solution for debugging the powershell script output
+                    // think about a better solution for debugging the PowerShell script output
                     Console.WriteLine(line);
                 }
 

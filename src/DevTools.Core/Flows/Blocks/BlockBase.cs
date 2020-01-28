@@ -25,11 +25,11 @@ namespace DevTools.Core.Flows.Blocks
         {
             try
             {
-                var outputmessages = Run(input);
-                var count = Math.Max(outputmessages.Length, _outputs.Count);
+                var outputMessages = Run(input);
+                var count = Math.Max(outputMessages.Length, _outputs.Count);
                 for (int i = 0; i < count; i++)
                 {
-                    var message = outputmessages[i];
+                    var message = outputMessages[i];
                     if (message != default)
                     {
                         TriggerOutput(i, message);
