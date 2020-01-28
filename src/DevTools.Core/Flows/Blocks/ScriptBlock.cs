@@ -22,8 +22,12 @@ namespace DevTools.Core.Flows.Blocks
                 runtime.LoadScript(Script);
                 runtime.SetVariable("msg", input);
 
-                // think about a solution for debugging the powershell script output
                 var result = runtime.Invoke<object>();
+                foreach(var line in result)
+                {
+                    // think about a better solution for debugging the powershell script output
+                    Console.WriteLine(line);
+                }
 
                 if (runtime.GetVariable("output") is Array array)
                 {

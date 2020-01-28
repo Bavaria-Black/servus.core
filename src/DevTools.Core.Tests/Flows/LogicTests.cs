@@ -118,7 +118,8 @@ namespace DevTools.Core.Tests.Flows
             var scriptBlock = new Core.Flows.Blocks.ScriptBlock(1, 
                 "$msg.SetValue(\"test\", 5); \r\n" +
                 "$msg.SetValue(\"Value\", 100); \r\n" +
-                "$output = @($msg); \r\n");
+                "$output = @($msg); \r\n" +
+                "Write-Output \"Leberkas\"");
 
             flow.AddBlock(scriptBlock);
             flow.AddEntryBlock(scriptBlock);
