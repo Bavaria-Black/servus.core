@@ -5,15 +5,15 @@ namespace DevTools.Core.Flows.Blocks
 {
     internal class Output
     {
-        private readonly List<IFlowConnection> _connetions = new List<IFlowConnection>();
+        private readonly List<IFlowConnection> _connections = new List<IFlowConnection>();
         internal void Add(IFlowConnection connection)
         {
-            _connetions.Add(connection);
+            _connections.Add(connection);
         }
 
         internal void Trigger(Message message)
         {
-            Parallel.ForEach(_connetions, (c) =>
+            Parallel.ForEach(_connections, (c) =>
             {
                 try
                 {
