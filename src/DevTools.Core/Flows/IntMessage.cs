@@ -1,6 +1,6 @@
 ﻿namespace DevTools.Core.Flows
 {
-    public class IntMessage : MessageBase
+    public class IntMessage : Message
     {
         public int Value {
             get => GetValue<int>(nameof(Value));

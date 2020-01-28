@@ -13,7 +13,7 @@ namespace DevTools.Core.Flows.Blocks
             Script = script;
         }
 
-        protected override MessageBase[] Run(MessageBase input)
+        protected override Message[] Run(Message input)
         {
             var runtime = Context.GetScriptRuntime("ps1");
 
@@ -27,10 +27,10 @@ namespace DevTools.Core.Flows.Blocks
 
                 if (runtime.GetVariable("output") is Array array)
                 {
-                    var outputMessages = new List<MessageBase>();
+                    var outputMessages = new List<Message>();
                     foreach(var element in array)
                     {
-                        if(element is MessageBase message)
+                        if(element is Message message)
                         {
                             outputMessages.Add(message);
                         }

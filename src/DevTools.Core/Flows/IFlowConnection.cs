@@ -2,6 +2,6 @@
 {
     public interface IFlowConnection
     {
-        void Trigger(MessageBase message);
+        void Trigger(Message message);
     }
 }

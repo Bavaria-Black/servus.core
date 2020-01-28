@@ -2,7 +2,7 @@
 
 namespace DevTools.Core.Flows
 {
-    public class MessageBase
+    public class Message
     {
         private Dictionary<string, object> _valueStore = new Dictionary<string, object>();
 
@@ -26,9 +26,9 @@ namespace DevTools.Core.Flows
             _valueStore = valueStore;
         }
 
-        internal MessageBase Duplicate()
+        internal Message Duplicate()
         {
-            var a = new MessageBase();
+            var a = new Message();
             a.SetValueStore(new Dictionary<string, object>(_valueStore));
             return a;
         }

@@ -16,7 +16,7 @@
             ConstantValue = constantValue;
         }
 
-        protected override MessageBase[] Run(MessageBase input)
+        protected override Message[] Run(Message input)
         {
             var value = input.GetValue<int>("Value");
             value += ConstantValue;

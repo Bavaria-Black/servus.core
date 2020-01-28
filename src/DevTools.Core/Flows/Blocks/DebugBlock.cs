@@ -10,7 +10,7 @@ namespace DevTools.Core.Flows.Blocks
         {
         }
 
-        protected override MessageBase[] Run(MessageBase input)
+        protected override Message[] Run(Message input)
         {
             Console.WriteLine(input.GetValue<object>("Value"));
             return new[] { input };

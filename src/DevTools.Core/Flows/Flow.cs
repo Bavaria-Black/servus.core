@@ -73,7 +73,7 @@ namespace DevTools.Core.Flows
             _connections.Add(connection);
         }
 
-        public void Trigger(MessageBase msg)
+        public void Trigger(Message msg)
         {
             Parallel.ForEach(EntryBlocks, (b) =>
             {

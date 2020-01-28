@@ -19,7 +19,7 @@ namespace DevTools.Core.Flows
             _target = target;
         }
 
-        public void Trigger(MessageBase message)
+        public void Trigger(Message message)
         {
             _target.TriggerInput(message);
         }

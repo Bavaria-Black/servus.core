@@ -11,7 +11,7 @@ namespace DevTools.Core.Flows.Blocks
             _connetions.Add(connection);
         }
 
-        internal void Trigger(MessageBase message)
+        internal void Trigger(Message message)
         {
             Parallel.ForEach(_connetions, (c) =>
             {

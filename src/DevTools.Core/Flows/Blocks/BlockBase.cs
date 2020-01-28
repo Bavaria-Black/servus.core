@@ -21,7 +21,7 @@ namespace DevTools.Core.Flows.Blocks
             }
         }
 
-        public void TriggerInput(MessageBase input)
+        public void TriggerInput(Message input)
         {
             try
             {
@@ -43,9 +43,9 @@ namespace DevTools.Core.Flows.Blocks
             }
         }
 
-        protected abstract MessageBase[] Run(MessageBase input);
+        protected abstract Message[] Run(Message input);
 
-        private void TriggerOutput(int output, MessageBase message)
+        private void TriggerOutput(int output, Message message)
         {
             _outputs[output].Trigger(message);
         }

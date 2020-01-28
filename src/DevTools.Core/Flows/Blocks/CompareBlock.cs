@@ -4,15 +4,15 @@ namespace DevTools.Core.Flows.Blocks
 {
     public class CompareBlock : BlockBase
     {
-        private readonly Func<MessageBase, bool> _comparer;
+        private readonly Func<Message, bool> _comparer;
 
-        public CompareBlock(Func<MessageBase, bool> comparer) 
+        public CompareBlock(Func<Message, bool> comparer) 
             : base(2)
         {
             _comparer = comparer;
         }
 
-        protected override MessageBase[] Run(MessageBase input)
+        protected override Message[] Run(Message input)
         {
             if(_comparer(input))
             {
