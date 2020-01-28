@@ -1,12 +1,9 @@
 ﻿using DevTools.Core.Encoding;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 [assembly: InternalsVisibleTo("DevTools.Core.Tests")]
@@ -31,9 +28,10 @@ namespace DevTools.Core.Security.Hardware.Yubikey
             _apiSecret = apiSecret;
         }
 
-        public async Task<bool> ValidateAsync(string otp)
+        public bool Validate(string otp)
         {
-            var tcs = new TaskCompletionSource<bool>();
+            var manualResetEvent = new ManualResetEvent(false);
+            bool isValid = false;
             var rnd = RandomNumberGenerator.Create();
             var nonce = new byte[16];
             rnd.GetBytes(nonce);
@@ -50,12 +48,17 @@ namespace DevTools.Core.Security.Hardware.Yubikey
                         var content = await result.Content.ReadAsStringAsync();
                         Console.WriteLine(content);
 
-                        tcs.SetResult(true);
+                        if (!isValid)
+                        {
+                            isValid = true;
+                            manualResetEvent.Set();
+                        }
                     }
                 }
             });
 
-            return await tcs.Task;
+            manualResetEvent.WaitOne(5000);
+            return isValid;
         }
 
         internal string CalculateHash(string input)
@@ -82,7 +85,7 @@ namespace DevTools.Core.Security.Hardware.Yubikey
 
         private static void ValidateLength(string otp)
         {
-            if (otp.Length < 34 && otp.Length > 48)
+            if (otp.Length < 34 || otp.Length > 48)
             {
                 throw new ArgumentException("otp has to be between 34 and 48 characters long");
             }

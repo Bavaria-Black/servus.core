@@ -1,8 +1,6 @@
 ﻿using DevTools.Core.Security.Hardware.Yubikey;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DevTools.Core.Tests.Security.Hardware.Yubikey
@@ -19,12 +17,30 @@ namespace DevTools.Core.Tests.Security.Hardware.Yubikey
         }
 
         [TestMethod]
-        public async Task ValidateAsync()
+        public void ValidateAsync()
         {
             var otp = "vvvvvvcurikvhjcvnlnbecbkubjvuittbifhndhn";
             var validator = new YubikeyOtpValidator(82, "asadfdsdfs");
-            var a = await validator.ValidateAsync(otp);
+            var a = validator.Validate(otp);
             Assert.IsTrue(a);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void ValidateTooShortOtp()
+        {
+            var otp = "vvvvvvcurikvhjcvnlnbecbkubj";
+            var clientId = YubikeyOtpValidator.ExtractClientId(otp);
+            Assert.Fail();
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void ValidateTooLongOtp()
+        {
+            var otp = "vvvvvvcurikvhjcvnlnbecbkubjlskjdflkjsfwjdkjflksjljfsljdfsksljslkdjf";
+            var clientId = YubikeyOtpValidator.ExtractClientId(otp);
+            Assert.Fail();
         }
     }
 }
