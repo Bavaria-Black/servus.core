@@ -25,8 +25,7 @@ namespace DevTools.Core.Flows.Blocks
                 // think about a solution for debugging the powershell script output
                 var result = runtime.Invoke<object>();
 
-                var output = runtime.GetVariable("output");
-                if (output != null && output is Array array)
+                if (runtime.GetVariable("output") is Array array)
                 {
                     var outputMessages = new List<MessageBase>();
                     foreach(var element in array)

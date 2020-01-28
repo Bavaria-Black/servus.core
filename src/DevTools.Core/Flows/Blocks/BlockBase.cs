@@ -13,7 +13,7 @@ namespace DevTools.Core.Flows.Blocks
 
         private readonly Dictionary<int, Output> _outputs = new Dictionary<int, Output>();
 
-        public BlockBase(int outputCount)
+        protected BlockBase(int outputCount)
         {
             for (int i = 0; i < outputCount; i++)
             {
@@ -25,7 +25,6 @@ namespace DevTools.Core.Flows.Blocks
         {
             try
             {
-                var a = input.Duplicate();
                 var outputmessages = Run(input);
                 var count = Math.Max(outputmessages.Length, _outputs.Count);
                 for (int i = 0; i < count; i++)

@@ -5,8 +5,8 @@ namespace DevTools.Core.Flows
 {
     internal class FlowContext : IFlowContext
     {
-        private Dictionary<string, IScriptRuntimeProvider> _scriptRuntimeProvider = new Dictionary<string, IScriptRuntimeProvider>();
-        public Dictionary<string, object> ValueStore { get; set; } = new Dictionary<string, object>();
+        private readonly Dictionary<string, IScriptRuntimeProvider> _scriptRuntimeProvider = new Dictionary<string, IScriptRuntimeProvider>();
+        public Dictionary<string, object> ValueStore { get; } = new Dictionary<string, object>();
 
         public IScriptRuntime GetScriptRuntime(string scriptLanguage)
         {

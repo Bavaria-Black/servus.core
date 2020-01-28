@@ -27,7 +27,7 @@ namespace DevTools.Core.Flows
             }
         }
 
-        public IFlowContext Context = new FlowContext();
+        public IFlowContext Context { get; } = new FlowContext();
 
         private readonly List<FlowConnection> _connections  = new List<FlowConnection>();
 
