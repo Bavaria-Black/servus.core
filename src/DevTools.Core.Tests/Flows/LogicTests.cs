@@ -30,29 +30,30 @@ namespace DevTools.Core.Tests.Flows
             // output 1 is only triggered when false
             _ = new FlowConnection(compare, 1, debugBlock);
 
-            var msg = new IntMessage(0);
+            var msg = new Message();
             add5Block.TriggerInput(msg);
-            Assert.AreEqual(5, msg.Value);
+            Assert.AreEqual(5, msg.GetValue<int>("Value"));
 
             // output 0 is only triggered when true
             _ = new FlowConnection(compare, 0, add10Block);
 
             // should result in 15 because comparer returned true
-            msg = new IntMessage(0);
+            msg = new Message();
             add5Block.TriggerInput(msg);
-            Assert.AreEqual(15, msg.Value);
+            Assert.AreEqual(15, msg.GetValue<int>("Value"));
 
             // should result in 6 because comparer returned false
-            msg = new IntMessage(1);
+            msg = new Message();
+            msg.SetValue("Value", 1);
             add5Block.TriggerInput(msg);
-            Assert.AreEqual(6, msg.Value);
+            Assert.AreEqual(6, msg.GetValue<int>("Value"));
         }
 
         [TestMethod]
         public void FlowTest()
         {
             bool customBlockReached = false;
-            var msg = new IntMessage(5);
+            var msg = new Message();
             var flow = new Flow();
             var add10Block = new AddConstantBlock(10);
             var compareBlock = new CompareBlock(m => m.GetValue<int>("Value") == 3);
@@ -77,7 +78,7 @@ namespace DevTools.Core.Tests.Flows
             flow.Trigger(msg);
             Assert.IsFalse(customBlockReached);
 
-            msg.Value = -7;
+            msg.SetValue<int>("Value", -7);
             flow.Trigger(msg);
             Assert.IsTrue(customBlockReached);
         }
@@ -85,7 +86,7 @@ namespace DevTools.Core.Tests.Flows
         [TestMethod]
         public void Serialize()
         {
-            var msg = new IntMessage(5);
+            var msg = new Message();
             var flow = new Flow();
             flow.Context.SetValue("test", 100);
 
@@ -106,7 +107,7 @@ namespace DevTools.Core.Tests.Flows
             Assert.AreEqual(100, f1.Context.GetValue<long>("test"));
 
             f1.Trigger(msg);
-            Assert.AreEqual(15, msg.Value);
+            Assert.AreEqual(10, msg.GetValue<int>("Value"));
         }
 
         [TestMethod]
@@ -122,10 +123,10 @@ namespace DevTools.Core.Tests.Flows
             flow.AddBlock(scriptBlock);
             flow.AddEntryBlock(scriptBlock);
 
-            var msg = new IntMessage(5);
+            var msg = new Message();
             flow.Trigger(msg);
 
-            Assert.AreEqual(100, msg.Value);
+            Assert.AreEqual(100, msg.GetValue<int>("Value"));
             Assert.AreEqual(5, msg.GetValue<int>("test"));
         }
 
