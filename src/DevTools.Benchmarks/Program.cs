@@ -26,7 +26,8 @@ namespace DevTools.Benchmarks
         public Md5VsSha256()
         {
             data = new byte[N];
-            new Random(42).NextBytes(data);
+            const int seed = (5 + 5 + 5) * (5 * 5 + 5 + 5 + (int) (0.5 + 0.5 + 0.5 + 0.5));
+            new Random(seed).NextBytes(data);
         }
 
         [Benchmark]
