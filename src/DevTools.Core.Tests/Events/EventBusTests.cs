@@ -21,9 +21,25 @@ namespace DevTools.Core.Tests.Events
         }
 
         [TestMethod]
+        [Timeout(100000)]
         public void PublishWithSingleSubscriberIsReceived()
         {
+            bool called = false;
             
+            _eventBus.Subscribe<string>("/test", message =>
+            {
+                if (message == "test")
+                {
+                    called = true;
+                }
+                else
+                {
+                    Assert.Fail("Should not have been called.");
+                }
+            });
+            
+            _eventBus.Publish("/test", "test");
+            Assert.IsTrue(called);
         }
     }
 }
