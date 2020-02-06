@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DevTools.Core.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+// ReSharper disable AssignmentIsFullyDiscarded
 
 namespace DevTools.Core.Tests.Threading
 {
@@ -21,8 +22,7 @@ namespace DevTools.Core.Tests.Threading
 
             cts.Token.Register(() => timeoutSemaphore.Release());
 
-            // ReSharper disable once UnusedVariable
-            var timer = new BlockingTimer(async () =>
+            _ = new BlockingTimer(async () =>
             {
                 await Task.Delay(10);
                 count++;
@@ -54,8 +54,7 @@ namespace DevTools.Core.Tests.Threading
                 semaphore.Release();
             });
 
-            // ReSharper disable once UnusedVariable
-            var timer = new BlockingTimer(async () =>
+            _ = new BlockingTimer(async () =>
             {
                 await Task.Delay(interval * 2);
                 if (count++ > maxRuns)
