@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevTools.Core", "DevTools.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevTools.Core.Tests", "DevTools.Core.Tests\DevTools.Core.Tests.csproj", "{B558746A-FC71-4734-B413-0C20458B49E3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevTools.Benchmarks", "DevTools.Benchmarks\DevTools.Benchmarks.csproj", "{357F95E4-AD95-4DAA-8623-E7A5AE905B21}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{B558746A-FC71-4734-B413-0C20458B49E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B558746A-FC71-4734-B413-0C20458B49E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B558746A-FC71-4734-B413-0C20458B49E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{357F95E4-AD95-4DAA-8623-E7A5AE905B21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{357F95E4-AD95-4DAA-8623-E7A5AE905B21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{357F95E4-AD95-4DAA-8623-E7A5AE905B21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{357F95E4-AD95-4DAA-8623-E7A5AE905B21}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
