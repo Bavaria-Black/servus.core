@@ -21,6 +21,7 @@ namespace DevTools.Core.Tests.Threading
 
             cts.Token.Register(() => timeoutSemaphore.Release());
 
+            // ReSharper disable once UnusedVariable
             var timer = new BlockingTimer(async () =>
             {
                 await Task.Delay(10);
@@ -53,6 +54,7 @@ namespace DevTools.Core.Tests.Threading
                 semaphore.Release();
             });
 
+            // ReSharper disable once UnusedVariable
             var timer = new BlockingTimer(async () =>
             {
                 await Task.Delay(interval * 2);

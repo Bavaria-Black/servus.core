@@ -1,22 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DevTools.Core.Encoding
 {
     public class ModHexEncoding : System.Text.Encoding
     {
-        private static readonly char[] _alphabet =
+        private static readonly char[] Alphabet =
         {
             //0   1    2    3    4    5    6    7    8    9    a    b    c    d    e    f
             'c', 'b', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'n', 'r', 't', 'u', 'v'
         };
 
-        private static readonly Lazy<ModHexEncoding> _lazyEncoding = new Lazy<ModHexEncoding>(() => new ModHexEncoding());
-        public static ModHexEncoding ModHex
-        {
-            get { return _lazyEncoding.Value; }
-        }
+        private static readonly Lazy<ModHexEncoding> LazyEncoding = new Lazy<ModHexEncoding>(() => new ModHexEncoding());
+        public static ModHexEncoding ModHex => LazyEncoding.Value;
 
         public static string ConvertFromAscii(string ascii)
         {
@@ -24,9 +19,9 @@ namespace DevTools.Core.Encoding
             return ModHex.GetString(bytes);
         }
 
-        public static string ConvertToAscii(string modhex)
+        public static string ConvertToAscii(string modHex)
         {
-            var bytes = ModHex.GetBytes(modhex);
+            var bytes = ModHex.GetBytes(modHex);
             return ASCII.GetString(bytes);
         }
 
@@ -45,8 +40,8 @@ namespace DevTools.Core.Encoding
                 var i1 = (chars[i] >> 4) & 0xf;
                 var i2 = chars[i] & 0xf;
 
-                bytes[byteIndex + counter++] = (byte)_alphabet[i1];
-                bytes[byteIndex + counter++] = (byte)_alphabet[i2];
+                bytes[byteIndex + counter++] = (byte)Alphabet[i1];
+                bytes[byteIndex + counter++] = (byte)Alphabet[i2];
             }
 
             return counter;
@@ -64,8 +59,8 @@ namespace DevTools.Core.Encoding
 
             for (int i = byteIndex; i < maxCount; i += 2)
             {
-                var index1 = Array.IndexOf(_alphabet, (char)bytes[i]);
-                var index2 = Array.IndexOf(_alphabet, (char)bytes[i + 1]);
+                var index1 = Array.IndexOf(Alphabet, (char)bytes[i]);
+                var index2 = Array.IndexOf(Alphabet, (char)bytes[i + 1]);
 
                 chars[charIndex + counter++] = (char)(index1 << 4 | index2);
             }
