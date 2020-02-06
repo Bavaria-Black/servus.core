@@ -1,38 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading;
 
 namespace DevTools.Core.Concurrency
 {
     public static class NamedSemaphoreSlimStore
     {
-        private static readonly object _storeLock = new object();
-        private static readonly Dictionary<string, NamedSemaphoreSlim> _store = new Dictionary<string, NamedSemaphoreSlim>();
+        private static readonly object StoreLock = new object();
+        private static readonly Dictionary<string, NamedSemaphoreSlim> Store = new Dictionary<string, NamedSemaphoreSlim>();
 
         public static NamedSemaphoreSlim OpenOrCreate(string name, int defaultInitialCount = 1, int defaultMaximumCount = 1)
         {
-            lock (_storeLock)
+            lock (StoreLock)
             {
-                if (!_store.ContainsKey(name))
+                if (!Store.ContainsKey(name))
                 {
-                    var semaphore = new NamedSemaphoreSlim(name, () => { return _store[name].RequestCounter == 0; }, defaultInitialCount, defaultMaximumCount);
+                    var semaphore = new NamedSemaphoreSlim(name, () => { return Store[name].RequestCounter == 0; }, defaultInitialCount, defaultMaximumCount);
                     semaphore.Disposing += Semaphore_Disposing;
-                    _store.Add(name, semaphore);
+                    Store.Add(name, semaphore);
                 }
                 else
                 {
-                    _store[name].RequestCounter++;
+                    Store[name].RequestCounter++;
                 }
 
-                return _store[name];
+                return Store[name];
             }
         }
 
         private static void Semaphore_Disposing(object sender, EventArgs e)
         {
             var semaphore = (NamedSemaphoreSlim)sender;
-            _store.Remove(semaphore.Name);
+            Store.Remove(semaphore.Name);
         }
     }
 }

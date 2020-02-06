@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DevTools.Core
 {
@@ -16,7 +14,9 @@ namespace DevTools.Core
             if (lowerBound > upperBound)
             {
                 // for those who switch those two
-                return dateTime.IsBetween(upperBound, lowerBound);
+                var lowerBound1 = lowerBound;
+                lowerBound = upperBound;
+                upperBound = lowerBound1;
             }
 
             return lowerBound <= dateTime && dateTime <= upperBound;

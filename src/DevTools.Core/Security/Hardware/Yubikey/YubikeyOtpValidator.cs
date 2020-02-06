@@ -1,12 +1,8 @@
 ﻿using DevTools.Core.Encoding;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 
 [assembly: InternalsVisibleTo("DevTools.Core.Tests")]
@@ -82,7 +78,7 @@ namespace DevTools.Core.Security.Hardware.Yubikey
 
         private static void ValidateLength(string otp)
         {
-            if (otp.Length < 34 && otp.Length > 48)
+            if (otp == null || (otp.Length < 34 && otp.Length > 48))
             {
                 throw new ArgumentException("otp has to be between 34 and 48 characters long");
             }

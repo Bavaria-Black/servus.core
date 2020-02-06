@@ -1,8 +1,5 @@
 ﻿using DevTools.Core.Security.Hardware.Yubikey;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DevTools.Core.Tests.Security.Hardware.Yubikey

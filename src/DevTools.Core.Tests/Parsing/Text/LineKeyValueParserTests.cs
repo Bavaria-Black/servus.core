@@ -1,8 +1,6 @@
 ﻿using DevTools.Core.Parsing.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DevTools.Core.Tests.Parsing.Text
 {
