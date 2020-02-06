@@ -9,39 +9,71 @@ namespace DevTools.Core.Tests
     public class NotifyPropertyChangedBaseTests
     {
         [TestMethod]
-        public void PropertyChangedTest()
+        public void ChangePropertyTriggersPropertyChangedEvent()
         {
             bool changed = false;
-            var testclass = new TestClass();
-            testclass.PropertyChanged += (s, e) =>
+            var testClass = new TestClass();
+            testClass.PropertyChanged += (s, e) =>
             {
-                changed = true;
+                if (e.PropertyName == nameof(TestClass.Property))
+                {
+                    changed = true;
+                }
             };
 
-            testclass.Property = true;
+            testClass.Property = true;
             Assert.IsTrue(changed);
         }
+        
         [TestMethod]
-        public void PropertyNotChangedTest()
+        public void ChangePropertyDoesNotTriggerPropertyChangedEventForSameValue()
         {
             bool changed = false;
-            var testclass = new TestClass();
-            testclass.PropertyChanged += (s, e) =>
+            var testClass = new TestClass();
+            testClass.PropertyChanged += (s, e) =>
             {
-                changed = true;
+                if (e.PropertyName == nameof(TestClass.Property))
+                {
+                    changed = true;
+                }
             };
 
-            testclass.Property = false;
+            testClass.Property = false;
             Assert.IsFalse(changed);
 
-            testclass.Property = true;
+            testClass.Property = true;
+            Assert.IsTrue(changed);
+        }
+      
+        [TestMethod]
+        public void OnPropertyChangedUtilizesCallerMemberName()
+        {
+            bool changed = false;
+            var testClass = new TestClass();
+            testClass.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(TestClass.OtherProperty))
+                {
+                    changed = true;
+                }
+            };
+
+            testClass.OtherProperty = true;
             Assert.IsTrue(changed);
         }
 
-        public class TestClass : NotifyPropertyChangedBase
+        private class TestClass : NotifyPropertyChangedBase
         {
             private bool _property;
-            public bool Property { get => _property; set => ChangeProperty(value, ref _property); }
+            public bool Property { set => ChangeProperty(value, ref _property); }
+            public bool OtherProperty
+            {
+                set
+                {
+                    _property = value;
+                    OnPropertyChanged();
+                }
+            }
         }
     }
 }
