@@ -43,14 +43,6 @@ jobs:
       InformationalVersion: '$(Build.BuildNumber)'
       Product: '$(System.PullRequest.PullRequestId)-$(Build.SourceVersion)'
 
-  - task: SonarCloudPrepare@1
-    inputs:
-      SonarCloud: 'SonarCloud'
-      organization: 'bavaria-black'
-      scannerMode: 'MSBuild'
-      projectKey: 'DevTools'
-      projectName: 'DevTools'
-
   - task: DotNetCoreCLI@2
     displayName: dotnet build
     inputs:
@@ -61,12 +53,10 @@ jobs:
   - task: DotNetCoreCLI@2
     displayName: dotnet test
     inputs:
-      command: test
+      command: 'test'
       projects: '**/*Tests.csproj'
-      arguments: '--configuration $(buildConfiguration) --logger trx --collect "Code coverage"'
-      nobuild: true
-
-  - task: SonarCloudAnalyze@1
+      arguments: '--configuration $(buildConfiguration) --logger trx'
+      publishTestResults: false
 
   - task: NuGetCommand@2
     displayName: 'NuGet pack'
@@ -103,11 +93,6 @@ jobs:
         
         git -c http.extraheader="AUTHORIZATION: bearer $env:SYSTEM_ACCESSTOKEN" push origin $(GitVersion.MajorMinorPatch) --porcelain
 
-  - task: SonarCloudPublish@1
-    displayName: 'Publish quality gate'
-    inputs:
-      pollingTimeoutSec: '300'
-
 
 
 
@@ -127,6 +112,14 @@ jobs:
 
   - task: NuGetToolInstaller@1
 
+  - task: SonarCloudPrepare@1
+    inputs:
+      SonarCloud: 'SonarCloud'
+      organization: 'bavaria-black'
+      scannerMode: 'MSBuild'
+      projectKey: 'DevTools'
+      projectName: 'DevTools'
+
   - task: DotNetCoreCLI@2
     displayName: dotnet build
     inputs:
@@ -137,13 +130,17 @@ jobs:
   - task: DotNetCoreCLI@2
     displayName: dotnet test
     inputs:
-      command: 'test'
+      command: test
       projects: '**/*Tests.csproj'
-      arguments: '--configuration $(buildConfiguration) --logger trx'
-      publishTestResults: false
+      arguments: '--configuration $(buildConfiguration) --logger trx --collect "Code coverage"'
+      nobuild: true
 
+  - task: SonarCloudAnalyze@1
 
-
+  - task: SonarCloudPublish@1
+    displayName: 'Publish quality gate'
+    inputs:
+      pollingTimeoutSec: '300'
 
 - job: 'discord_webhook'
   displayName: 'Send notification to Discord channel'
