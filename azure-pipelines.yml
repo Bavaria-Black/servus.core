@@ -92,8 +92,11 @@ jobs:
         git tag -a $(GitVersion.MajorMinorPatch) -m 'Version tag'
         
         git -c http.extraheader="AUTHORIZATION: bearer $env:SYSTEM_ACCESSTOKEN" push origin $(GitVersion.MajorMinorPatch) --porcelain
-
-
+  - task: PowerShell@2
+    displayName: 'Send Discord notification'
+    condition: and(succeeded(), eq(variables['System.PullRequest.PullRequestId'], variables['noSuch']))  
+    inputs:
+      filePath: '$(Build.SourcesDirectory)/build/powershell/discord.ps1'
 
 
 - job: build_ubuntu
@@ -141,20 +144,3 @@ jobs:
     displayName: 'Publish quality gate'
     inputs:
       pollingTimeoutSec: '300'
-
-- job: 'discord_webhook'
-  displayName: 'Send notification to Discord channel'
-  condition: and(succeeded(), eq(variables['System.PullRequest.PullRequestId'], variables['noSuch']))
-  dependsOn:
-  - build_windows
-  - build_ubuntu
-  pool: server
-  steps:
-    - task: InvokeRESTAPI@1
-      inputs:
-       connectionType: connectedServiceName
-       serviceConnection: 'Discord'
-       azureServiceConnection: ''
-       method: POST
-       body: '{"content" : "Build $(Build.BuildNumber) in branch $(Build.SourceBranchName) completed by $(Build.QueuedBy). Version message: $(Build.SourceVersionMessage)"}'
-       waitForCompletion: 'false'
