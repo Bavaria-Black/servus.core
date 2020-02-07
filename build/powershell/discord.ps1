@@ -1,8 +1,8 @@
 $request = @{
     content = "
-**$(Build.BuildNumber)** is now available!
+**$Env:BUILD_BUILDNUMBER** is now available!
 ``````
-$(Build.SourceVersionMessage)
+$Env:BUILD_SOURCEVERSIONMESSAGE
 ``````"
 }
 
