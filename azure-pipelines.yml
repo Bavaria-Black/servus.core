@@ -95,9 +95,10 @@ jobs:
   - task: PowerShell@2
     displayName: 'Send Discord notification'
     condition: and(succeeded(), eq(variables['System.PullRequest.PullRequestId'], variables['noSuch']))  
+    env:
+      DISCORD: $(discord)
     inputs:
       filePath: '$(Build.SourcesDirectory)/build/powershell/discord.ps1'
-
 
 - job: build_ubuntu
   displayName: 'Build and test on ubuntu'
