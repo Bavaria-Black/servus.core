@@ -43,6 +43,14 @@ jobs:
       InformationalVersion: '$(Build.BuildNumber)'
       Product: '$(System.PullRequest.PullRequestId)-$(Build.SourceVersion)'
 
+  - task: SonarCloudPrepare@1
+    inputs:
+      SonarCloud: 'SonarCloud'
+      organization: 'bavaria-black'
+      scannerMode: 'MSBuild'
+      projectKey: 'DevTools'
+      projectName: 'DevTools'
+
   - task: DotNetCoreCLI@2
     displayName: dotnet build
     inputs:
@@ -53,16 +61,23 @@ jobs:
   - task: DotNetCoreCLI@2
     displayName: dotnet test
     inputs:
-      command: 'test'
+      command: test
       projects: '**/*Tests.csproj'
-      arguments: '--configuration $(buildConfiguration) --logger trx'
-      publishTestResults: false
+      arguments: '--configuration $(buildConfiguration) --logger trx --collect "Code coverage"'
+      nobuild: true
+
+  - task: SonarCloudAnalyze@1
 
   - task: NuGetCommand@2
     displayName: 'NuGet pack'
     inputs:
       command: custom
       arguments: pack $(Build.SourcesDirectory)\src\DevTools.Core\DevTools.Core.nuspec -Version $(GitVersion.NuGetVersion) -OutputDirectory $(Build.ArtifactStagingDirectory) -Properties Configuration=$(BuildConfiguration) -NoDefaultExcludes
+
+  - task: SonarCloudPublish@1
+    displayName: 'Publish quality gate'
+    inputs:
+      pollingTimeoutSec: '300'
 
   - task: PowerShell@2
     displayName: 'Tag current version'
@@ -92,6 +107,7 @@ jobs:
         git tag -a $(GitVersion.MajorMinorPatch) -m 'Version tag'
         
         git -c http.extraheader="AUTHORIZATION: bearer $env:SYSTEM_ACCESSTOKEN" push origin $(GitVersion.MajorMinorPatch) --porcelain
+
   - task: PowerShell@2
     displayName: 'Send Discord notification'
     condition: and(succeeded(), eq(variables['System.PullRequest.PullRequestId'], variables['noSuch']))  
@@ -116,14 +132,6 @@ jobs:
 
   - task: NuGetToolInstaller@1
 
-  - task: SonarCloudPrepare@1
-    inputs:
-      SonarCloud: 'SonarCloud'
-      organization: 'bavaria-black'
-      scannerMode: 'MSBuild'
-      projectKey: 'DevTools'
-      projectName: 'DevTools'
-
   - task: DotNetCoreCLI@2
     displayName: dotnet build
     inputs:
@@ -136,12 +144,5 @@ jobs:
     inputs:
       command: test
       projects: '**/*Tests.csproj'
-      arguments: '--configuration $(buildConfiguration) --logger trx --collect "Code coverage"'
+      arguments: '--configuration $(buildConfiguration) --logger trx'
       nobuild: true
-
-  - task: SonarCloudAnalyze@1
-
-  - task: SonarCloudPublish@1
-    displayName: 'Publish quality gate'
-    inputs:
-      pollingTimeoutSec: '300'
