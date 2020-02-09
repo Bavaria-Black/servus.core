@@ -1,6 +1,6 @@
 $request = @{
     content = "
-**$Env:BUILD_BUILDNUMBER** is now available!
+**$Env:BUILD_REPOSITORY_NAME $Env:BUILD_BUILDNUMBER** is now available!
 ``````
 $Env:BUILD_SOURCEVERSIONMESSAGE
 ``````"
