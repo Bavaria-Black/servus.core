@@ -10,25 +10,39 @@ namespace DevTools.Core.Events
     //todo: Unsubscribe
     public class EventBus
     {
-        private readonly Dictionary<string, Action<object>> _subscriptions = new Dictionary<string, Action<object>>();
+        private readonly Dictionary<string, List<Action<object>>> _subscriptions = new Dictionary<string, List<Action<object>>>();
         
-        public void Publish<T>(string topic, T message)
+        public void Publish<T>(T message)
         {
-            if (topic == null) throw new ArgumentNullException(nameof(topic));
             if (message == null) throw new ArgumentNullException(nameof(message));
-
-            if (_subscriptions.TryGetValue(topic, out var action))
+            
+            var topic = typeof(T).FullName;
+            
+            if (_subscriptions.TryGetValue(topic, out var actions))
             {
-                action(message);
+                foreach (var action in actions)
+                {
+                    action(message);
+                }
             }
         }
 
-        public void Subscribe<T>(string topic, Action<T> action)
+        public void Subscribe<T>(Action<T> action)
         {
-            if (topic == null) throw new ArgumentNullException(nameof(topic));
             if (action == null) throw new ArgumentNullException(nameof(action));
             
-            _subscriptions.Add(topic, message => action((T) message));
+            var topic = typeof(T).FullName;
+
+            if (_subscriptions.TryGetValue(topic, out var actions))
+            {
+                actions.Add( message => action((T) message));
+            }
+            else
+            {
+                var newActions = new List<Action<object>>() {message => action((T) message)};
+                _subscriptions.Add(topic, newActions);
+            }
+
         }
     }
 }

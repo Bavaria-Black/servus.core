@@ -1,4 +1,5 @@
-﻿using DevTools.Core.Events;
+﻿using System.Threading;
+using DevTools.Core.Events;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace DevTools.Core.Tests.Events
@@ -15,9 +16,10 @@ namespace DevTools.Core.Tests.Events
         }
 
         [TestMethod]
+        [Timeout(100000)]
         public void PublishWithoutSubscribersDoesNothing()
         {
-            _eventBus.Publish("/food", "Payload: Leberkas Semme");
+            _eventBus.Publish("Payload: Leberkas Semme");
         }
 
         [TestMethod]
@@ -26,7 +28,7 @@ namespace DevTools.Core.Tests.Events
         {
             bool called = false;
             
-            _eventBus.Subscribe<string>("/test", message =>
+            _eventBus.Subscribe<string>(message =>
             {
                 if (message == "test")
                 {
@@ -38,8 +40,42 @@ namespace DevTools.Core.Tests.Events
                 }
             });
             
-            _eventBus.Publish("/test", "test");
+            _eventBus.Publish( "test");
             Assert.IsTrue(called);
+        }
+        
+        [TestMethod]
+        [Timeout(100000)]
+        public void PublishWithMultipleSubscriberAreReceived()
+        {
+            int calledCount = 0;
+            
+            _eventBus.Subscribe<string>(message =>
+            {
+                if (message == "test")
+                {
+                    Interlocked.Increment(ref calledCount);
+                }
+                else
+                {
+                    Assert.Fail("Should not have been called.");
+                }
+            });
+            
+            _eventBus.Subscribe<string>(message =>
+            {
+                if (message == "test")
+                { 
+                    Interlocked.Increment(ref calledCount);
+                }
+                else
+                {
+                    Assert.Fail("Should not have been called.");
+                }
+            });
+            
+            _eventBus.Publish("test");
+            Assert.AreEqual(2, calledCount);
         }
     }
 }
