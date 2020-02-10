@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection.PortableExecutable;
 
 namespace DevTools.Core.Events
 {
@@ -7,42 +8,84 @@ namespace DevTools.Core.Events
     //todo:  Publish T?
     //todo: Subscribe to multiple T on same topic
     //todo: Documentation
-    //todo: Unsubscribe
+    //toDo: Subscribe with CancellationToken Subscribe(() => a(), cancellationToken)
+    //toDo: Filter predicate
+    //toDo: Benchmark dict vs list
+    //toDo: return disposable subscription instead of guid?
+    //toDo: Unsubscribe without T?
     public class EventBus
     {
-        private readonly Dictionary<string, List<Action<object>>> _subscriptions = new Dictionary<string, List<Action<object>>>();
+        private readonly Dictionary<string, List<InternalSubscription>> _subscriptions = new Dictionary<string, List<InternalSubscription>>();
         
         public void Publish<T>(T message)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
+            var topic = typeof(T).FullName;    
+            if(topic == null) throw new ArgumentNullException($"Type parameter {nameof(T)} FullName is null.");
             
-            var topic = typeof(T).FullName;
-            
-            if (_subscriptions.TryGetValue(topic, out var actions))
+            if (_subscriptions.TryGetValue(topic, out var subscriptionsForTopic))
             {
-                foreach (var action in actions)
+                foreach (var subscription in subscriptionsForTopic)
                 {
-                    action(message);
+                    subscription.Action(message);
                 }
             }
         }
 
-        public void Subscribe<T>(Action<T> action)
+        public Guid Subscribe<T>(Action<T> action)
         {
             if (action == null) throw new ArgumentNullException(nameof(action));
-            
-            var topic = typeof(T).FullName;
+            var topic = typeof(T).FullName;    
+            if(topic == null) throw new ArgumentNullException($"Type parameter {nameof(T)} FullName is null.");
 
-            if (_subscriptions.TryGetValue(topic, out var actions))
+            var internalSubscription = new InternalSubscription(message => action((T) message));
+
+            if (_subscriptions.TryGetValue(topic, out var subscriptionsForTopic))
             {
-                actions.Add( message => action((T) message));
+                subscriptionsForTopic.Add(internalSubscription);
             }
             else
             {
-                var newActions = new List<Action<object>>() {message => action((T) message)};
-                _subscriptions.Add(topic, newActions);
+                var newSubscriptionsForTopic = new List<InternalSubscription>() { internalSubscription };
+                _subscriptions.Add(topic, newSubscriptionsForTopic);
             }
 
+            return internalSubscription.Id;
+        }
+
+        public void Unsubscribe<T>(Guid subscriptionId)
+        {
+            var topic = typeof(T).FullName;    
+            if(topic == null) throw new ArgumentNullException($"Type parameter {nameof(T)} FullName is null.");
+
+            if (_subscriptions.TryGetValue(topic, out var subscriptionsForTopic))
+            {
+                var index = subscriptionsForTopic.FindIndex(s => s.Id.Equals(subscriptionId));
+                if (index > -1)
+                {
+                    subscriptionsForTopic.RemoveAt(index);
+                }
+            }
+            
+            //ToDo: Remove key if list is empty
+        }
+        
+        private class InternalSubscription
+        {
+            public InternalSubscription(Action<object> action)
+            {
+                Action = action;
+            }
+
+            public Guid Id { get; } = Guid.NewGuid();
+            public Action<object> Action { get; }
         }
     }
+    
+
+    // public class Subscription : IDisposable
+    // {
+    //     
+    //     
+    // }
 }

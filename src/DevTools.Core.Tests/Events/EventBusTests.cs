@@ -77,5 +77,33 @@ namespace DevTools.Core.Tests.Events
             _eventBus.Publish("test");
             Assert.AreEqual(2, calledCount);
         }
+        
+        [TestMethod]
+        [Timeout(100000)]
+        public void SubscribeUnsubscribeSingleSubscriber()
+        {
+            int calledCount = 0;
+            
+            var subscriptionId = _eventBus.Subscribe<string>(message =>
+            {
+                if (message == "test")
+                {
+                    Interlocked.Increment(ref calledCount);
+                }
+                else
+                {
+                    Assert.Fail("Should not have been called.");
+                }
+            });
+            
+            _eventBus.Publish("test");
+            _eventBus.Unsubscribe<string>(subscriptionId);
+            
+            // Should not trigger the subscriber
+            _eventBus.Publish("test"); 
+
+            
+            Assert.AreEqual(1, calledCount);
+        }
     }
 }
