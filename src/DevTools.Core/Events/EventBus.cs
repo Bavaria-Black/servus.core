@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection.PortableExecutable;
 
 namespace DevTools.Core.Events
 {
     //ToDo: Is the folder events alright?
-    //todo:  Publish T?
-    //todo: Subscribe to multiple T on same topic
+    //todo: Publish T?
     //todo: Documentation
     //toDo: Subscribe with CancellationToken Subscribe(() => a(), cancellationToken)
-    //toDo: Filter predicate
     //toDo: Benchmark dict vs list
-    //toDo: return disposable subscription instead of guid?
+    //toDo: return disposable subscription instead of guid? As alternative to the subscription manager.
     //toDo: Unsubscribe without T?
     //ToDo: Replace T with Event - otherwise everybody could just send a string etc.
+    //ToDo: Subscription action. Trigger with Task.Run? Or from separate Thread? Or multiple threads? Or TPL?
     public class EventBus
     {
         private readonly Dictionary<string, List<InternalSubscription>> _subscriptions = new Dictionary<string, List<InternalSubscription>>();
@@ -74,9 +72,13 @@ namespace DevTools.Core.Events
                 {
                     subscriptionsForTopic.RemoveAt(index);
                 }
+                
+                // Remove key if list is empty
+                if (subscriptionsForTopic.Count == 0)
+                {
+                    _subscriptions.Remove(topic);
+                }
             }
-            
-            //ToDo: Remove key if list is empty
         }
         
         private class InternalSubscription
