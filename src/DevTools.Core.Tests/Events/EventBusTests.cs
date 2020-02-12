@@ -28,12 +28,14 @@ namespace DevTools.Core.Tests.Events
         public void PublishWithSingleSubscriberIsReceived()
         {
             bool called = false;
+            var manualResetEvent = new ManualResetEvent(false);
             
             _eventBus.Subscribe<string>(message =>
             {
                 if (message == "test")
                 {
                     called = true;
+                    manualResetEvent.Set();
                 }
                 else
                 {
@@ -42,6 +44,7 @@ namespace DevTools.Core.Tests.Events
             });
             
             _eventBus.Publish( "test");
+            manualResetEvent.WaitOne();
             Assert.IsTrue(called);
         }
         
@@ -50,12 +53,14 @@ namespace DevTools.Core.Tests.Events
         public void PublishWithMultipleSubscriberAreReceived()
         {
             int calledCount = 0;
+            var barrier = new Barrier(3);
             
             _eventBus.Subscribe<string>(message =>
             {
                 if (message == "test")
                 {
                     Interlocked.Increment(ref calledCount);
+                    barrier.RemoveParticipant();
                 }
                 else
                 {
@@ -68,6 +73,7 @@ namespace DevTools.Core.Tests.Events
                 if (message == "test")
                 { 
                     Interlocked.Increment(ref calledCount);
+                    barrier.RemoveParticipant();
                 }
                 else
                 {
@@ -76,6 +82,10 @@ namespace DevTools.Core.Tests.Events
             });
             
             _eventBus.Publish("test");
+
+            // Wait until the two subscriptions have been processed
+            barrier.SignalAndWait();
+            
             Assert.AreEqual(2, calledCount);
         }
         
@@ -102,7 +112,6 @@ namespace DevTools.Core.Tests.Events
             
             // Should not trigger the subscriber
             _eventBus.Publish("test"); 
-
             
             Assert.AreEqual(1, calledCount);
         }
@@ -125,7 +134,8 @@ namespace DevTools.Core.Tests.Events
         public void SubscribeWithPredicateOnlyReturnsFilteredEvents()
         {
             int calledCount = 0;
-
+            var manualResetEvent = new ManualResetEvent(false);
+            
             _eventBus.Subscribe<string>(message =>
             {
                 Assert.Fail("Should not have been called.");
@@ -133,11 +143,13 @@ namespace DevTools.Core.Tests.Events
             _eventBus.Subscribe<string>(message =>
             {
                 calledCount++;
+                manualResetEvent.Set();
             }, s => s.StartsWith("test"));
             
             _eventBus.Publish( "test1");
             _eventBus.Publish( "_test");
 
+            manualResetEvent.WaitOne();
             Assert.AreEqual(1, calledCount);
         }
         
@@ -145,25 +157,32 @@ namespace DevTools.Core.Tests.Events
         [Timeout(20000)]
         public void Publish1000EventsWithPredicates()
         {
+            const int maxCount = 1000;
+            var barrier = new Barrier(maxCount + 1);
             int calledCountA = 0;
             int calledCountB = 0;
             
             _eventBus.Subscribe<int>(message =>
             {
                 calledCountA++;
+                barrier.RemoveParticipant();
             }, i  => i%2 == 0 );
             _eventBus.Subscribe<int>(message =>
             {
                 calledCountB++;
+                barrier.RemoveParticipant();
             }, i  => i%2 != 0 );
 
-            for (int i = 0; i < 1000; i++)
+            for (int i = 0; i < maxCount; i++)
             {
                 _eventBus.Publish(i);
             }
 
-            Assert.AreEqual(500, calledCountA);
-            Assert.AreEqual(500, calledCountB);
+            // Wait until all the 1000 messages have been received
+            barrier.SignalAndWait();
+            
+            Assert.AreEqual(maxCount/2, calledCountA);
+            Assert.AreEqual(maxCount/2, calledCountB);
         }
     }
 }
