@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks.Dataflow;
+using DevTools.Core.Threading;
 
 namespace DevTools.Core.Events
 {
@@ -15,30 +16,50 @@ namespace DevTools.Core.Events
     //toDo: Unsubscribe without T? Optional at least.
     //ToDo: Replace T with Event - otherwise everybody could just send a string etc.
     //ToDo: Subscription action. Trigger with Task.Run? Or from separate Thread? Or multiple threads? Or TPL?
+    //ToDo: Dispose and stop pipeline.
+    //ToDo: Interface and a simpler synchronous version of the event bus?
+    //ToDo: Benchmark async semaphore vs non async one
     public class EventBus
     {
         private readonly Dictionary<string, List<InternalSubscription>> _subscriptions = new Dictionary<string, List<InternalSubscription>>();
-        private readonly ActionBlock<(string topic, object message)> _publishActionBlock;
+        private readonly SemaphoreSlim _subscriptionsSemaphore = new SemaphoreSlim(1,1);
+        private readonly TransformManyBlock<(string topic, object message), Action> _findSubscribersBlock;
+        private readonly ActionBlock<Action> _publishActionBlock;
 
         public EventBus()
         {
-            _publishActionBlock = new ActionBlock<(string topic, object message)>(t =>
+            _findSubscribersBlock = new TransformManyBlock<(string topic, object message), Action>(args =>
             {
-                // ToDo: Synchronize access to _subscriptions
-                Debug.WriteLine(Thread.CurrentThread.ManagedThreadId);
-                if (_subscriptions.TryGetValue(t.topic, out var subscriptionsForTopic))
+                var actions = new List<Action>();
+                
+                Debug.WriteLine("_findSubscribersBlock " + Thread.CurrentThread.ManagedThreadId);
+                using (_subscriptionsSemaphore.WaitScoped())
                 {
-                    foreach (var subscription in subscriptionsForTopic)
+                    if (_subscriptions.TryGetValue(args.topic, out var subscriptionsForTopic))
                     {
-                        // Filter by optional predicate
-                        if (subscription.Predicate == null || subscription.Predicate(t.message))
+                        foreach (var subscription in subscriptionsForTopic)
                         {
-                            subscription.Action(t.message);
+                            // Filter by optional predicate
+                            if (subscription.Predicate == null || subscription.Predicate(args.message))
+                            {
+                                actions.Add(() => subscription.Action(args.message));
+                            }
                         }
                     }
                 }
+                
+                // ToDo: Yield return beneficial or not?
+                return actions;
             });
-            // new ExecutionDataflowBlockOptions(){ MaxDegreeOfParallelism = DataflowBlockOptions.Unbounded}
+            
+            _publishActionBlock = new ActionBlock<Action>(publishAction =>
+            {
+                Debug.WriteLine("_publishActionBlock " + Thread.CurrentThread.ManagedThreadId);
+                publishAction();
+            }, new ExecutionDataflowBlockOptions(){ MaxDegreeOfParallelism = DataflowBlockOptions.Unbounded});
+            
+            // Connect the data flow blocks to form a pipeline.
+            _findSubscribersBlock.LinkTo(_publishActionBlock);
         }
         
         
@@ -48,7 +69,7 @@ namespace DevTools.Core.Events
             var topic = typeof(T).FullName;    
             if(topic == null) throw new ArgumentNullException($"Type parameter {nameof(T)} FullName is null.");
 
-            _publishActionBlock.Post((topic, message));
+            _findSubscribersBlock.Post((topic, message));
         }
         
         // Subscribes synchronously (waits until subscription is made)
@@ -63,15 +84,18 @@ namespace DevTools.Core.Events
             {
                 internalSubscription.Predicate = o => predicate((T)o);
             }
-            
-            if (_subscriptions.TryGetValue(topic, out var subscriptionsForTopic))
+
+            using (_subscriptionsSemaphore.WaitScoped())
             {
-                subscriptionsForTopic.Add(internalSubscription);
-            }
-            else
-            {
-                var newSubscriptionsForTopic = new List<InternalSubscription>() { internalSubscription };
-                _subscriptions.Add(topic, newSubscriptionsForTopic);
+                if (_subscriptions.TryGetValue(topic, out var subscriptionsForTopic))
+                {
+                    subscriptionsForTopic.Add(internalSubscription);
+                }
+                else
+                {
+                    var newSubscriptionsForTopic = new List<InternalSubscription>() { internalSubscription };
+                    _subscriptions.Add(topic, newSubscriptionsForTopic);
+                }
             }
 
             return internalSubscription.Id;
@@ -82,18 +106,21 @@ namespace DevTools.Core.Events
             var topic = typeof(T).FullName;    
             if(topic == null) throw new ArgumentNullException($"Type parameter {nameof(T)} FullName is null.");
 
-            if (_subscriptions.TryGetValue(topic, out var subscriptionsForTopic))
+            using (_subscriptionsSemaphore.WaitScoped())
             {
-                var index = subscriptionsForTopic.FindIndex(s => s.Id.Equals(subscriptionId));
-                if (index > -1)
+                if (_subscriptions.TryGetValue(topic, out var subscriptionsForTopic))
                 {
-                    subscriptionsForTopic.RemoveAt(index);
-                }
-                
-                // Remove key if list is empty
-                if (subscriptionsForTopic.Count == 0)
-                {
-                    _subscriptions.Remove(topic);
+                    var index = subscriptionsForTopic.FindIndex(s => s.Id.Equals(subscriptionId));
+                    if (index > -1)
+                    {
+                        subscriptionsForTopic.RemoveAt(index);
+                    }
+                    
+                    // Remove key if list is empty
+                    if (subscriptionsForTopic.Count == 0)
+                    {
+                        _subscriptions.Remove(topic);
+                    }
                 }
             }
         }
