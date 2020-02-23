@@ -5,7 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Parsing\Binary\" />
+    <Compile Remove="Parsing\Binary\**" />
+    <EmbeddedResource Remove="Parsing\Binary\**" />
+    <None Remove="Parsing\Binary\**" />
   </ItemGroup>
 
 </Project>
