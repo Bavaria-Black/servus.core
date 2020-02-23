@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DevTools.Core.IO
+﻿namespace DevTools.Core.IO
 {
     public interface IDataEntry : IDataInfo
     {
