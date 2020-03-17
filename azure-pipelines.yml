@@ -68,12 +68,6 @@ jobs:
 
   - task: SonarCloudAnalyze@1
 
-  - task: NuGetCommand@2
-    displayName: 'NuGet pack'
-    inputs:
-      command: custom
-      arguments: pack $(Build.SourcesDirectory)\src\Servus.Core\Servus.Core.nuspec -Version $(GitVersion.NuGetVersion) -OutputDirectory $(Build.ArtifactStagingDirectory) -Properties Configuration=$(BuildConfiguration) -NoDefaultExcludes
-
   - task: SonarCloudPublish@1
     displayName: 'Publish quality gate'
     inputs:
@@ -132,6 +126,10 @@ jobs:
 
   - task: NuGetToolInstaller@1
 
+  - task: GitVersion@5
+    inputs:
+      runtime: 'core'
+
   - task: DotNetCoreCLI@2
     displayName: dotnet build
     inputs:
@@ -146,3 +144,15 @@ jobs:
       projects: '**/*Tests.csproj'
       arguments: '--configuration $(buildConfiguration) --logger trx'
       nobuild: true
+
+  - task: NuGetCommand@2
+    displayName: 'NuGet pack'
+    inputs:
+      command: custom
+      arguments: pack $(Build.SourcesDirectory)/src/Servus.Core/Servus.Core.nuspec -Version $(GitVersion.NuGetVersion) -OutputDirectory $(Build.ArtifactStagingDirectory) -Properties Configuration=$(BuildConfiguration) -NoDefaultExcludes
+      
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'nuget'
+      publishLocation: 'Container'
