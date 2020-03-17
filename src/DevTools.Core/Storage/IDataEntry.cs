@@ -1,4 +1,4 @@
-﻿namespace DevTools.Core.IO
+﻿namespace DevTools.Core.Storage
 {
     public interface IDataEntry : IDataInfo
     {

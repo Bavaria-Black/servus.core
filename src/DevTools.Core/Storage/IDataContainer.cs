@@ -1,12 +1,12 @@
 ﻿using System.IO;
 
-namespace DevTools.Core.IO
+namespace DevTools.Core.Storage
 {
     public interface IDataContainer : IDataInfo
     {
         bool Exists(string name);
         void Delete(bool recursive);
-        void CreateContainer(string name);
+        IDataContainer CreateContainer(string name, bool openIfExists = true);
 
         Stream GetEntry(string name, OpenEntryMode mode);
 
