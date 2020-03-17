@@ -72,7 +72,7 @@ jobs:
     displayName: 'NuGet pack'
     inputs:
       command: custom
-      arguments: pack $(Build.SourcesDirectory)\src\DevTools.Core\DevTools.Core.nuspec -Version $(GitVersion.NuGetVersion) -OutputDirectory $(Build.ArtifactStagingDirectory) -Properties Configuration=$(BuildConfiguration) -NoDefaultExcludes
+      arguments: pack $(Build.SourcesDirectory)\src\Servus.Core\Servus.Core.nuspec -Version $(GitVersion.NuGetVersion) -OutputDirectory $(Build.ArtifactStagingDirectory) -Properties Configuration=$(BuildConfiguration) -NoDefaultExcludes
 
   - task: SonarCloudPublish@1
     displayName: 'Publish quality gate'
