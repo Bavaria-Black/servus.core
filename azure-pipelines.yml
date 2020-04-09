@@ -102,14 +102,6 @@ jobs:
         
         git -c http.extraheader="AUTHORIZATION: bearer $env:SYSTEM_ACCESSTOKEN" push origin $(GitVersion.MajorMinorPatch) --porcelain
 
-  - task: PowerShell@2
-    displayName: 'Send Discord notification'
-    condition: and(succeeded(), eq(variables['System.PullRequest.PullRequestId'], variables['noSuch']))  
-    env:
-      DISCORD: $(discord)
-    inputs:
-      filePath: '$(Build.SourcesDirectory)/build/powershell/discord.ps1'
-
 - job: build_ubuntu
   displayName: 'Build and test on ubuntu'
 
@@ -150,7 +142,12 @@ jobs:
     inputs:
       command: custom
       arguments: pack $(Build.SourcesDirectory)/src/Servus.Core/Servus.Core.nuspec -Version $(GitVersion.NuGetVersion) -OutputDirectory $(Build.ArtifactStagingDirectory) -Properties Configuration=$(BuildConfiguration) -NoDefaultExcludes
-      
+
+  - task: PowerShell@2
+    displayName: 'prepare notification message'
+    inputs:
+      filePath: '$(Build.SourcesDirectory)/build/powershell/notification.ps1'
+
   - task: PublishBuildArtifacts@1
     inputs:
       PathtoPublish: '$(Build.ArtifactStagingDirectory)'

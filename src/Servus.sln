@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{3CD71B3A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "powershell", "powershell", "{42427CE6-3E5D-42DB-922F-2027A952FC01}"
 	ProjectSection(SolutionItems) = preProject
-		..\build\powershell\discord.ps1 = ..\build\powershell\discord.ps1
+		..\build\powershell\notification.ps1 = ..\build\powershell\notification.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "files", "files", "{E7268A44-EA38-483A-9B1A-C48D58F8AEC9}"
