@@ -85,6 +85,32 @@ namespace Servus.Core.Tests
             Assert.IsTrue(testClass.PropertyWithActionCalled);
         }
 
+        [TestMethod]
+        public void ChangedCallbackIsNotCalledIfValueHasntChanged()
+        {
+            // Arrange
+            var testClass = new TestClass();
+
+            // Act
+            testClass.PropertyWithCallback = false;
+
+            // Assert
+            Assert.IsFalse(testClass.PropertyWithCallbackCalled);
+        }
+
+        [TestMethod]
+        public void ChangedCallbackIsCalledIfValueChanged()
+        {
+            // Arrange
+            var testClass = new TestClass();
+
+            // Act
+            testClass.PropertyWithCallback = true;
+
+            // Assert
+            Assert.IsTrue(testClass.PropertyWithCallbackCalled);
+        }
+
         private class TestClass : NotifyPropertyChangedBase
         {
             private bool _property;
@@ -111,6 +137,19 @@ namespace Servus.Core.Tests
             }
 
             public bool PropertyWithActionCalled { get; private set; }
+
+
+
+            private bool _propertyWithCallback;
+            public bool PropertyWithCallback
+            {
+                set
+                {
+                    ChangeProperty(value, ref _propertyWithCallback, () => PropertyWithCallbackCalled = true);
+                }
+            }
+
+            public bool PropertyWithCallbackCalled { get; private set; }
         }
     }
 }
