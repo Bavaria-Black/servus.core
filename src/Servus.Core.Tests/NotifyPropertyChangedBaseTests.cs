@@ -59,6 +59,32 @@ namespace Servus.Core.Tests
             Assert.IsTrue(changed);
         }
 
+        [TestMethod]
+        public void ChangePropertyReturnsFalseIfValueNotChanged()
+        {
+            // Arrange
+            var testClass = new TestClass();
+
+            // Act
+            testClass.PropertyWithAction = false;
+
+            // Assert
+            Assert.IsFalse(testClass.PropertyWithActionCalled);
+        }
+
+        [TestMethod]
+        public void ChangePropertyReturnsTrueIfValueChanged()
+        {
+            // Arrange
+            var testClass = new TestClass();
+
+            // Act
+            testClass.PropertyWithAction = true;
+
+            // Assert
+            Assert.IsTrue(testClass.PropertyWithActionCalled);
+        }
+
         private class TestClass : NotifyPropertyChangedBase
         {
             private bool _property;
@@ -71,6 +97,20 @@ namespace Servus.Core.Tests
                     OnPropertyChanged();
                 }
             }
+
+            private bool _propertyWithAction;
+            public bool PropertyWithAction
+            {
+                set
+                {
+                    if (ChangeProperty(value, ref _propertyWithAction))
+                    {
+                        PropertyWithActionCalled = true;
+                    }
+                }
+            }
+
+            public bool PropertyWithActionCalled { get; private set; }
         }
     }
 }

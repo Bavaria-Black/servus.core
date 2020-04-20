@@ -15,23 +15,33 @@ namespace Servus.Core
         /// <param name="target">Reference to the target field</param>
         /// <param name="propertyName">Optional property name. Else the name of the calling property is used.</param>
         /// <typeparam name="T"></typeparam>
+        /// <returns>True if property was changed, otherwise false.</returns>
         /// <example>
         /// This sample shows how to call the <see cref="ChangeProperty{T}" /> method.
         /// <code>
         /// class TestClass 
         /// {
         ///     private bool _myProperty;
-        ///     public bool MyProperty { set => ChangeProperty(value, ref _myProperty); }
+        ///     public bool MyProperty 
+        ///     { 
+        ///         set 
+        ///         {
+        ///             if (ChangeProperty(value, ref _myProperty)) { DoSomething(); }
+        ///         }
+        ///     }
         /// }
         /// </code>
         /// </example>
-        protected void ChangeProperty<T>(T value, ref T target, [CallerMemberName] string propertyName = "")
+        protected bool ChangeProperty<T>(T value, ref T target, [CallerMemberName] string propertyName = "")
         {
             if (!value.Equals(target))
             {
                 target = value;
                 OnPropertyChanged(propertyName);
+                return true;
             }
+
+            return false;
         }
         
         /// <summary>
