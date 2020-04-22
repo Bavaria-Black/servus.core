@@ -7,25 +7,11 @@ using DevTools.Core.Threading;
 
 namespace DevTools.Core.Events
 {
-    //ToDo: Is the folder events alright?
-    //todo: Publish T?
-    //todo: Documentation
-    //toDo: Subscribe with CancellationToken Subscribe(() => a(), cancellationToken)
-    //toDo: Benchmark dict vs list
-    //toDo: return disposable subscription instead of guid? As alternative to the subscription manager.
-    //toDo: Unsubscribe without T? Optional at least.
-    //ToDo: Replace T with Event - otherwise everybody could just send a string etc.
-    //ToDo: Subscription action. Trigger with Task.Run? Or from separate Thread? Or multiple threads? Or TPL?
-    //ToDo: Dispose and stop pipeline.
-    //ToDo: Interface and a simpler synchronous version of the event bus?
-    //ToDo: Benchmark async semaphore vs non async one
-    public class EventBus
+    public class EventBus : EventBusBase
     {
-        private readonly Dictionary<string, List<InternalSubscription>> _subscriptions = new Dictionary<string, List<InternalSubscription>>();
-        private readonly SemaphoreSlim _subscriptionsSemaphore = new SemaphoreSlim(1,1);
         private readonly TransformManyBlock<(string topic, object message), Action> _findSubscribersBlock;
         private readonly ActionBlock<Action> _publishActionBlock;
-
+        
         public EventBus()
         {
             _findSubscribersBlock = new TransformManyBlock<(string topic, object message), Action>(args =>
@@ -33,9 +19,9 @@ namespace DevTools.Core.Events
                 var actions = new List<Action>();
                 
                 Debug.WriteLine("_findSubscribersBlock " + Thread.CurrentThread.ManagedThreadId);
-                using (_subscriptionsSemaphore.WaitScoped())
+                using (SubscriptionsSemaphore.WaitScoped())
                 {
-                    if (_subscriptions.TryGetValue(args.topic, out var subscriptionsForTopic))
+                    if (Subscriptions.TryGetValue(args.topic, out var subscriptionsForTopic))
                     {
                         foreach (var subscription in subscriptionsForTopic)
                         {
@@ -61,9 +47,7 @@ namespace DevTools.Core.Events
             // Connect the data flow blocks to form a pipeline.
             _findSubscribersBlock.LinkTo(_publishActionBlock);
         }
-        
-        
-        public void Publish<T>(T message)
+        public override void Publish<T>(T message)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
             var topic = typeof(T).FullName;    
@@ -71,13 +55,38 @@ namespace DevTools.Core.Events
 
             _findSubscribersBlock.Post((topic, message));
         }
+    }
+    
+    //ToDo: Is the folder events alright?
+    //todo: Publish T?
+    //todo: Documentation
+    //toDo: Subscribe with CancellationToken Subscribe(() => a(), cancellationToken)
+    //toDo: Benchmark dict vs list
+    //toDo: return disposable subscription instead of guid? As alternative to the subscription manager.
+    //toDo: Unsubscribe without T? Optional at least.
+    //ToDo: Replace T with Event - otherwise everybody could just send a string etc.
+    //ToDo: Subscription action. Trigger with Task.Run? Or from separate Thread? Or multiple threads? Or TPL?
+    //ToDo: Dispose and stop pipeline.
+    //ToDo: Interface and a simpler synchronous version of the event bus?
+    //ToDo: Benchmark async semaphore vs non async one
+    //ToDo: Subscribe and get notified via a async action
+    public abstract class EventBusBase
+    {
+        protected readonly Dictionary<string, List<InternalSubscription>> Subscriptions = new Dictionary<string, List<InternalSubscription>>();
+        protected readonly SemaphoreSlim SubscriptionsSemaphore = new SemaphoreSlim(1,1);
+
+
+
+
+        public abstract void Publish<T>(T message);
+
         
         // Subscribes synchronously (waits until subscription is made)
         public Guid Subscribe<T>(Action<T> action, Predicate<T> predicate = null)
         {
             if (action == null) throw new ArgumentNullException(nameof(action));
             var topic = typeof(T).FullName;    
-            if(topic == null) throw new ArgumentNullException($"Type parameter {nameof(T)} FullName is null.");
+            if(topic == null) throw new ArgumentNullException($"Type parameter {nameof(T)}.FullName is null.");
             
             var internalSubscription = new InternalSubscription(message => action((T) message));
             if (predicate != null)
@@ -85,16 +94,16 @@ namespace DevTools.Core.Events
                 internalSubscription.Predicate = o => predicate((T)o);
             }
 
-            using (_subscriptionsSemaphore.WaitScoped())
+            using (SubscriptionsSemaphore.WaitScoped())
             {
-                if (_subscriptions.TryGetValue(topic, out var subscriptionsForTopic))
+                if (Subscriptions.TryGetValue(topic, out var subscriptionsForTopic))
                 {
                     subscriptionsForTopic.Add(internalSubscription);
                 }
                 else
                 {
                     var newSubscriptionsForTopic = new List<InternalSubscription>() { internalSubscription };
-                    _subscriptions.Add(topic, newSubscriptionsForTopic);
+                    Subscriptions.Add(topic, newSubscriptionsForTopic);
                 }
             }
 
@@ -104,11 +113,11 @@ namespace DevTools.Core.Events
         public void Unsubscribe<T>(Guid subscriptionId)
         {
             var topic = typeof(T).FullName;    
-            if(topic == null) throw new ArgumentNullException($"Type parameter {nameof(T)} FullName is null.");
+            if(topic == null) throw new ArgumentNullException($"Type parameter {nameof(T)}.FullName is null.");
 
-            using (_subscriptionsSemaphore.WaitScoped())
+            using (SubscriptionsSemaphore.WaitScoped())
             {
-                if (_subscriptions.TryGetValue(topic, out var subscriptionsForTopic))
+                if (Subscriptions.TryGetValue(topic, out var subscriptionsForTopic))
                 {
                     var index = subscriptionsForTopic.FindIndex(s => s.Id.Equals(subscriptionId));
                     if (index > -1)
@@ -119,13 +128,13 @@ namespace DevTools.Core.Events
                     // Remove key if list is empty
                     if (subscriptionsForTopic.Count == 0)
                     {
-                        _subscriptions.Remove(topic);
+                        Subscriptions.Remove(topic);
                     }
                 }
             }
         }
 
-        private class InternalSubscription
+        protected class InternalSubscription
         {
             public InternalSubscription(Action<object> action)
             {

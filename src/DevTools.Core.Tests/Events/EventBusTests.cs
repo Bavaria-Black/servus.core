@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using DevTools.Core.Events;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -152,24 +153,41 @@ namespace DevTools.Core.Tests.Events
             manualResetEvent.WaitOne();
             Assert.AreEqual(1, calledCount);
         }
+
+        
+        /// <summary>
+        /// Run Publish1000EventsWithPredicates to detect possible threading issues
+        /// </summary>
+        [TestMethod]
+        [Ignore]
+        public void ContinuouslyPublish1000EventsWithPredicates()
+        {
+            // ToDo: Remove test?
+            for (int i = 0; i < 10; i++)
+            {
+                // Console.WriteLine(i);
+                Publish1000EventsWithPredicates();
+            }
+        }
+        //ToDo: test blocking subscription action
         
         [TestMethod]
-        [Timeout(20000)]
+        [Timeout(20*1000)]
         public void Publish1000EventsWithPredicates()
         {
             const int maxCount = 1000;
-            var barrier = new Barrier(maxCount + 1);
+            var barrier = new Barrier(maxCount + 1); // todo: replace this with an async barrier
             int calledCountA = 0;
             int calledCountB = 0;
             
             _eventBus.Subscribe<int>(message =>
             {
-                calledCountA++;
+                Interlocked.Increment(ref calledCountA);
                 barrier.RemoveParticipant();
             }, i  => i%2 == 0 );
             _eventBus.Subscribe<int>(message =>
             {
-                calledCountB++;
+                Interlocked.Increment(ref calledCountB);
                 barrier.RemoveParticipant();
             }, i  => i%2 != 0 );
 
