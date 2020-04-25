@@ -1,27 +1,21 @@
 ﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
-using Servus.Core.Events;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Servus.Core.Events;
 
 namespace Servus.Core.Tests.Events
 {
-    [TestClass]
-    public class EventBusTests
+    public abstract class EventBusTestsBase
     {
-        private EventBus _eventBus;
-
-        [TestInitialize]
-        public void Initialize()
-        {
-            _eventBus = new EventBus();
-        }
+        protected EventBus EventBus;
+        
+        public abstract void Initialize();
 
         [TestMethod]
         [Timeout(10000)]
         public void PublishWithoutSubscribersDoesNothing()
         {
-            _eventBus.Publish("Payload: Leberkas Semme");
+            EventBus.Publish("Payload: Leberkas Semme");
         }
 
         [TestMethod]
@@ -31,7 +25,7 @@ namespace Servus.Core.Tests.Events
             bool called = false;
             var manualResetEvent = new ManualResetEvent(false);
             
-            _eventBus.Subscribe<string>(message =>
+            EventBus.Subscribe<string>(message =>
             {
                 if (message == "test")
                 {
@@ -44,7 +38,7 @@ namespace Servus.Core.Tests.Events
                 }
             });
             
-            _eventBus.Publish( "test");
+            EventBus.Publish( "test");
             manualResetEvent.WaitOne();
             Assert.IsTrue(called);
         }
@@ -56,7 +50,7 @@ namespace Servus.Core.Tests.Events
             int calledCount = 0;
             var barrier = new Barrier(3);
             
-            _eventBus.Subscribe<string>(message =>
+            EventBus.Subscribe<string>(message =>
             {
                 if (message == "test")
                 {
@@ -69,7 +63,7 @@ namespace Servus.Core.Tests.Events
                 }
             });
             
-            _eventBus.Subscribe<string>(message =>
+            EventBus.Subscribe<string>(message =>
             {
                 if (message == "test")
                 { 
@@ -82,7 +76,7 @@ namespace Servus.Core.Tests.Events
                 }
             });
             
-            _eventBus.Publish("test");
+            EventBus.Publish("test");
 
             // Wait until the two subscriptions have been processed
             barrier.SignalAndWait();
@@ -95,12 +89,15 @@ namespace Servus.Core.Tests.Events
         public void SubscribeUnsubscribeSingleSubscriber()
         {
             int calledCount = 0;
+            var manualResetEvent = new ManualResetEvent(false);
+            var barrier = new Barrier(2);
             
-            var subscriptionId = _eventBus.Subscribe<string>(message =>
+            var subscriptionId = EventBus.Subscribe<string>(message =>
             {
                 if (message == "test")
                 {
-                    Interlocked.Increment(ref calledCount);
+                    calledCount++;
+                    barrier.RemoveParticipant();
                 }
                 else
                 {
@@ -108,11 +105,15 @@ namespace Servus.Core.Tests.Events
                 }
             });
             
-            _eventBus.Publish("test");
-            _eventBus.Unsubscribe<string>(subscriptionId);
+            EventBus.Publish("test");
+            barrier.SignalAndWait();
+            
+            EventBus.Unsubscribe<string>(subscriptionId);
             
             // Should not trigger the subscriber
-            _eventBus.Publish("test"); 
+            EventBus.Publish("test");
+            
+
             
             Assert.AreEqual(1, calledCount);
         }
@@ -121,13 +122,13 @@ namespace Servus.Core.Tests.Events
         [Timeout(10000)]
         public void UnsubscribeWhenNotSubscribedDoesNotFail()
         {
-            var subscriptionId1 = _eventBus.Subscribe<object>(Console.WriteLine);
-            var subscriptionId2 = _eventBus.Subscribe<object>(Console.WriteLine);
+            var subscriptionId1 = EventBus.Subscribe<object>(Console.WriteLine);
+            var subscriptionId2 = EventBus.Subscribe<object>(Console.WriteLine);
             
-            _eventBus.Unsubscribe<object>(subscriptionId2);
-            _eventBus.Unsubscribe<object>(subscriptionId1);
-            _eventBus.Unsubscribe<object>(subscriptionId1);
-            _eventBus.Unsubscribe<object>(subscriptionId1);
+            EventBus.Unsubscribe<object>(subscriptionId2);
+            EventBus.Unsubscribe<object>(subscriptionId1);
+            EventBus.Unsubscribe<object>(subscriptionId1);
+            EventBus.Unsubscribe<object>(subscriptionId1);
         }
         
         [TestMethod]
@@ -137,69 +138,21 @@ namespace Servus.Core.Tests.Events
             int calledCount = 0;
             var manualResetEvent = new ManualResetEvent(false);
             
-            _eventBus.Subscribe<string>(message =>
+            EventBus.Subscribe<string>(message =>
             {
                 Assert.Fail("Should not have been called.");
             }, s => s.Equals("NotCalled"));
-            _eventBus.Subscribe<string>(message =>
+            EventBus.Subscribe<string>(message =>
             {
                 calledCount++;
                 manualResetEvent.Set();
             }, s => s.StartsWith("test"));
             
-            _eventBus.Publish( "test1");
-            _eventBus.Publish( "_test");
+            EventBus.Publish( "test1");
+            EventBus.Publish( "_test");
 
             manualResetEvent.WaitOne();
             Assert.AreEqual(1, calledCount);
-        }
-
-        
-        /// <summary>
-        /// Run Publish1000EventsWithPredicates to detect possible threading issues
-        /// </summary>
-        [TestMethod]
-        public void ContinuouslyPublish1000EventsWithPredicates()
-        {
-            // ToDo: Remove test?
-            for (int i = 0; i < 10; i++)
-            {
-                // Console.WriteLine(i);
-                Publish1000EventsWithPredicates();
-            }
-        }
-        //ToDo: test blocking subscription action
-        
-        [TestMethod]
-        [Timeout(20*1000)]
-        public void Publish1000EventsWithPredicates()
-        {
-            const int maxCount = 1000;
-            var barrier = new Barrier(maxCount + 1); // todo: replace this with an async barrier
-            int calledCountA = 0;
-            int calledCountB = 0;
-            
-            _eventBus.Subscribe<int>(message =>
-            {
-                Interlocked.Increment(ref calledCountA);
-                barrier.RemoveParticipant();
-            }, i  => i%2 == 0 );
-            _eventBus.Subscribe<int>(message =>
-            {
-                Interlocked.Increment(ref calledCountB);
-                barrier.RemoveParticipant();
-            }, i  => i%2 != 0 );
-
-            for (int i = 0; i < maxCount; i++)
-            {
-                _eventBus.Publish(i);
-            }
-
-            // Wait until all the 1000 messages have been received
-            barrier.SignalAndWait();
-            
-            Assert.AreEqual(maxCount/2, calledCountA);
-            Assert.AreEqual(maxCount/2, calledCountB);
         }
     }
 }

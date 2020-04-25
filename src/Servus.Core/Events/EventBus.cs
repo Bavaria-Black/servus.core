@@ -1,63 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks.Dataflow;
 using Servus.Core.Threading;
 
 namespace Servus.Core.Events
 {
-
-    public class EventBus : EventBusBase
-    {
-        private readonly TransformManyBlock<(string topic, object message), Action> _findSubscribersBlock;
-        private readonly ActionBlock<Action> _publishActionBlock;
-        
-        public EventBus()
-        {
-            _findSubscribersBlock = new TransformManyBlock<(string topic, object message), Action>(args =>
-            {
-                var actions = new List<Action>();
-                
-                Debug.WriteLine("_findSubscribersBlock " + Thread.CurrentThread.ManagedThreadId);
-                using (SubscriptionsSemaphore.WaitScoped())
-                {
-                    if (Subscriptions.TryGetValue(args.topic, out var subscriptionsForTopic))
-                    {
-                        foreach (var subscription in subscriptionsForTopic)
-                        {
-                            // Filter by optional predicate
-                            if (subscription.Predicate == null || subscription.Predicate(args.message))
-                            {
-                                actions.Add(() => subscription.Action(args.message));
-                            }
-                        }
-                    }
-                }
-                
-                // ToDo: Yield return beneficial or not?
-                return actions;
-            });
-            
-            _publishActionBlock = new ActionBlock<Action>(publishAction =>
-            {
-                Debug.WriteLine("_publishActionBlock " + Thread.CurrentThread.ManagedThreadId);
-                publishAction();
-            }, new ExecutionDataflowBlockOptions(){ MaxDegreeOfParallelism = DataflowBlockOptions.Unbounded});
-            
-            // Connect the data flow blocks to form a pipeline.
-            _findSubscribersBlock.LinkTo(_publishActionBlock);
-        }
-        public override void Publish<T>(T message)
-        {
-            if (message == null) throw new ArgumentNullException(nameof(message));
-            var topic = typeof(T).FullName;    
-            if(topic == null) throw new ArgumentNullException($"Type parameter {nameof(T)} FullName is null.");
-
-            _findSubscribersBlock.Post((topic, message));
-        }
-    }
-    
     //ToDo: Is the folder events alright?
     //todo: Publish T?
     //todo: Documentation
@@ -71,13 +18,10 @@ namespace Servus.Core.Events
     //ToDo: Interface and a simpler synchronous version of the event bus?
     //ToDo: Benchmark async semaphore vs non async one
     //ToDo: Subscribe and get notified via a async action
-    public abstract class EventBusBase
+    public abstract class EventBus
     {
         protected readonly Dictionary<string, List<InternalSubscription>> Subscriptions = new Dictionary<string, List<InternalSubscription>>();
         protected readonly SemaphoreSlim SubscriptionsSemaphore = new SemaphoreSlim(1,1);
-
-
-
 
         public abstract void Publish<T>(T message);
 
@@ -87,7 +31,7 @@ namespace Servus.Core.Events
         {
             if (action == null) throw new ArgumentNullException(nameof(action));
             var topic = typeof(T).FullName;    
-            if(topic == null) throw new ArgumentNullException($"Type parameter {nameof(T)} FullName is null.");
+            if(topic == null) throw new ArgumentNullException($"Type parameter {nameof(T)}.FullName is null.");
             
             var internalSubscription = new InternalSubscription(message => action((T) message));
             if (predicate != null)
@@ -114,7 +58,7 @@ namespace Servus.Core.Events
         public void Unsubscribe<T>(Guid subscriptionId)
         {
             var topic = typeof(T).FullName;    
-            if(topic == null) throw new ArgumentNullException($"Type parameter {nameof(T)} FullName is null.");
+            if(topic == null) throw new ArgumentNullException($"Type parameter {nameof(T)}.FullName is null.");
 
             using (SubscriptionsSemaphore.WaitScoped())
             {
@@ -147,11 +91,4 @@ namespace Servus.Core.Events
             public Predicate<object> Predicate { get; internal set; }
         }
     }
-    
-
-    // public class Subscription : IDisposable
-    // {
-    //     
-    //     
-    // }
 }
