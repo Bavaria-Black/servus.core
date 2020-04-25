@@ -27,9 +27,9 @@ namespace Servus.Core.Security.Hardware.Yubikey
             _apiSecret = apiSecret;
         }
 
-        public async Task<bool> ValidateAsync(string otp)
+        public Task<bool> ValidateAsync(string otp)
         {
-            var tcs = new TaskCompletionSource<bool>();
+            var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
             var rnd = RandomNumberGenerator.Create();
             var nonce = new byte[16];
             rnd.GetBytes(nonce);
@@ -46,12 +46,12 @@ namespace Servus.Core.Security.Hardware.Yubikey
                         var content = await result.Content.ReadAsStringAsync();
                         Console.WriteLine(content);
 
-                        tcs.SetResult(true);
+                        tcs.TrySetResult(true);
                     }
                 }
             });
 
-            return await tcs.Task;
+            return tcs.Task;
         }
 
         internal string CalculateHash(string input)

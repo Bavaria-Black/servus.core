@@ -8,9 +8,9 @@ namespace Servus.Core.Tests.Security.Hardware.Yubikey
     public class YubikeyOtpValidatorTests
     {
         [TestMethod]
-        public void Validate()
+        public void ExtractClientId()
         {
-            var otp = "vvvvvvcurikvhjcvnlnbecbkubjvuittbifhndhn";
+            const string otp = "vvvvvvcurikvhjcvnlnbecbkubjvuittbifhndhn";
             var clientId = YubikeyOtpValidator.ExtractClientId(otp);
             Assert.AreEqual("vvvvvvcu", clientId);
         }
@@ -18,10 +18,10 @@ namespace Servus.Core.Tests.Security.Hardware.Yubikey
         [TestMethod]
         public async Task ValidateAsync()
         {
-            var otp = "vvvvvvcurikvhjcvnlnbecbkubjvuittbifhndhn";
+            const string otp = "vvvvvvcurikvhjcvnlnbecbkubjvuittbifhndhn";
             var validator = new YubikeyOtpValidator(82, "asadfdsdfs");
-            var a = await validator.ValidateAsync(otp);
-            Assert.IsTrue(a);
+            var result = await validator.ValidateAsync(otp);
+            Assert.IsTrue(result);
         }
     }
 }
