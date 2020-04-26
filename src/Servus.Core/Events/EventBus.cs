@@ -5,13 +5,11 @@ using Servus.Core.Threading;
 
 namespace Servus.Core.Events
 {
-    //ToDo: Is the folder events alright?
     //todo: Publish T?
     //todo: Documentation
     //toDo: Subscribe with CancellationToken Subscribe(() => a(), cancellationToken)
     //toDo: Benchmark dict vs list
     //toDo: return disposable subscription instead of guid? As alternative to the subscription manager.
-    //toDo: Unsubscribe without T? Optional at least.
     //ToDo: Replace T with Event - otherwise everybody could just send a string etc.
     //ToDo: Subscription action. Trigger with Task.Run? Or from separate Thread? Or multiple threads? Or TPL?
     //ToDo: Dispose and stop pipeline.

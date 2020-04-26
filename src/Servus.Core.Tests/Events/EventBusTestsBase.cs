@@ -154,5 +154,19 @@ namespace Servus.Core.Tests.Events
             manualResetEvent.WaitOne();
             Assert.AreEqual(1, calledCount);
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void PublishWithNullMessageThrowsException()
+        {
+            EventBus.Publish<object>(null);
+        }
+        
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void SubscribeWithNullActionThrowsException()
+        {
+            EventBus.Subscribe<object>(null);
+        }
     }
 }

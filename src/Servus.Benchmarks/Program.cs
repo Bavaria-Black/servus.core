@@ -2,6 +2,7 @@
 using System.Security.Cryptography;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
+using Servus.Benchmarks.Events;
 
 namespace Servus.Benchmarks
 {
@@ -9,7 +10,7 @@ namespace Servus.Benchmarks
     {
         static void Main(string[] args)
         {
-            BenchmarkRunner.Run<Md5VsSha256>();
+            BenchmarkRunner.Run<EventBusBenchmarks>();
         }
     }
 

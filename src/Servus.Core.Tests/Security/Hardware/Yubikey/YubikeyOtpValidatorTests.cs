@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 namespace Servus.Core.Tests.Security.Hardware.Yubikey
 {
     [TestClass]
+    [Ignore]
     public class YubikeyOtpValidatorTests
     {
         [TestMethod]
