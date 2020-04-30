@@ -7,7 +7,8 @@ namespace Servus.Benchmarks
     {
         private static void Main()
         {
-            BenchmarkRunner.Run<EventBusBenchmarks>();
+            BenchmarkRunner.Run<EventBusBenchmarksWait>();
+            BenchmarkRunner.Run<EventBusBenchmarksCpuIntensive>();
         }
     }
 }

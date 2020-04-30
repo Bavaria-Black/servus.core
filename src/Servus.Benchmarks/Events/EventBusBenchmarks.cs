@@ -6,72 +6,35 @@ using Servus.Core.Events;
 
 namespace Servus.Benchmarks.Events
 {
-    [Config(typeof(Config))]
-    [RPlotExporter]
-    public class EventBusBenchmarks
+    public class EventBusBenchmarksCpuIntensive : EventBusBenchmarks
     {
-        private ManualResetEvent _manualResetEvent;
-        private SynchronousEventBus _synchronousEventBus;
-        private TaskBasedEventBus _taskBasedEventBus;
-        private TplEventBus _tplEventBus;
-        
-        // ToDo: Parameterize the number of topics in the dictionary
-        // ToDo: measure sequential vs parallel publish
-        // ToDo: Measure Predicates
-        /*
-        Configurable number of:
-        Publishers,
-        Subscribers,
-        BusyWait x,
-        NonBusyWait x,
-         */
-        
-        [Params(100, 1000, 10000)]
-        public int N;
-        
-        // [Params(0, 100, 1000, 10000, 100000)]
-        [Params(1)]
-        public int UnrelatedSubscribers;
-        
-        [Params(1, 3, 5, 7, 9, 11)]
-        public int ActiveSubscribers;
-
-        [Params(10,100,1000)]
-        public int OperationModifier;
-        
-
-        [IterationSetup]
-        public void Setup() => _manualResetEvent = new ManualResetEvent(false); 
-        
-
-        # region "CPU Heavy Operation"        // Create event buses
         
         // The EventBus is intended as a long living object,
         // so it's creation time is not considered in the benchmark.
         [IterationSetup(Target = nameof(SynchronousEventBusHeavyOperation))]
         public void SetupSynchronousEventBusHeavyOperation()
         {
-            _synchronousEventBus = new SynchronousEventBus();
-            SetupPublishSubscribeCpuHeavyOperation(_synchronousEventBus);
+            SynchronousEventBus = new SynchronousEventBus();
+            SetupPublishSubscribeCpuHeavyOperation(SynchronousEventBus);
         }
 
         [IterationSetup(Target = nameof(TaskBasedEventBusHeavyOperation))]
         public void SetupTaskBasedEventBusHeavyOperation()
         {
-            _taskBasedEventBus = new TaskBasedEventBus();
-            SetupPublishSubscribeCpuHeavyOperation(_taskBasedEventBus);
+            TaskBasedEventBus = new TaskBasedEventBus();
+            SetupPublishSubscribeCpuHeavyOperation(TaskBasedEventBus);
         }
 
         [IterationSetup(Target = nameof(TplEventBusHeavyOperation))]
         public void SetupTplEventBusHeavyOperation()
         {
-            _tplEventBus = new TplEventBus();
-            SetupPublishSubscribeCpuHeavyOperation(_tplEventBus);
+            TplEventBus = new TplEventBus();
+            SetupPublishSubscribeCpuHeavyOperation(TplEventBus);
         }
 
         private void SetupPublishSubscribeCpuHeavyOperation(EventBus eventBus)
         {
-            void CpuHeavyOperation(int num)
+            double CpuHeavyOperation(int num)
             {
                 var random = new Random(555);
                 double result = 1d;
@@ -80,6 +43,8 @@ namespace Servus.Benchmarks.Events
                 {
                     result = Math.Sqrt(random.NextDouble() + result) * Math.Sqrt(i + num);
                 }
+
+                return result;
             }
             
             for (int i = 0; i < UnrelatedSubscribers; i++)
@@ -92,50 +57,52 @@ namespace Servus.Benchmarks.Events
                 eventBus.Subscribe((HandledEvent e) => { CpuHeavyOperation(e.Number); });
             }
             
-            eventBus.Subscribe((FinishedEvent e) => _manualResetEvent.Set());
+            eventBus.Subscribe((FinishedEvent e) => ManualResetEvent.Set());
         }
 
         [Benchmark]
         public void SynchronousEventBusHeavyOperation()
         {
-            PublishOperation(_synchronousEventBus);
+            PublishOperation(SynchronousEventBus);
         }
         
         [Benchmark]
         public void TaskBasedEventBusHeavyOperation()
         {
-            PublishOperation(_taskBasedEventBus);
+            PublishOperation(TaskBasedEventBus);
         }
         
         [Benchmark]
         public void TplEventBusHeavyOperation()
         {
-            PublishOperation(_tplEventBus);
+            PublishOperation(TplEventBus);
         }
-        
-        #endregion
-        
-        #region "Wait Operation"
+    }
+    
+    [Config(typeof(Config))]
+    [RPlotExporter]
+    public class EventBusBenchmarksWait : EventBusBenchmarks
+    {
         
         [IterationSetup(Target = nameof(SynchronousEventBusWaitOperation))]
         public void SetupSynchronousEventBusWaitOperation()
         {
-            _synchronousEventBus = new SynchronousEventBus();
-            SetupPublishSubscribeWaitOperation(_synchronousEventBus);
+            SynchronousEventBus = new SynchronousEventBus();
+            SetupPublishSubscribeWaitOperation(SynchronousEventBus);
         }
 
         [IterationSetup(Target = nameof(TaskBasedEventBusWaitOperation))]
         public void SetupTaskBasedEventBusWaitOperation()
         {
-            _taskBasedEventBus = new TaskBasedEventBus();
-            SetupPublishSubscribeWaitOperation(_taskBasedEventBus);
+            TaskBasedEventBus = new TaskBasedEventBus();
+            SetupPublishSubscribeWaitOperation(TaskBasedEventBus);
         }
 
         [IterationSetup(Target = nameof(TplEventBusWaitOperation))]
         public void SetupTplEventBusWaitOperation()
         {
-            _tplEventBus = new TplEventBus();
-            SetupPublishSubscribeWaitOperation(_tplEventBus);
+            TplEventBus = new TplEventBus();
+            SetupPublishSubscribeWaitOperation(TplEventBus);
         }
         
         private void SetupPublishSubscribeWaitOperation(EventBus eventBus)
@@ -150,32 +117,60 @@ namespace Servus.Benchmarks.Events
                 eventBus.Subscribe((HandledEvent e) => Task.Delay(OperationModifier / 10));
             }
             
-            eventBus.Subscribe((FinishedEvent e) => _manualResetEvent.Set());
+            eventBus.Subscribe((FinishedEvent e) => ManualResetEvent.Set());
         }
         
         [Benchmark]
         public void SynchronousEventBusWaitOperation()
         {
-            PublishOperation(_synchronousEventBus);
+            PublishOperation(SynchronousEventBus);
         }
         
         [Benchmark]
         public void TaskBasedEventBusWaitOperation()
         {
-            PublishOperation(_taskBasedEventBus);
+            PublishOperation(TaskBasedEventBus);
         }
         
         [Benchmark]
         public void TplEventBusWaitOperation()
         {
-            PublishOperation(_tplEventBus);
+            PublishOperation(TplEventBus);
         }
+    }
+    
+
+    public class EventBusBenchmarks
+    {
+        protected const int UnrelatedSubscribers = 1000; 
+        protected ManualResetEvent ManualResetEvent;
+        protected SynchronousEventBus SynchronousEventBus;
+        protected TaskBasedEventBus TaskBasedEventBus;
+        protected TplEventBus TplEventBus;
         
-        #endregion
+        // ToDo: Parameterize the number of topics in the dictionary
+        // ToDo: measure sequential vs parallel publish
+        // ToDo: Measure Predicates
+
+        [Params(100, 1000, 10000)]
+        public int N;
+
+        // [Params(1, 3, 5, 7, 9, 11)]
+        public int ActiveSubscribers = 1;
+
+        // [Params(10, 100, 1000)]
+        public int OperationModifier = 10000;
         
-        private void PublishOperation(EventBus eventBus)
+
+        [IterationSetup]
+        public void Setup() => ManualResetEvent = new ManualResetEvent(false); 
+        
+
+        
+
+        protected void PublishOperation(EventBus eventBus)
         {
-            _manualResetEvent = new ManualResetEvent(false);
+            ManualResetEvent = new ManualResetEvent(false);
 
             // Synchronous publish
             for (int i = 0; i < N; i++)
@@ -186,10 +181,10 @@ namespace Servus.Benchmarks.Events
             // Last event that is published. Because the bus behaves after FIFO principle,
             // it should be done when this event is received.
             eventBus.Publish(new FinishedEvent());
-            _manualResetEvent.WaitOne();
+            ManualResetEvent.WaitOne();
         }
 
-        private class HandledEvent
+        protected class HandledEvent
         {
             public int Number { get; }
             
@@ -199,12 +194,12 @@ namespace Servus.Benchmarks.Events
             }
         }
         
-        private class UnhandledEvent
+        protected class UnhandledEvent
         {
             
         }
         
-        private class FinishedEvent
+        protected class FinishedEvent
         {
             
         }
