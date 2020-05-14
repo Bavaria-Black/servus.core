@@ -112,6 +112,8 @@ namespace Servus.Core.Tests.Threading
             }
         }
 
+        #region WaitScoped
+
         [TestMethod]
         [Timeout(1000)]
         public async Task WaitScopedWithCancellationToken()
@@ -387,7 +389,287 @@ namespace Servus.Core.Tests.Threading
             Assert.IsTrue(operationCanceledExceptionThrown);
         }
 
+        #endregion
 
+        #region WaitScopedAsync
+
+
+        [TestMethod]
+        [Timeout(1000)]
+        public async Task WaitScopedAsyncWithCancellationToken()
+        {
+            var semaphore = new SemaphoreSlim(0, 1);
+            var cts = new CancellationTokenSource();
+            var waitSuccessfull = false;
+            var operationCanceledExceptionThrown = false;
+
+            var task = Task.Run(async () =>
+            {
+                try
+                {
+                    using (await semaphore.WaitScopedAsync(cts.Token))
+                    {
+                        waitSuccessfull = true;
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    operationCanceledExceptionThrown = true;
+                }
+            });
+
+            await Task.Delay(50);
+
+            cts.Cancel();
+
+            await task;
+
+            Assert.IsFalse(waitSuccessfull);
+            Assert.IsTrue(operationCanceledExceptionThrown);
+        }
+
+        [TestMethod]
+        [Timeout(300)]
+        public async Task WaitScopedAsyncWithTimeoutMilliseconds()
+        {
+            var semaphore = new SemaphoreSlim(1, 1);
+            var waitSuccessfull = false;
+
+            using (await semaphore.WaitScopedAsync(100))
+            {
+                waitSuccessfull = true;
+            }
+
+            Assert.IsTrue(waitSuccessfull);
+        }
+
+        [TestMethod]
+        [Timeout(300)]
+        public async Task WaitScopedAsyncWithTimeoutMillisecondsFails()
+        {
+            var semaphore = new SemaphoreSlim(0, 1);
+            var waitSuccessfull = false;
+            var operationCanceledExceptionThrown = false;
+
+            await Task.Run(async () =>
+            {
+                try
+                {
+                    using (await semaphore.WaitScopedAsync(100))
+                    {
+                        waitSuccessfull = true;
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    operationCanceledExceptionThrown = true;
+                }
+            });
+
+            Assert.IsFalse(waitSuccessfull);
+            Assert.IsTrue(operationCanceledExceptionThrown);
+        }
+
+        [TestMethod]
+        [Timeout(300)]
+        public async Task WaitScopedAsyncWithTimeoutMillisecondsAndCancellationToken()
+        {
+            var semaphore = new SemaphoreSlim(1, 1);
+            var cts = new CancellationTokenSource();
+            var waitSuccessfull = false;
+
+            using (await semaphore.WaitScopedAsync(100, cts.Token))
+            {
+                waitSuccessfull = true;
+            }
+
+            Assert.IsTrue(waitSuccessfull);
+        }
+
+        [TestMethod]
+        [Timeout(300)]
+        public async Task WaitScopedAsyncWithTimeoutMillisecondsAndCancellationTokenFailsByTimeout()
+        {
+            var semaphore = new SemaphoreSlim(0, 1);
+            var cts = new CancellationTokenSource();
+            var waitSuccessfull = false;
+            var operationCanceledExceptionThrown = false;
+
+            await Task.Run(async () =>
+            {
+                try
+                {
+                    using (await semaphore.WaitScopedAsync(100, cts.Token))
+                    {
+                        waitSuccessfull = true;
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    operationCanceledExceptionThrown = true;
+                }
+            });
+
+            Assert.IsFalse(waitSuccessfull);
+            Assert.IsTrue(operationCanceledExceptionThrown);
+        }
+
+        [TestMethod]
+        [Timeout(300)]
+        public async Task WaitScopedAsyncWithTimeoutMillisecondsAndCancellationTokenFailsByCancellationToken()
+        {
+            var semaphore = new SemaphoreSlim(0, 1);
+            var cts = new CancellationTokenSource();
+            var waitSuccessfull = false;
+            var operationCanceledExceptionThrown = false;
+
+            var task = Task.Run(async () =>
+            {
+                try
+                {
+                    using (await semaphore.WaitScopedAsync(100, cts.Token))
+                    {
+                        waitSuccessfull = true;
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    operationCanceledExceptionThrown = true;
+                }
+            });
+
+            cts.Cancel();
+
+            await task;
+
+            Assert.IsFalse(waitSuccessfull);
+            Assert.IsTrue(operationCanceledExceptionThrown);
+        }
+
+        [TestMethod]
+        [Timeout(300)]
+        public async Task WaitScopedAsyncWithTimeoutTimeSpan()
+        {
+            var semaphore = new SemaphoreSlim(1, 1);
+            var waitSuccessfull = false;
+            var timeout = TimeSpan.FromMilliseconds(100);
+
+            using (await semaphore.WaitScopedAsync(timeout))
+            {
+                waitSuccessfull = true;
+            }
+
+            Assert.IsTrue(waitSuccessfull);
+        }
+
+        [TestMethod]
+        [Timeout(300)]
+        public async Task WaitScopedAsyncWithTimeoutTimeSpanFails()
+        {
+            var semaphore = new SemaphoreSlim(0, 1);
+            var waitSuccessfull = false;
+            var operationCanceledExceptionThrown = false;
+            var timeout = TimeSpan.FromMilliseconds(100);
+
+            await Task.Run(async () =>
+            {
+                try
+                {
+                    using (await semaphore.WaitScopedAsync(timeout))
+                    {
+                        waitSuccessfull = true;
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    operationCanceledExceptionThrown = true;
+                }
+            });
+
+            Assert.IsFalse(waitSuccessfull);
+            Assert.IsTrue(operationCanceledExceptionThrown);
+        }
+
+        [TestMethod]
+        [Timeout(300)]
+        public async Task WaitScopedAsyncWithTimeoutTimeSpanAndCancellationToken()
+        {
+            var semaphore = new SemaphoreSlim(1, 1);
+            var cts = new CancellationTokenSource();
+            var waitSuccessfull = false;
+            var timeout = TimeSpan.FromMilliseconds(100);
+
+            using (await semaphore.WaitScopedAsync(timeout, cts.Token))
+            {
+                waitSuccessfull = true;
+            }
+
+            Assert.IsTrue(waitSuccessfull);
+        }
+
+        [TestMethod]
+        [Timeout(300)]
+        public async Task WaitScopedAsyncWithTimeoutTimeSpanAndCancellationTokenFailsByTimeout()
+        {
+            var semaphore = new SemaphoreSlim(0, 1);
+            var cts = new CancellationTokenSource();
+            var waitSuccessfull = false;
+            var operationCanceledExceptionThrown = false;
+            var timeout = TimeSpan.FromMilliseconds(100);
+
+            await Task.Run(async () =>
+            {
+                try
+                {
+                    using (await semaphore.WaitScopedAsync(timeout, cts.Token))
+                    {
+                        waitSuccessfull = true;
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    operationCanceledExceptionThrown = true;
+                }
+            });
+
+            Assert.IsFalse(waitSuccessfull);
+            Assert.IsTrue(operationCanceledExceptionThrown);
+        }
+
+        [TestMethod]
+        [Timeout(300)]
+        public async Task WaitScopedAsyncWithTimeoutTimeSpanAndCancellationTokenFailsByCancellationToken()
+        {
+            var semaphore = new SemaphoreSlim(0, 1);
+            var cts = new CancellationTokenSource();
+            var waitSuccessfull = false;
+            var operationCanceledExceptionThrown = false;
+            var timeout = TimeSpan.FromMilliseconds(100);
+
+            var task = Task.Run(async () =>
+            {
+                try
+                {
+                    using (await semaphore.WaitScopedAsync(timeout, cts.Token))
+                    {
+                        waitSuccessfull = true;
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    operationCanceledExceptionThrown = true;
+                }
+            });
+
+            cts.Cancel();
+
+            await task;
+
+            Assert.IsFalse(waitSuccessfull);
+            Assert.IsTrue(operationCanceledExceptionThrown);
+        }
+
+        #endregion
 
         private class CountContainer
         {

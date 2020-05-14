@@ -18,66 +18,71 @@ namespace Servus.Core.Threading
             _semaphoreSlim = semaphoreSlim;
         }
 
-        internal static async Task<IDisposable> WaitAsync(SemaphoreSlim semaphoreSlim, CancellationToken cancellationToken = default(CancellationToken))
+        #region WaitAsync
+
+        internal static async Task<IDisposable> WaitAsync(SemaphoreSlim semaphoreSlim, CancellationToken cancellationToken = default)
         {
             var scope = new SemaphoreSlimScope(semaphoreSlim);
             await semaphoreSlim.WaitAsync(cancellationToken);
             return scope;
         }
 
-        internal static IDisposable Wait(SemaphoreSlim semaphoreSlim)
+        internal static async Task<IDisposable> WaitAsync(SemaphoreSlim semaphoreSlim, int millisecondsTimeout, CancellationToken cancellationToken = default)
         {
             var scope = new SemaphoreSlimScope(semaphoreSlim);
-            semaphoreSlim.Wait();
+            if (!await semaphoreSlim.WaitAsync(millisecondsTimeout, cancellationToken))
+            {
+                throw new OperationCanceledException();
+            }
+
             return scope;
         }
 
-        internal static IDisposable Wait(SemaphoreSlim semaphoreSlim, CancellationToken cancellationToken)
+        internal static async Task<IDisposable> WaitAsync(SemaphoreSlim semaphoreSlim, TimeSpan timeout, CancellationToken cancellationToken = default)
+        {
+            var scope = new SemaphoreSlimScope(semaphoreSlim);
+            if (!await semaphoreSlim.WaitAsync(timeout, cancellationToken))
+            {
+                throw new OperationCanceledException();
+            }
+
+            return scope;
+        }
+
+        #endregion
+
+        #region Wait
+
+        internal static IDisposable Wait(SemaphoreSlim semaphoreSlim, CancellationToken cancellationToken = default)
         {
             var scope = new SemaphoreSlimScope(semaphoreSlim);
             semaphoreSlim.Wait(cancellationToken);
             return scope;
         }
 
-        internal static IDisposable Wait(SemaphoreSlim semaphoreSlim, int millisecondsTimeout)
-        {
-            var scope = new SemaphoreSlimScope(semaphoreSlim);
-            if (!semaphoreSlim.Wait(millisecondsTimeout))
-            {
-                throw new OperationCanceledException();
-            }
-            return scope;
-        }
-
-        internal static IDisposable Wait(SemaphoreSlim semaphoreSlim, int millisecondsTimeout, CancellationToken cancellationToken)
+        internal static IDisposable Wait(SemaphoreSlim semaphoreSlim, int millisecondsTimeout, CancellationToken cancellationToken = default)
         {
             var scope = new SemaphoreSlimScope(semaphoreSlim);
             if (!semaphoreSlim.Wait(millisecondsTimeout, cancellationToken))
             {
                 throw new OperationCanceledException();
             }
+
             return scope;
         }
 
-        internal static IDisposable Wait(SemaphoreSlim semaphoreSlim, TimeSpan timeout)
-        {
-            var scope = new SemaphoreSlimScope(semaphoreSlim);
-            if (!semaphoreSlim.Wait(timeout))
-            {
-                throw new OperationCanceledException();
-            }
-            return scope;
-        }
-
-        internal static IDisposable Wait(SemaphoreSlim semaphoreSlim, TimeSpan timeout, CancellationToken cancellationToken)
+        internal static IDisposable Wait(SemaphoreSlim semaphoreSlim, TimeSpan timeout, CancellationToken cancellationToken = default)
         {
             var scope = new SemaphoreSlimScope(semaphoreSlim);
             if (!semaphoreSlim.Wait(timeout, cancellationToken))
             {
                 throw new OperationCanceledException();
             }
+
             return scope;
         }
+
+        #endregion
 
         public void Dispose()
         {
