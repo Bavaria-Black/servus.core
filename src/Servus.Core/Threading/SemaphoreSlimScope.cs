@@ -39,6 +39,46 @@ namespace Servus.Core.Threading
             return scope;
         }
 
+        internal static IDisposable Wait(SemaphoreSlim semaphoreSlim, int millisecondsTimeout)
+        {
+            var scope = new SemaphoreSlimScope(semaphoreSlim);
+            if (!semaphoreSlim.Wait(millisecondsTimeout))
+            {
+                throw new OperationCanceledException();
+            }
+            return scope;
+        }
+
+        internal static IDisposable Wait(SemaphoreSlim semaphoreSlim, int millisecondsTimeout, CancellationToken cancellationToken)
+        {
+            var scope = new SemaphoreSlimScope(semaphoreSlim);
+            if (!semaphoreSlim.Wait(millisecondsTimeout, cancellationToken))
+            {
+                throw new OperationCanceledException();
+            }
+            return scope;
+        }
+
+        internal static IDisposable Wait(SemaphoreSlim semaphoreSlim, TimeSpan timeout)
+        {
+            var scope = new SemaphoreSlimScope(semaphoreSlim);
+            if (!semaphoreSlim.Wait(timeout))
+            {
+                throw new OperationCanceledException();
+            }
+            return scope;
+        }
+
+        internal static IDisposable Wait(SemaphoreSlim semaphoreSlim, TimeSpan timeout, CancellationToken cancellationToken)
+        {
+            var scope = new SemaphoreSlimScope(semaphoreSlim);
+            if (!semaphoreSlim.Wait(timeout, cancellationToken))
+            {
+                throw new OperationCanceledException();
+            }
+            return scope;
+        }
+
         public void Dispose()
         {
             _semaphoreSlim.Release();
