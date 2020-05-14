@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Servus.Core.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace Servus.Core.Tests.Threading
 {
@@ -109,6 +110,39 @@ namespace Servus.Core.Tests.Threading
                     Assert.AreEqual(i, items[i]);
                 }
             }
+        }
+
+        [TestMethod]
+        public async Task WaitScopedWithCancellationToken()
+        {
+            var semaphore = new SemaphoreSlim(0, 1);
+            var cts = new CancellationTokenSource();
+            var waitSuccessfull = false;
+            var operationCanceledExceptionThrown = false;
+
+            _ = Task.Run(() =>
+            {
+                try
+                {
+                    using (semaphore.WaitScoped(cts.Token))
+                    {
+                        waitSuccessfull = true;
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    operationCanceledExceptionThrown = true;
+                }
+            });
+
+            await Task.Delay(50);
+
+            cts.Cancel();
+
+            await Task.Delay(50);
+
+            Assert.IsFalse(waitSuccessfull);
+            Assert.IsTrue(operationCanceledExceptionThrown);
         }
 
 

@@ -32,6 +32,13 @@ namespace Servus.Core.Threading
             return scope;
         }
 
+        internal static IDisposable Wait(SemaphoreSlim semaphoreSlim, CancellationToken cancellationToken)
+        {
+            var scope = new SemaphoreSlimScope(semaphoreSlim);
+            semaphoreSlim.Wait(cancellationToken);
+            return scope;
+        }
+
         public void Dispose()
         {
             _semaphoreSlim.Release();
