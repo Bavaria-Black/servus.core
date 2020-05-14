@@ -32,7 +32,7 @@ namespace Servus.Core.Threading
             var scope = new SemaphoreSlimScope(semaphoreSlim);
             if (!await semaphoreSlim.WaitAsync(millisecondsTimeout, cancellationToken))
             {
-                throw new OperationCanceledException();
+                throw new TimeoutException();
             }
 
             return scope;
@@ -43,7 +43,7 @@ namespace Servus.Core.Threading
             var scope = new SemaphoreSlimScope(semaphoreSlim);
             if (!await semaphoreSlim.WaitAsync(timeout, cancellationToken))
             {
-                throw new OperationCanceledException();
+                throw new TimeoutException();
             }
 
             return scope;
@@ -65,7 +65,7 @@ namespace Servus.Core.Threading
             var scope = new SemaphoreSlimScope(semaphoreSlim);
             if (!semaphoreSlim.Wait(millisecondsTimeout, cancellationToken))
             {
-                throw new OperationCanceledException();
+                throw new TimeoutException();
             }
 
             return scope;
@@ -76,7 +76,7 @@ namespace Servus.Core.Threading
             var scope = new SemaphoreSlimScope(semaphoreSlim);
             if (!semaphoreSlim.Wait(timeout, cancellationToken))
             {
-                throw new OperationCanceledException();
+                throw new TimeoutException();
             }
 
             return scope;

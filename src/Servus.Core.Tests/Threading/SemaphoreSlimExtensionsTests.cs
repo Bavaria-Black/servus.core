@@ -169,7 +169,7 @@ namespace Servus.Core.Tests.Threading
         {
             var semaphore = new SemaphoreSlim(0, 1);
             var waitSuccessfull = false;
-            var operationCanceledExceptionThrown = false;
+            var timeoutExceptionThrown = false;
 
             await Task.Run(() =>
             {
@@ -180,14 +180,14 @@ namespace Servus.Core.Tests.Threading
                         waitSuccessfull = true;
                     }
                 }
-                catch (OperationCanceledException)
+                catch (TimeoutException)
                 {
-                    operationCanceledExceptionThrown = true;
+                    timeoutExceptionThrown = true;
                 }
             });
 
             Assert.IsFalse(waitSuccessfull);
-            Assert.IsTrue(operationCanceledExceptionThrown);
+            Assert.IsTrue(timeoutExceptionThrown);
         }
 
         [TestMethod]
@@ -213,7 +213,7 @@ namespace Servus.Core.Tests.Threading
             var semaphore = new SemaphoreSlim(0, 1);
             var cts = new CancellationTokenSource();
             var waitSuccessfull = false;
-            var operationCanceledExceptionThrown = false;
+            var timeoutExceptionThrown = false;
 
             await Task.Run(() =>
             {
@@ -224,14 +224,14 @@ namespace Servus.Core.Tests.Threading
                         waitSuccessfull = true;
                     }
                 }
-                catch (OperationCanceledException)
+                catch (TimeoutException)
                 {
-                    operationCanceledExceptionThrown = true;
+                    timeoutExceptionThrown = true;
                 }
             });
 
             Assert.IsFalse(waitSuccessfull);
-            Assert.IsTrue(operationCanceledExceptionThrown);
+            Assert.IsTrue(timeoutExceptionThrown);
         }
 
         [TestMethod]
@@ -288,7 +288,7 @@ namespace Servus.Core.Tests.Threading
         {
             var semaphore = new SemaphoreSlim(0, 1);
             var waitSuccessfull = false;
-            var operationCanceledExceptionThrown = false;
+            var timeoutExceptionThrown = false;
             var timeout = TimeSpan.FromMilliseconds(100);
 
             await Task.Run(() =>
@@ -300,14 +300,14 @@ namespace Servus.Core.Tests.Threading
                         waitSuccessfull = true;
                     }
                 }
-                catch (OperationCanceledException)
+                catch (TimeoutException)
                 {
-                    operationCanceledExceptionThrown = true;
+                    timeoutExceptionThrown = true;
                 }
             });
 
             Assert.IsFalse(waitSuccessfull);
-            Assert.IsTrue(operationCanceledExceptionThrown);
+            Assert.IsTrue(timeoutExceptionThrown);
         }
 
         [TestMethod]
@@ -334,7 +334,7 @@ namespace Servus.Core.Tests.Threading
             var semaphore = new SemaphoreSlim(0, 1);
             var cts = new CancellationTokenSource();
             var waitSuccessfull = false;
-            var operationCanceledExceptionThrown = false;
+            var timeoutExceptionThrown = false;
             var timeout = TimeSpan.FromMilliseconds(100);
 
             await Task.Run(() =>
@@ -346,14 +346,14 @@ namespace Servus.Core.Tests.Threading
                         waitSuccessfull = true;
                     }
                 }
-                catch (OperationCanceledException)
+                catch (TimeoutException)
                 {
-                    operationCanceledExceptionThrown = true;
+                    timeoutExceptionThrown = true;
                 }
             });
 
             Assert.IsFalse(waitSuccessfull);
-            Assert.IsTrue(operationCanceledExceptionThrown);
+            Assert.IsTrue(timeoutExceptionThrown);
         }
 
         [TestMethod]
@@ -449,7 +449,7 @@ namespace Servus.Core.Tests.Threading
         {
             var semaphore = new SemaphoreSlim(0, 1);
             var waitSuccessfull = false;
-            var operationCanceledExceptionThrown = false;
+            var timeoutExceptionThrown = false;
 
             await Task.Run(async () =>
             {
@@ -460,14 +460,14 @@ namespace Servus.Core.Tests.Threading
                         waitSuccessfull = true;
                     }
                 }
-                catch (OperationCanceledException)
+                catch (TimeoutException)
                 {
-                    operationCanceledExceptionThrown = true;
+                    timeoutExceptionThrown = true;
                 }
             });
 
             Assert.IsFalse(waitSuccessfull);
-            Assert.IsTrue(operationCanceledExceptionThrown);
+            Assert.IsTrue(timeoutExceptionThrown);
         }
 
         [TestMethod]
@@ -493,7 +493,7 @@ namespace Servus.Core.Tests.Threading
             var semaphore = new SemaphoreSlim(0, 1);
             var cts = new CancellationTokenSource();
             var waitSuccessfull = false;
-            var operationCanceledExceptionThrown = false;
+            var timeoutExceptionThrown = false;
 
             await Task.Run(async () =>
             {
@@ -504,14 +504,14 @@ namespace Servus.Core.Tests.Threading
                         waitSuccessfull = true;
                     }
                 }
-                catch (OperationCanceledException)
+                catch (TimeoutException)
                 {
-                    operationCanceledExceptionThrown = true;
+                    timeoutExceptionThrown = true;
                 }
             });
 
             Assert.IsFalse(waitSuccessfull);
-            Assert.IsTrue(operationCanceledExceptionThrown);
+            Assert.IsTrue(timeoutExceptionThrown);
         }
 
         [TestMethod]
@@ -568,7 +568,7 @@ namespace Servus.Core.Tests.Threading
         {
             var semaphore = new SemaphoreSlim(0, 1);
             var waitSuccessfull = false;
-            var operationCanceledExceptionThrown = false;
+            var timeoutExceptionThrown = false;
             var timeout = TimeSpan.FromMilliseconds(100);
 
             await Task.Run(async () =>
@@ -580,14 +580,14 @@ namespace Servus.Core.Tests.Threading
                         waitSuccessfull = true;
                     }
                 }
-                catch (OperationCanceledException)
+                catch (TimeoutException)
                 {
-                    operationCanceledExceptionThrown = true;
+                    timeoutExceptionThrown = true;
                 }
             });
 
             Assert.IsFalse(waitSuccessfull);
-            Assert.IsTrue(operationCanceledExceptionThrown);
+            Assert.IsTrue(timeoutExceptionThrown);
         }
 
         [TestMethod]
@@ -614,7 +614,7 @@ namespace Servus.Core.Tests.Threading
             var semaphore = new SemaphoreSlim(0, 1);
             var cts = new CancellationTokenSource();
             var waitSuccessfull = false;
-            var operationCanceledExceptionThrown = false;
+            var timeoutExceptionThrown = false;
             var timeout = TimeSpan.FromMilliseconds(100);
 
             await Task.Run(async () =>
@@ -626,14 +626,14 @@ namespace Servus.Core.Tests.Threading
                         waitSuccessfull = true;
                     }
                 }
-                catch (OperationCanceledException)
+                catch (TimeoutException)
                 {
-                    operationCanceledExceptionThrown = true;
+                    timeoutExceptionThrown = true;
                 }
             });
 
             Assert.IsFalse(waitSuccessfull);
-            Assert.IsTrue(operationCanceledExceptionThrown);
+            Assert.IsTrue(timeoutExceptionThrown);
         }
 
         [TestMethod]
