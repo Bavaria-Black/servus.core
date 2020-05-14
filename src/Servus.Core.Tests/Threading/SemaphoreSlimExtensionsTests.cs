@@ -113,6 +113,7 @@ namespace Servus.Core.Tests.Threading
         }
 
         [TestMethod]
+        [Timeout(10000)]
         public async Task WaitScopedWithCancellationToken()
         {
             var semaphore = new SemaphoreSlim(0, 1);
