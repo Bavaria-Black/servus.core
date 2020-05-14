@@ -115,7 +115,7 @@ namespace Servus.Core.Tests.Threading
         #region WaitScoped
 
         [TestMethod]
-        [Timeout(1000)]
+        [Timeout(10000)]
         public async Task WaitScopedWithCancellationToken()
         {
             var semaphore = new SemaphoreSlim(0, 1);
@@ -149,7 +149,7 @@ namespace Servus.Core.Tests.Threading
         }
 
         [TestMethod]
-        [Timeout(300)]
+        [Timeout(10000)]
         public void WaitScopedWithTimeoutMilliseconds()
         {
             var semaphore = new SemaphoreSlim(1, 1);
@@ -164,7 +164,7 @@ namespace Servus.Core.Tests.Threading
         }
 
         [TestMethod]
-        [Timeout(300)]
+        [Timeout(10000)]
         public async Task WaitScopedWithTimeoutMillisecondsFails()
         {
             var semaphore = new SemaphoreSlim(0, 1);
@@ -191,7 +191,7 @@ namespace Servus.Core.Tests.Threading
         }
 
         [TestMethod]
-        [Timeout(300)]
+        [Timeout(10000)]
         public void WaitScopedWithTimeoutMillisecondsAndCancellationToken()
         {
             var semaphore = new SemaphoreSlim(1, 1);
@@ -207,7 +207,7 @@ namespace Servus.Core.Tests.Threading
         }
 
         [TestMethod]
-        [Timeout(300)]
+        [Timeout(10000)]
         public async Task WaitScopedWithTimeoutMillisecondsAndCancellationTokenFailsByTimeout()
         {
             var semaphore = new SemaphoreSlim(0, 1);
@@ -235,7 +235,7 @@ namespace Servus.Core.Tests.Threading
         }
 
         [TestMethod]
-        [Timeout(300)]
+        [Timeout(10000)]
         public async Task WaitScopedWithTimeoutMillisecondsAndCancellationTokenFailsByCancellationToken()
         {
             var semaphore = new SemaphoreSlim(0, 1);
@@ -267,7 +267,7 @@ namespace Servus.Core.Tests.Threading
         }
 
         [TestMethod]
-        [Timeout(300)]
+        [Timeout(10000)]
         public void WaitScopedWithTimeoutTimeSpan()
         {
             var semaphore = new SemaphoreSlim(1, 1);
@@ -283,7 +283,7 @@ namespace Servus.Core.Tests.Threading
         }
 
         [TestMethod]
-        [Timeout(300)]
+        [Timeout(10000)]
         public async Task WaitScopedWithTimeoutTimeSpanFails()
         {
             var semaphore = new SemaphoreSlim(0, 1);
@@ -311,7 +311,7 @@ namespace Servus.Core.Tests.Threading
         }
 
         [TestMethod]
-        [Timeout(300)]
+        [Timeout(10000)]
         public void WaitScopedWithTimeoutTimeSpanAndCancellationToken()
         {
             var semaphore = new SemaphoreSlim(1, 1);
@@ -328,7 +328,7 @@ namespace Servus.Core.Tests.Threading
         }
 
         [TestMethod]
-        [Timeout(300)]
+        [Timeout(10000)]
         public async Task WaitScopedWithTimeoutTimeSpanAndCancellationTokenFailsByTimeout()
         {
             var semaphore = new SemaphoreSlim(0, 1);
@@ -357,7 +357,7 @@ namespace Servus.Core.Tests.Threading
         }
 
         [TestMethod]
-        [Timeout(300)]
+        [Timeout(10000)]
         public async Task WaitScopedWithTimeoutTimeSpanAndCancellationTokenFailsByCancellationToken()
         {
             var semaphore = new SemaphoreSlim(0, 1);
@@ -429,7 +429,7 @@ namespace Servus.Core.Tests.Threading
         }
 
         [TestMethod]
-        [Timeout(300)]
+        [Timeout(10000)]
         public async Task WaitScopedAsyncWithTimeoutMilliseconds()
         {
             var semaphore = new SemaphoreSlim(1, 1);
@@ -444,7 +444,7 @@ namespace Servus.Core.Tests.Threading
         }
 
         [TestMethod]
-        [Timeout(300)]
+        [Timeout(10000)]
         public async Task WaitScopedAsyncWithTimeoutMillisecondsFails()
         {
             var semaphore = new SemaphoreSlim(0, 1);
@@ -471,7 +471,7 @@ namespace Servus.Core.Tests.Threading
         }
 
         [TestMethod]
-        [Timeout(300)]
+        [Timeout(10000)]
         public async Task WaitScopedAsyncWithTimeoutMillisecondsAndCancellationToken()
         {
             var semaphore = new SemaphoreSlim(1, 1);
@@ -487,7 +487,7 @@ namespace Servus.Core.Tests.Threading
         }
 
         [TestMethod]
-        [Timeout(300)]
+        [Timeout(10000)]
         public async Task WaitScopedAsyncWithTimeoutMillisecondsAndCancellationTokenFailsByTimeout()
         {
             var semaphore = new SemaphoreSlim(0, 1);
@@ -515,7 +515,7 @@ namespace Servus.Core.Tests.Threading
         }
 
         [TestMethod]
-        [Timeout(300)]
+        [Timeout(10000)]
         public async Task WaitScopedAsyncWithTimeoutMillisecondsAndCancellationTokenFailsByCancellationToken()
         {
             var semaphore = new SemaphoreSlim(0, 1);
@@ -547,7 +547,7 @@ namespace Servus.Core.Tests.Threading
         }
 
         [TestMethod]
-        [Timeout(300)]
+        [Timeout(10000)]
         public async Task WaitScopedAsyncWithTimeoutTimeSpan()
         {
             var semaphore = new SemaphoreSlim(1, 1);
@@ -563,7 +563,7 @@ namespace Servus.Core.Tests.Threading
         }
 
         [TestMethod]
-        [Timeout(300)]
+        [Timeout(10000)]
         public async Task WaitScopedAsyncWithTimeoutTimeSpanFails()
         {
             var semaphore = new SemaphoreSlim(0, 1);
@@ -591,7 +591,7 @@ namespace Servus.Core.Tests.Threading
         }
 
         [TestMethod]
-        [Timeout(300)]
+        [Timeout(10000)]
         public async Task WaitScopedAsyncWithTimeoutTimeSpanAndCancellationToken()
         {
             var semaphore = new SemaphoreSlim(1, 1);
@@ -608,7 +608,7 @@ namespace Servus.Core.Tests.Threading
         }
 
         [TestMethod]
-        [Timeout(300)]
+        [Timeout(10000)]
         public async Task WaitScopedAsyncWithTimeoutTimeSpanAndCancellationTokenFailsByTimeout()
         {
             var semaphore = new SemaphoreSlim(0, 1);
@@ -637,7 +637,7 @@ namespace Servus.Core.Tests.Threading
         }
 
         [TestMethod]
-        [Timeout(300)]
+        [Timeout(10000)]
         public async Task WaitScopedAsyncWithTimeoutTimeSpanAndCancellationTokenFailsByCancellationToken()
         {
             var semaphore = new SemaphoreSlim(0, 1);
