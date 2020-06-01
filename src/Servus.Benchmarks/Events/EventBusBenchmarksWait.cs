@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using Servus.Core.Events;
 
@@ -8,433 +6,341 @@ namespace Servus.Benchmarks.Events
 {
     [Config(typeof(Config))]
     [RPlotExporter]
-    public class Cpu1Sub : EventBusBenchmarksCpuIntensive
+    public class Wait1Sub : EventBusBenchmarksWait
     {
-        public Cpu1Sub() => ActiveSubscribers = 1;
-        
-        // The EventBus is intended as a long living object,
-        // so it's creation time is not considered in the benchmark.
+        public Wait1Sub() => ActiveSubscribers = 1;
+
         [IterationSetup(Target = nameof(Sync))]
         public void SetupSync()
         {
             SynchronousEventBus = new SynchronousEventBus();
-            SetupPublishSubscribeCpuHeavyOperation(SynchronousEventBus);
+            SetupPublishSubscribeWaitOperation(SynchronousEventBus);
         }
 
         [IterationSetup(Target = nameof(Tasks))]
         public void SetupTasks()
         {
             TaskBasedEventBus = new TaskBasedEventBus();
-            SetupPublishSubscribeCpuHeavyOperation(TaskBasedEventBus);
+            SetupPublishSubscribeWaitOperation(TaskBasedEventBus);
         }
 
         [IterationSetup(Target = nameof(Tpl))]
         public void SetupTpl()
         {
             TplEventBus = new TplEventBus();
-            SetupPublishSubscribeCpuHeavyOperation(TplEventBus);
+            SetupPublishSubscribeWaitOperation(TplEventBus);
         }
-        
+
         [Benchmark]
         public void Sync()
         {
             PublishOperation(SynchronousEventBus);
         }
-        
+
         [Benchmark]
         public void Tasks()
         {
             PublishOperation(TaskBasedEventBus);
         }
-        
+
         [Benchmark]
         public void Tpl()
         {
             PublishOperation(TplEventBus);
         }
     }
-    
+
     [Config(typeof(Config))]
     [RPlotExporter]
-    public class Cpu2Sub : EventBusBenchmarksCpuIntensive
+    public class Wait2Sub : EventBusBenchmarksWait
     {
-        public Cpu2Sub() => ActiveSubscribers = 2;
-        
-        // The EventBus is intended as a long living object,
-        // so it's creation time is not considered in the benchmark.
+        public Wait2Sub() => ActiveSubscribers = 2;
+
         [IterationSetup(Target = nameof(Sync))]
         public void SetupSync()
         {
             SynchronousEventBus = new SynchronousEventBus();
-            SetupPublishSubscribeCpuHeavyOperation(SynchronousEventBus);
+            SetupPublishSubscribeWaitOperation(SynchronousEventBus);
         }
 
         [IterationSetup(Target = nameof(Tasks))]
         public void SetupTasks()
         {
             TaskBasedEventBus = new TaskBasedEventBus();
-            SetupPublishSubscribeCpuHeavyOperation(TaskBasedEventBus);
+            SetupPublishSubscribeWaitOperation(TaskBasedEventBus);
         }
 
         [IterationSetup(Target = nameof(Tpl))]
         public void SetupTpl()
         {
             TplEventBus = new TplEventBus();
-            SetupPublishSubscribeCpuHeavyOperation(TplEventBus);
+            SetupPublishSubscribeWaitOperation(TplEventBus);
         }
-        
+
         [Benchmark]
         public void Sync()
         {
             PublishOperation(SynchronousEventBus);
         }
-        
+
         [Benchmark]
         public void Tasks()
         {
             PublishOperation(TaskBasedEventBus);
         }
-        
+
         [Benchmark]
         public void Tpl()
         {
             PublishOperation(TplEventBus);
         }
     }
-    
+
     [Config(typeof(Config))]
     [RPlotExporter]
-    public class Cpu3Sub : EventBusBenchmarksCpuIntensive
+    public class Wait3Sub : EventBusBenchmarksWait
     {
-        public Cpu3Sub() => ActiveSubscribers = 3;
-        
-        // The EventBus is intended as a long living object,
-        // so it's creation time is not considered in the benchmark.
+        public Wait3Sub() => ActiveSubscribers = 3;
+
         [IterationSetup(Target = nameof(Sync))]
         public void SetupSync()
         {
             SynchronousEventBus = new SynchronousEventBus();
-            SetupPublishSubscribeCpuHeavyOperation(SynchronousEventBus);
+            SetupPublishSubscribeWaitOperation(SynchronousEventBus);
         }
 
         [IterationSetup(Target = nameof(Tasks))]
         public void SetupTasks()
         {
             TaskBasedEventBus = new TaskBasedEventBus();
-            SetupPublishSubscribeCpuHeavyOperation(TaskBasedEventBus);
+            SetupPublishSubscribeWaitOperation(TaskBasedEventBus);
         }
 
         [IterationSetup(Target = nameof(Tpl))]
         public void SetupTpl()
         {
             TplEventBus = new TplEventBus();
-            SetupPublishSubscribeCpuHeavyOperation(TplEventBus);
+            SetupPublishSubscribeWaitOperation(TplEventBus);
         }
-        
+
         [Benchmark]
         public void Sync()
         {
             PublishOperation(SynchronousEventBus);
         }
-        
+
         [Benchmark]
         public void Tasks()
         {
             PublishOperation(TaskBasedEventBus);
         }
-        
+
         [Benchmark]
         public void Tpl()
         {
             PublishOperation(TplEventBus);
         }
     }
-    
+
     [Config(typeof(Config))]
     [RPlotExporter]
-    public class Cpu5Sub : EventBusBenchmarksCpuIntensive
+    public class Wait5Sub : EventBusBenchmarksWait
     {
-        public Cpu5Sub() => ActiveSubscribers = 5;
-        
-        // The EventBus is intended as a long living object,
-        // so it's creation time is not considered in the benchmark.
+        public Wait5Sub() => ActiveSubscribers = 5;
+
         [IterationSetup(Target = nameof(Sync))]
         public void SetupSync()
         {
             SynchronousEventBus = new SynchronousEventBus();
-            SetupPublishSubscribeCpuHeavyOperation(SynchronousEventBus);
+            SetupPublishSubscribeWaitOperation(SynchronousEventBus);
         }
 
         [IterationSetup(Target = nameof(Tasks))]
         public void SetupTasks()
         {
             TaskBasedEventBus = new TaskBasedEventBus();
-            SetupPublishSubscribeCpuHeavyOperation(TaskBasedEventBus);
+            SetupPublishSubscribeWaitOperation(TaskBasedEventBus);
         }
 
         [IterationSetup(Target = nameof(Tpl))]
         public void SetupTpl()
         {
             TplEventBus = new TplEventBus();
-            SetupPublishSubscribeCpuHeavyOperation(TplEventBus);
+            SetupPublishSubscribeWaitOperation(TplEventBus);
         }
-        
+
         [Benchmark]
         public void Sync()
         {
             PublishOperation(SynchronousEventBus);
         }
-        
+
         [Benchmark]
         public void Tasks()
         {
             PublishOperation(TaskBasedEventBus);
         }
-        
+
         [Benchmark]
         public void Tpl()
         {
             PublishOperation(TplEventBus);
         }
     }
-    
+
     [Config(typeof(Config))]
     [RPlotExporter]
-    public class Cpu7Sub : EventBusBenchmarksCpuIntensive
+    public class Wait7Sub : EventBusBenchmarksWait
     {
-        public Cpu7Sub() => ActiveSubscribers = 7;
-        
-        // The EventBus is intended as a long living object,
-        // so it's creation time is not considered in the benchmark.
+        public Wait7Sub() => ActiveSubscribers = 7;
+
         [IterationSetup(Target = nameof(Sync))]
         public void SetupSync()
         {
             SynchronousEventBus = new SynchronousEventBus();
-            SetupPublishSubscribeCpuHeavyOperation(SynchronousEventBus);
+            SetupPublishSubscribeWaitOperation(SynchronousEventBus);
         }
 
         [IterationSetup(Target = nameof(Tasks))]
         public void SetupTasks()
         {
             TaskBasedEventBus = new TaskBasedEventBus();
-            SetupPublishSubscribeCpuHeavyOperation(TaskBasedEventBus);
+            SetupPublishSubscribeWaitOperation(TaskBasedEventBus);
         }
 
         [IterationSetup(Target = nameof(Tpl))]
         public void SetupTpl()
         {
             TplEventBus = new TplEventBus();
-            SetupPublishSubscribeCpuHeavyOperation(TplEventBus);
+            SetupPublishSubscribeWaitOperation(TplEventBus);
         }
-        
+
         [Benchmark]
         public void Sync()
         {
             PublishOperation(SynchronousEventBus);
         }
-        
+
         [Benchmark]
         public void Tasks()
         {
             PublishOperation(TaskBasedEventBus);
         }
-        
+
         [Benchmark]
         public void Tpl()
         {
             PublishOperation(TplEventBus);
         }
     }
-    
+
     [Config(typeof(Config))]
     [RPlotExporter]
-    public class Cpu9Sub : EventBusBenchmarksCpuIntensive
+    public class Wait9Sub : EventBusBenchmarksWait
     {
-        public Cpu9Sub() => ActiveSubscribers = 9;
-        
-        // The EventBus is intended as a long living object,
-        // so it's creation time is not considered in the benchmark.
+        public Wait9Sub() => ActiveSubscribers = 9;
+
         [IterationSetup(Target = nameof(Sync))]
         public void SetupSync()
         {
             SynchronousEventBus = new SynchronousEventBus();
-            SetupPublishSubscribeCpuHeavyOperation(SynchronousEventBus);
+            SetupPublishSubscribeWaitOperation(SynchronousEventBus);
         }
 
         [IterationSetup(Target = nameof(Tasks))]
         public void SetupTasks()
         {
             TaskBasedEventBus = new TaskBasedEventBus();
-            SetupPublishSubscribeCpuHeavyOperation(TaskBasedEventBus);
+            SetupPublishSubscribeWaitOperation(TaskBasedEventBus);
         }
 
         [IterationSetup(Target = nameof(Tpl))]
         public void SetupTpl()
         {
             TplEventBus = new TplEventBus();
-            SetupPublishSubscribeCpuHeavyOperation(TplEventBus);
+            SetupPublishSubscribeWaitOperation(TplEventBus);
         }
-        
+
         [Benchmark]
         public void Sync()
         {
             PublishOperation(SynchronousEventBus);
         }
-        
+
         [Benchmark]
         public void Tasks()
         {
             PublishOperation(TaskBasedEventBus);
         }
-        
+
         [Benchmark]
         public void Tpl()
         {
             PublishOperation(TplEventBus);
         }
     }
-    
+
     [Config(typeof(Config))]
     [RPlotExporter]
-    public class Cpu11Sub : EventBusBenchmarksCpuIntensive
+    public class Wait11Sub : EventBusBenchmarksWait
     {
-        public Cpu11Sub() => ActiveSubscribers = 11;
-        
-        // The EventBus is intended as a long living object,
-        // so it's creation time is not considered in the benchmark.
+        public Wait11Sub() => ActiveSubscribers = 11;
+
         [IterationSetup(Target = nameof(Sync))]
         public void SetupSync()
         {
             SynchronousEventBus = new SynchronousEventBus();
-            SetupPublishSubscribeCpuHeavyOperation(SynchronousEventBus);
+            SetupPublishSubscribeWaitOperation(SynchronousEventBus);
         }
 
         [IterationSetup(Target = nameof(Tasks))]
         public void SetupTasks()
         {
             TaskBasedEventBus = new TaskBasedEventBus();
-            SetupPublishSubscribeCpuHeavyOperation(TaskBasedEventBus);
+            SetupPublishSubscribeWaitOperation(TaskBasedEventBus);
         }
 
         [IterationSetup(Target = nameof(Tpl))]
         public void SetupTpl()
         {
             TplEventBus = new TplEventBus();
-            SetupPublishSubscribeCpuHeavyOperation(TplEventBus);
+            SetupPublishSubscribeWaitOperation(TplEventBus);
         }
-        
+
         [Benchmark]
         public void Sync()
         {
             PublishOperation(SynchronousEventBus);
         }
-        
+
         [Benchmark]
         public void Tasks()
         {
             PublishOperation(TaskBasedEventBus);
         }
-        
+
         [Benchmark]
         public void Tpl()
         {
             PublishOperation(TplEventBus);
         }
     }
-    
-    public abstract class EventBusBenchmarksCpuIntensive : EventBusBenchmarks
+
+    public abstract class EventBusBenchmarksWait : EventBusBenchmarks
     {
-        protected void SetupPublishSubscribeCpuHeavyOperation(EventBus eventBus)
+        protected void SetupPublishSubscribeWaitOperation(EventBus eventBus)
         {
-            double CpuHeavyOperation(int num)
-            {
-                var random = new Random(555);
-                double result = 1d;
-
-                for (int i = 0; i < OperationModifier; i++)
-                {
-                    result = Math.Sqrt(random.NextDouble() + result) * Math.Sqrt(i + num);
-                }
-
-                return result;
-            }
-            
             for (int i = 0; i < UnrelatedSubscribers; i++)
             {
-                eventBus.Subscribe((UnhandledEvent e) => { });    
+                eventBus.Subscribe((UnhandledEvent e) => { });
             }
-            
+
             for (int i = 0; i < ActiveSubscribers; i++)
             {
-                eventBus.Subscribe((HandledEvent e) => { CpuHeavyOperation(e.Number); });
+                eventBus.Subscribe((HandledEvent e) => Task.Delay(OperationModifier / 10));
             }
-            
+
             eventBus.Subscribe((FinishedEvent e) => ManualResetEvent.Set());
-        }
-    }
-
-
-    
-
-    public abstract class EventBusBenchmarks
-    {
-        protected const int UnrelatedSubscribers = 1000; 
-        protected ManualResetEvent ManualResetEvent;
-        protected SynchronousEventBus SynchronousEventBus;
-        protected TaskBasedEventBus TaskBasedEventBus;
-        protected TplEventBus TplEventBus;
-        
-        // ToDo: Parameterize the number of topics in the dictionary
-        // ToDo: measure sequential vs parallel publish
-        // ToDo: Measure Predicates
-
-        [Params(100, 1000, 10000)]
-        public int N;
-        
-        protected int ActiveSubscribers;
-
-        
-        public int OperationModifier = 10000;
-        
-
-        [IterationSetup]
-        public void Setup() => ManualResetEvent = new ManualResetEvent(false); 
-        
-
-        protected void PublishOperation(EventBus eventBus)
-        {
-            ManualResetEvent = new ManualResetEvent(false);
-
-            // Synchronous publish
-            for (int i = 0; i < N; i++)
-            {
-                eventBus.Publish(new HandledEvent(i));
-            }
-
-            // Last event that is published. Because the bus behaves after FIFO principle,
-            // it should be done when this event is received.
-            eventBus.Publish(new FinishedEvent());
-            ManualResetEvent.WaitOne();
-        }
-
-        protected class HandledEvent
-        {
-            public int Number { get; }
-            
-            public HandledEvent(int number)
-            {
-                Number = number;
-            }
-        }
-        
-        protected class UnhandledEvent
-        {
-            
-        }
-        
-        protected class FinishedEvent
-        {
-            
         }
     }
 }
