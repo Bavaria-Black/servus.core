@@ -8,8 +8,8 @@ namespace Servus.Benchmarks
     {
         public Config()
         {
-            Add(CsvMeasurementsExporter.Default);
-            Add(RPlotExporter.Default);
+            AddExporter(CsvMeasurementsExporter.Default);
+            AddExporter(RPlotExporter.Default);
         }
     }
 }
