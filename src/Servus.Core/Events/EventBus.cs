@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using Servus.Core.Threading;
 
 namespace Servus.Core.Events
@@ -53,6 +54,35 @@ namespace Servus.Core.Events
             return internalSubscription.Id;
         }
 
+        public Guid Subscribe<T>(Func<T, Task> func, Predicate<T> predicate = null)
+        {
+            if (func == null) throw new ArgumentNullException(nameof(func));
+            var topic = typeof(T).FullName;    
+            if(topic == null) throw new ArgumentNullException($"Type parameter {nameof(T)}.FullName is null.");
+            
+            var internalSubscription = new InternalSubscription(message => func((T) message),
+                async message => await func((T) message));
+            if (predicate != null)
+            {
+                internalSubscription.Predicate = o => predicate((T)o);
+            }
+
+            using (SubscriptionsSemaphore.WaitScoped())
+            {
+                if (Subscriptions.TryGetValue(topic, out var subscriptionsForTopic))
+                {
+                    subscriptionsForTopic.Add(internalSubscription);
+                }
+                else
+                {
+                    var newSubscriptionsForTopic = new List<InternalSubscription>() { internalSubscription };
+                    Subscriptions.Add(topic, newSubscriptionsForTopic);
+                }
+            }
+            
+            return internalSubscription.Id;
+        }
+
         public void Unsubscribe<T>(Guid subscriptionId)
         {
             var topic = typeof(T).FullName;    
@@ -82,10 +112,20 @@ namespace Servus.Core.Events
             public InternalSubscription(Action<object> action)
             {
                 Action = action;
+                IsAsync = false;
+            }
+            
+            public InternalSubscription(Action<object> syncActionFallback, Func<object, Task> asyncFunc)
+            {
+                Action = syncActionFallback;
+                AsyncFunc = asyncFunc;
+                IsAsync = true;
             }
 
+            public bool IsAsync { get; }
             public Guid Id { get; } = Guid.NewGuid();
             public Action<object> Action { get; }
+            public Func<object, Task> AsyncFunc { get; }
             public Predicate<object> Predicate { get; internal set; }
         }
     }
