@@ -83,14 +83,16 @@ namespace Servus.Core.Threading
             }
         }
 
-        private async Task DelayUntilNextExecutionTime(DateTime nextExecutionTime)
+        private Task DelayUntilNextExecutionTime(DateTime nextExecutionTime)
         {
             var waitFor = nextExecutionTime - DateTime.Now;
 
             if (waitFor > TimeSpan.Zero)
             {
-                await Task.Delay(waitFor, _cancellationTokenSource.Token).ConfigureAwait(false);
+                return Task.Delay(waitFor, _cancellationTokenSource.Token);
             }
+
+            return Task.CompletedTask;
         }
     }
 }
