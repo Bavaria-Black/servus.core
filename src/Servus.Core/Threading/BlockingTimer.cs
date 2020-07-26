@@ -30,7 +30,8 @@ namespace Servus.Core.Threading
         {
             try
             {
-                Task.Run(ExecuteTimerLoop, _cancellationToken);
+                Task.Factory.StartNew(ExecuteTimerLoop, _cancellationToken,
+                    TaskCreationOptions.LongRunning, TaskScheduler.Default);
             }
             catch (OperationCanceledException)
             {
@@ -40,13 +41,13 @@ namespace Servus.Core.Threading
 
         private async Task ExecuteTimerLoop()
         {
-            do
+            while (!_cancellationToken.IsCancellationRequested)
             {
                 try
                 {
                     var nextExecutionTime = DateTime.Now.AddMilliseconds(_intervalMilliseconds);
                     _timerAction();
-                    await DelayUntilNextExecutionTime(nextExecutionTime);
+                    await DelayUntilNextExecutionTime(nextExecutionTime).ConfigureAwait(false);
                 }
                 catch (OperationCanceledException)
                 {
@@ -56,7 +57,7 @@ namespace Servus.Core.Threading
                 {
                     Console.WriteLine(ex);
                 }
-            } while (!_cancellationToken.IsCancellationRequested);
+            }
         }
 
         private async Task DelayUntilNextExecutionTime(DateTime nextExecutionTime)
@@ -65,7 +66,7 @@ namespace Servus.Core.Threading
 
             if (waitFor > TimeSpan.Zero)
             {
-                await Task.Delay(waitFor, _cancellationToken);
+                await Task.Delay(waitFor, _cancellationToken).ConfigureAwait(false);
             }
         }
     }
