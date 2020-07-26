@@ -12,25 +12,38 @@ namespace Servus.Core.Threading
     public class BlockingTimer
     {
         private readonly Action _timerAction;
-        private readonly CancellationToken _cancellationToken;
+        private readonly CancellationTokenSource _cancellationTokenSource;
         private readonly double _intervalMilliseconds;
+        private Task _task;
 
+        /// <summary>
+        /// Creates and starts the timer, until the cancellation via the provided cancellation token is requested
+        /// </summary>
+        public BlockingTimer(Action timerAction, double intervalInMilliseconds)
+        {
+            _timerAction = timerAction;
+            _intervalMilliseconds = intervalInMilliseconds;
+            _cancellationTokenSource = new CancellationTokenSource();
+            Start();
+        }
+        
         /// <summary>
         /// Creates and starts the timer, until the cancellation via the provided cancellation token is requested
         /// </summary>
         public BlockingTimer(Action timerAction, CancellationToken cancellationToken, double intervalInMilliseconds)
         {
             _timerAction = timerAction;
-            _cancellationToken = cancellationToken;
             _intervalMilliseconds = intervalInMilliseconds;
+            _cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             Start();
         }
-
+        
         private void Start()
         {
             try
             {
-                Task.Run(ExecuteTimerLoop, _cancellationToken);
+                _task = Task.Factory.StartNew(ExecuteTimerLoop, _cancellationTokenSource.Token,
+                    TaskCreationOptions.LongRunning, TaskScheduler.Default).Unwrap();
             }
             catch (OperationCanceledException)
             {
@@ -38,15 +51,26 @@ namespace Servus.Core.Threading
             }
         }
 
+        /// <summary>
+        /// Stops the timer and wait's until it's stopped
+        /// </summary>
+        public void Stop()
+        {
+            _cancellationTokenSource.Cancel();
+
+            // Wait for the scheduled task to complete
+            _task.Wait();
+        }
+        
         private async Task ExecuteTimerLoop()
         {
-            do
+            while (!_cancellationTokenSource.Token.IsCancellationRequested)
             {
                 try
                 {
                     var nextExecutionTime = DateTime.Now.AddMilliseconds(_intervalMilliseconds);
                     _timerAction();
-                    await DelayUntilNextExecutionTime(nextExecutionTime);
+                    await DelayUntilNextExecutionTime(nextExecutionTime).ConfigureAwait(false);
                 }
                 catch (OperationCanceledException)
                 {
@@ -56,17 +80,19 @@ namespace Servus.Core.Threading
                 {
                     Console.WriteLine(ex);
                 }
-            } while (!_cancellationToken.IsCancellationRequested);
+            }
         }
 
-        private async Task DelayUntilNextExecutionTime(DateTime nextExecutionTime)
+        private Task DelayUntilNextExecutionTime(DateTime nextExecutionTime)
         {
             var waitFor = nextExecutionTime - DateTime.Now;
 
             if (waitFor > TimeSpan.Zero)
             {
-                await Task.Delay(waitFor, _cancellationToken);
+                return Task.Delay(waitFor, _cancellationTokenSource.Token);
             }
+
+            return Task.CompletedTask;
         }
     }
 }

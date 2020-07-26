@@ -24,16 +24,16 @@ namespace Servus.Core.Tests.Threading
 
             _ = new BlockingTimer(async () =>
             {
-                await Task.Delay(10);
+                await Task.Delay(10).ConfigureAwait(false);
                 count++;
             }, cts.Token, 600);
 
-            await timeoutSemaphore.WaitAsync();
+            await timeoutSemaphore.WaitAsync().ConfigureAwait(false);
 
             Console.WriteLine($@"Count: {count}");
             Assert.IsTrue(cts.IsCancellationRequested);
             Assert.IsTrue(count > 1, $"Count is {count}");
-            Assert.IsTrue(count < 3, $"Count is {count}");
+            Assert.IsTrue(count <= 3, $"Count is {count}");
         }
 
         [TestMethod]
@@ -64,12 +64,32 @@ namespace Servus.Core.Tests.Threading
                 }
             }, cts.Token, interval);
 
-            await semaphore.WaitAsync();
+            await semaphore.WaitAsync().ConfigureAwait(false);
 
             Console.WriteLine($"Count: {count}/{maxRuns}");
             Assert.IsTrue(cts.IsCancellationRequested);
             Assert.IsTrue(count >= 1, $"Count is {count}/{maxRuns}");
             Assert.IsTrue(count < maxRuns, $"Count is {count}/{maxRuns}");
+        }
+        
+        [TestMethod]
+        [Timeout(20000)]
+        [Ignore]
+        public async Task StopMethodIsWorking()
+        {
+            int count = 0;
+
+            var timer = new BlockingTimer(async () =>
+            {
+                await Task.Delay(10000).ConfigureAwait(false);
+                count++;
+            }, 10);
+
+
+            await Task.Delay(100).ConfigureAwait(false);
+            timer.Stop();
+            
+            Assert.AreEqual(0, count, $"Count is {count}");
         }
     }
 }
