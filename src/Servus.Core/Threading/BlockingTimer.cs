@@ -12,26 +12,38 @@ namespace Servus.Core.Threading
     public class BlockingTimer
     {
         private readonly Action _timerAction;
-        private readonly CancellationToken _cancellationToken;
+        private readonly CancellationTokenSource _cancellationTokenSource;
         private readonly double _intervalMilliseconds;
+        private Task _task;
 
+        /// <summary>
+        /// Creates and starts the timer, until the cancellation via the provided cancellation token is requested
+        /// </summary>
+        public BlockingTimer(Action timerAction, double intervalInMilliseconds)
+        {
+            _timerAction = timerAction;
+            _intervalMilliseconds = intervalInMilliseconds;
+            _cancellationTokenSource = new CancellationTokenSource();
+            Start();
+        }
+        
         /// <summary>
         /// Creates and starts the timer, until the cancellation via the provided cancellation token is requested
         /// </summary>
         public BlockingTimer(Action timerAction, CancellationToken cancellationToken, double intervalInMilliseconds)
         {
             _timerAction = timerAction;
-            _cancellationToken = cancellationToken;
             _intervalMilliseconds = intervalInMilliseconds;
+            _cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             Start();
         }
-
+        
         private void Start()
         {
             try
             {
-                Task.Factory.StartNew(ExecuteTimerLoop, _cancellationToken,
-                    TaskCreationOptions.LongRunning, TaskScheduler.Default);
+                _task = Task.Factory.StartNew(ExecuteTimerLoop, _cancellationTokenSource.Token,
+                    TaskCreationOptions.LongRunning, TaskScheduler.Default).Unwrap();
             }
             catch (OperationCanceledException)
             {
@@ -39,9 +51,20 @@ namespace Servus.Core.Threading
             }
         }
 
+        /// <summary>
+        /// Stops the timer and wait's until it's stopped
+        /// </summary>
+        public void Stop()
+        {
+            _cancellationTokenSource.Cancel();
+
+            // Wait for the scheduled task to complete
+            _task.Wait();
+        }
+        
         private async Task ExecuteTimerLoop()
         {
-            while (!_cancellationToken.IsCancellationRequested)
+            while (!_cancellationTokenSource.Token.IsCancellationRequested)
             {
                 try
                 {
@@ -66,7 +89,7 @@ namespace Servus.Core.Threading
 
             if (waitFor > TimeSpan.Zero)
             {
-                await Task.Delay(waitFor, _cancellationToken).ConfigureAwait(false);
+                await Task.Delay(waitFor, _cancellationTokenSource.Token).ConfigureAwait(false);
             }
         }
     }
