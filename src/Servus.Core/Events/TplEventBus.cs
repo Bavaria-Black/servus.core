@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using Servus.Core.Threading;
 
@@ -15,12 +16,12 @@ namespace Servus.Core.Events
         
         public TplEventBus()
         {
-            _findSubscribersBlock = new TransformManyBlock<(string topic, object message), Action>(args =>
+            _findSubscribersBlock = new TransformManyBlock<(string topic, object message), Action>(async args =>
             {
                 var actions = new List<Action>();
-                
+
                 Debug.WriteLine("_findSubscribersBlock " + Thread.CurrentThread.ManagedThreadId);
-                using (SubscriptionsSemaphore.WaitScoped())
+                using (await SubscriptionsSemaphore.WaitScopedAsync().ConfigureAwait(false))
                 {
                     if (Subscriptions.TryGetValue(args.topic, out var subscriptionsForTopic))
                     {
@@ -29,13 +30,21 @@ namespace Servus.Core.Events
                             // Filter by optional predicate
                             if (subscription.Predicate == null || subscription.Predicate(args.message))
                             {
-                                actions.Add(() => subscription.Action(args.message));
+                                if (subscription.IsAsync)
+                                {
+                                    // Execute async subscription func
+                                    actions.Add(async () => await subscription.AsyncFunc(args.message).ConfigureAwait(false));
+                                }
+                                else
+                                {
+                                    // Execute sync subscription action
+                                    actions.Add(() => subscription.Action(args.message));
+                                }
                             }
                         }
                     }
                 }
                 
-                // ToDo: Yield return beneficial or not?
                 return actions;
             });
             

@@ -6,10 +6,8 @@ using Servus.Core.Threading;
 
 namespace Servus.Core.Events
 {
-    //todo: Publish T?
     //todo: Documentation
     //toDo: Subscribe with CancellationToken Subscribe(() => a(), cancellationToken)
-    //toDo: Benchmark dict vs list
     //toDo: return disposable subscription instead of guid? As alternative to the subscription manager.
     //ToDo: Replace T with Event - otherwise everybody could just send a string etc.
     //ToDo: Subscription action. Trigger with Task.Run? Or from separate Thread? Or multiple threads? Or TPL?
@@ -23,9 +21,8 @@ namespace Servus.Core.Events
         protected readonly SemaphoreSlim SubscriptionsSemaphore = new SemaphoreSlim(1,1);
 
         public abstract void Publish<T>(T message);
-
         
-        // Subscribes synchronously (waits until subscription is made)
+        
         public Guid Subscribe<T>(Action<T> action, Predicate<T> predicate = null)
         {
             if (action == null) throw new ArgumentNullException(nameof(action));
@@ -40,15 +37,27 @@ namespace Servus.Core.Events
 
             using (SubscriptionsSemaphore.WaitScoped())
             {
-                if (Subscriptions.TryGetValue(topic, out var subscriptionsForTopic))
-                {
-                    subscriptionsForTopic.Add(internalSubscription);
-                }
-                else
-                {
-                    var newSubscriptionsForTopic = new List<InternalSubscription>() { internalSubscription };
-                    Subscriptions.Add(topic, newSubscriptionsForTopic);
-                }
+                AddSubscription<T>(topic, internalSubscription);
+            }
+
+            return internalSubscription.Id;
+        }
+        
+        public async Task<Guid> SubscribeAsync<T>(Action<T> action, Predicate<T> predicate = null)
+        {
+            if (action == null) throw new ArgumentNullException(nameof(action));
+            var topic = typeof(T).FullName;    
+            if(topic == null) throw new ArgumentNullException($"Type parameter {nameof(T)}.FullName is null.");
+            
+            var internalSubscription = new InternalSubscription(message => action((T) message));
+            if (predicate != null)
+            {
+                internalSubscription.Predicate = o => predicate((T)o);
+            }
+
+            using (await SubscriptionsSemaphore.WaitScopedAsync().ConfigureAwait(false))
+            {
+                AddSubscription<T>(topic, internalSubscription);
             }
 
             return internalSubscription.Id;
@@ -61,7 +70,7 @@ namespace Servus.Core.Events
             if(topic == null) throw new ArgumentNullException($"Type parameter {nameof(T)}.FullName is null.");
             
             var internalSubscription = new InternalSubscription(message => func((T) message),
-                async message => await func((T) message));
+                async message => await func((T) message).ConfigureAwait(false));
             if (predicate != null)
             {
                 internalSubscription.Predicate = o => predicate((T)o);
@@ -69,18 +78,44 @@ namespace Servus.Core.Events
 
             using (SubscriptionsSemaphore.WaitScoped())
             {
-                if (Subscriptions.TryGetValue(topic, out var subscriptionsForTopic))
-                {
-                    subscriptionsForTopic.Add(internalSubscription);
-                }
-                else
-                {
-                    var newSubscriptionsForTopic = new List<InternalSubscription>() { internalSubscription };
-                    Subscriptions.Add(topic, newSubscriptionsForTopic);
-                }
+                AddSubscription<T>(topic, internalSubscription);
             }
             
             return internalSubscription.Id;
+        }
+        
+        public async Task<Guid> SubscribeAsync<T>(Func<T, Task> func, Predicate<T> predicate = null)
+        {
+            if (func == null) throw new ArgumentNullException(nameof(func));
+            var topic = typeof(T).FullName;    
+            if(topic == null) throw new ArgumentNullException($"Type parameter {nameof(T)}.FullName is null.");
+            
+            var internalSubscription = new InternalSubscription(message => func((T) message),
+                async message => await func((T) message).ConfigureAwait(false));
+            if (predicate != null)
+            {
+                internalSubscription.Predicate = o => predicate((T)o);
+            }
+
+            using (await SubscriptionsSemaphore.WaitScopedAsync().ConfigureAwait(false))
+            {
+                AddSubscription<T>(topic, internalSubscription);
+            }
+            
+            return internalSubscription.Id;
+        }
+
+        private void AddSubscription<T>(string topic, InternalSubscription internalSubscription)
+        {
+            if (Subscriptions.TryGetValue(topic, out var subscriptionsForTopic))
+            {
+                subscriptionsForTopic.Add(internalSubscription);
+            }
+            else
+            {
+                var newSubscriptionsForTopic = new List<InternalSubscription>() {internalSubscription};
+                Subscriptions.Add(topic, newSubscriptionsForTopic);
+            }
         }
 
         public void Unsubscribe<T>(Guid subscriptionId)
@@ -90,19 +125,35 @@ namespace Servus.Core.Events
 
             using (SubscriptionsSemaphore.WaitScoped())
             {
-                if (Subscriptions.TryGetValue(topic, out var subscriptionsForTopic))
+                RemoveSubscription(subscriptionId, topic);
+            }
+        }
+        
+        public async Task UnsubscribeAsync<T>(Guid subscriptionId)
+        {
+            var topic = typeof(T).FullName;    
+            if(topic == null) throw new ArgumentNullException($"Type parameter {nameof(T)}.FullName is null.");
+
+            using (await SubscriptionsSemaphore.WaitScopedAsync().ConfigureAwait(false))
+            {
+                RemoveSubscription(subscriptionId, topic);
+            }
+        }
+
+        private void RemoveSubscription(Guid subscriptionId, string topic)
+        {
+            if (Subscriptions.TryGetValue(topic, out var subscriptionsForTopic))
+            {
+                var index = subscriptionsForTopic.FindIndex(s => s.Id.Equals(subscriptionId));
+                if (index > -1)
                 {
-                    var index = subscriptionsForTopic.FindIndex(s => s.Id.Equals(subscriptionId));
-                    if (index > -1)
-                    {
-                        subscriptionsForTopic.RemoveAt(index);
-                    }
+                    subscriptionsForTopic.RemoveAt(index);
+                }
                     
-                    // Remove key if list is empty
-                    if (subscriptionsForTopic.Count == 0)
-                    {
-                        Subscriptions.Remove(topic);
-                    }
+                // Remove key if list is empty
+                if (subscriptionsForTopic.Count == 0)
+                {
+                    Subscriptions.Remove(topic);
                 }
             }
         }

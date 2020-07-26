@@ -33,7 +33,7 @@ namespace Servus.Core.Events
             var topic = typeof(T).FullName;    
             if(topic == null) throw new ArgumentNullException($"Type parameter {nameof(T)} FullName is null.");
 
-            using (await SubscriptionsSemaphore.WaitScopedAsync())
+            using (await SubscriptionsSemaphore.WaitScopedAsync().ConfigureAwait(false))
             {
                 if (Subscriptions.TryGetValue(topic, out var subscriptionsForTopic))
                 {
@@ -43,7 +43,7 @@ namespace Servus.Core.Events
                         if (subscription.IsAsync)
                         {
                             // Execute async subscription func
-                            await subscription.AsyncFunc(message);
+                            await subscription.AsyncFunc(message).ConfigureAwait(false);
                         }
                         else
                         {

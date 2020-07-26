@@ -15,7 +15,7 @@ namespace Servus.Core.Events
 
             Task.Run(async () =>
             {
-                using (await SubscriptionsSemaphore.WaitScopedAsync())
+                using (await SubscriptionsSemaphore.WaitScopedAsync().ConfigureAwait(false))
                 {
                     if (Subscriptions.TryGetValue(topic, out var subscriptionsForTopic))
                     {
