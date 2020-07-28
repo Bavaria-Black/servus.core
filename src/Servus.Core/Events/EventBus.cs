@@ -6,15 +6,12 @@ using Servus.Core.Threading;
 
 namespace Servus.Core.Events
 {
+    //ToDo: Replace T with Event - otherwise everybody could just send a string etc.
     //todo: Documentation
     //toDo: Subscribe with CancellationToken Subscribe(() => a(), cancellationToken)
     //toDo: return disposable subscription instead of guid? As alternative to the subscription manager.
-    //ToDo: Replace T with Event - otherwise everybody could just send a string etc.
-    //ToDo: Subscription action. Trigger with Task.Run? Or from separate Thread? Or multiple threads? Or TPL?
-    //ToDo: Dispose and stop pipeline.
     //ToDo: Interface and a simpler synchronous version of the event bus?
     //ToDo: Benchmark async semaphore vs non async one
-    //ToDo: Subscribe and get notified via a async action
     public abstract class EventBus
     {
         protected readonly Dictionary<string, List<InternalSubscription>> Subscriptions = new Dictionary<string, List<InternalSubscription>>();
