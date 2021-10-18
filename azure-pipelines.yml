@@ -106,7 +106,7 @@ jobs:
   displayName: 'Build and test on ubuntu'
 
   pool:
-    vmImage: 'ubuntu-latest'
+    vmImage: 'ubuntu-18.04'
 
   variables:
     solution: '**/*.sln'
