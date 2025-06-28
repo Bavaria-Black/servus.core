@@ -2,14 +2,13 @@
 using BenchmarkDotNet.Exporters;
 using BenchmarkDotNet.Exporters.Csv;
 
-namespace Servus.Benchmarks
+namespace Servus.Benchmarks;
+
+public class Config : ManualConfig
 {
-    public class Config : ManualConfig
+    public Config()
     {
-        public Config()
-        {
-            Add(CsvMeasurementsExporter.Default);
-            Add(RPlotExporter.Default);
-        }
+        Add(CsvMeasurementsExporter.Default);
+        Add(RPlotExporter.Default);
     }
 }

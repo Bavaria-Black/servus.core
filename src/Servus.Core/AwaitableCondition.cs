@@ -1,65 +1,63 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Servus.Core
+namespace Servus.Core;
+
+public abstract class AwaitableCondition
 {
-    
-    public abstract class AwaitableCondition
+    private readonly TaskCompletionSource<bool> _taskCompletionSource = new ();
+
+    protected AwaitableCondition(int timeoutMilliseconds)
+        : this(new CancellationTokenSource(timeoutMilliseconds).Token)
     {
-        private readonly TaskCompletionSource<bool> _taskCompletionSource = new ();
+    }
 
-        protected AwaitableCondition(int timeoutMilliseconds)
-            : this(new CancellationTokenSource(timeoutMilliseconds).Token)
+    protected AwaitableCondition(CancellationToken token, bool throwExceptionIfCanceled = true)
+    {
+        token.Register(() =>
         {
-        }
-
-        protected AwaitableCondition(CancellationToken token, bool throwExceptionIfCanceled = true)
-        {
-            token.Register(() =>
+            OnCanceled();
+            if (throwExceptionIfCanceled)
             {
-                OnCanceled();
-                if (throwExceptionIfCanceled)
-                {
-                    _taskCompletionSource.TrySetCanceled();
-                }
-                else
-                {
-                    _taskCompletionSource.TrySetResult(false);
-                }
-            });
-        }
-
-        public Task<bool> WaitAsync()
-        {
-            OnConditionChanged();
-            return _taskCompletionSource.Task;
-        }
-
-        protected virtual bool OnConditionChanged()
-        {
-            if (Evaluate())
-            {
-                OnSuccess();
-                _taskCompletionSource.TrySetResult(true);
-                return true;
+                _taskCompletionSource.TrySetCanceled();
             }
+            else
+            {
+                _taskCompletionSource.TrySetResult(false);
+            }
+        });
+    }
 
-            OnFailed();
-            return false;
-        }
+    public Task<bool> WaitAsync()
+    {
+        OnConditionChanged();
+        return _taskCompletionSource.Task;
+    }
 
-        protected abstract bool Evaluate();
-
-        protected virtual void OnSuccess()
+    protected virtual bool OnConditionChanged()
+    {
+        if (Evaluate())
         {
+            OnSuccess();
+            _taskCompletionSource.TrySetResult(true);
+            return true;
         }
 
-        protected virtual void OnFailed()
-        {
-        }
+        OnFailed();
+        return false;
+    }
 
-        protected virtual void OnCanceled()
-        {
-        }
+    protected abstract bool Evaluate();
+
+    protected virtual void OnSuccess()
+    {
+    }
+
+    protected virtual void OnFailed()
+    {
+    }
+
+    protected virtual void OnCanceled()
+    {
     }
 }
