@@ -2,41 +2,41 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Servus.Core.Gamification
+namespace Servus.Core.Gamification;
+
+public class AchievementCollection
 {
-    public class AchievementCollection
+    private readonly List<Achievement> _achievements = new List<Achievement>();
+    public IEnumerable<Achievement> Achievements => _achievements;
+
+    private readonly List<AchievementProperty> _properties = new List<AchievementProperty>();
+
+    public event EventHandler<string>? AchievementUnlocked;
+
+    public void AddProperty(string name, double initialValue, double targetValue, CompareRule compareRule, bool autoReset = false)
     {
-        private readonly List<Achievement> _achievements = new List<Achievement>();
-        public IEnumerable<Achievement> Achievements => _achievements;
+        _properties.Add(new AchievementProperty(name, initialValue, targetValue, compareRule, autoReset));
+    }
 
-        private readonly List<AchievementProperty> _properties = new List<AchievementProperty>();
+    public void AddAchievement(string name, params string[] propertyName)
+    {
+        var props = _properties.Where(p => propertyName.Contains(p.Name));
+        var achievement = new Achievement(name, props);
+        achievement.Unlocked += Achievement_Unlocked;
+        _achievements.Add(achievement);
+    }
 
-        public event EventHandler<string> AchievementUnlocked;
+    private void Achievement_Unlocked(object? sender, EventArgs e)
+    {
+        if (sender is not Achievement achievement) return;
+        
+        _achievements.Remove(achievement);
+        AchievementUnlocked?.Invoke(this, achievement.Name);
+    }
 
-        public void AddProperty(string name, double initialValue, double targetValue, CompareRule compareRule, bool autoReset = false)
-        {
-            _properties.Add(new AchievementProperty(name, initialValue, targetValue, compareRule, autoReset));
-        }
-
-        public void AddAchievement(string name, params string[] propertyName)
-        {
-            var props = _properties.Where(p => propertyName.Contains(p.Name));
-            var achievement = new Achievement(name, props);
-            achievement.Unlocked += Achievement_Unlocked;
-            _achievements.Add(achievement);
-        }
-
-        private void Achievement_Unlocked(object sender, EventArgs e)
-        {
-            var achievement = (Achievement)sender;
-            _achievements.Remove(achievement);
-            AchievementUnlocked?.Invoke(this, achievement.Name);
-        }
-
-        public void SetValue(string propertyName, double value)
-        {
-            var prop = _properties.First(p => p.Name == propertyName);
-            prop.Value = value;
-        }
+    public void SetValue(string propertyName, double value)
+    {
+        var prop = _properties.First(p => p.Name == propertyName);
+        prop.Value = value;
     }
 }

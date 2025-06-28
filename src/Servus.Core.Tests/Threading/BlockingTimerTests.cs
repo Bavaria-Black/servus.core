@@ -5,91 +5,90 @@ using Servus.Core.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 // ReSharper disable AssignmentIsFullyDiscarded
 
-namespace Servus.Core.Tests.Threading
+namespace Servus.Core.Tests.Threading;
+
+[TestClass]
+public class BlockingTimerTests
 {
-    [TestClass]
-    public class BlockingTimerTests
+    [TestMethod]
+    [Timeout(20000)]
+    [Ignore]
+    public async Task ActionIsFasterThenBlockingTimer()
     {
-        [TestMethod]
-        [Timeout(20000)]
-        [Ignore]
-        public async Task ActionIsFasterThenBlockingTimer()
+        //CTS with 2 second timeout
+        var cts = new CancellationTokenSource(1500);
+        int count = 0;
+        var timeoutSemaphore = new SemaphoreSlim(0, int.MaxValue);
+
+        cts.Token.Register(() => timeoutSemaphore.Release());
+
+        _ = new BlockingTimer(async () =>
         {
-            //CTS with 2 second timeout
-            var cts = new CancellationTokenSource(1500);
-            int count = 0;
-            var timeoutSemaphore = new SemaphoreSlim(0, int.MaxValue);
+            await Task.Delay(10).ConfigureAwait(false);
+            count++;
+        }, cts.Token, 600);
 
-            cts.Token.Register(() => timeoutSemaphore.Release());
+        await timeoutSemaphore.WaitAsync().ConfigureAwait(false);
 
-            _ = new BlockingTimer(async () =>
-            {
-                await Task.Delay(10).ConfigureAwait(false);
-                count++;
-            }, cts.Token, 600);
+        Console.WriteLine($@"Count: {count}");
+        Assert.IsTrue(cts.IsCancellationRequested);
+        Assert.IsTrue(count > 1, $"Count is {count}");
+        Assert.IsTrue(count <= 3, $"Count is {count}");
+    }
 
-            await timeoutSemaphore.WaitAsync().ConfigureAwait(false);
+    [TestMethod]
+    [Timeout(40000)]
+    [Ignore]
+    public async Task ActionIsSlowerThenBlockingTimer()
+    {
+        //CTS with 1 second timeout
+        int count = 0;
+        int interval = 10;
+        int runtime = 1000;
+        int maxRuns = runtime / interval;
+        var cts = new CancellationTokenSource(runtime);
+        var semaphore = new SemaphoreSlim(0, 1);
 
-            Console.WriteLine($@"Count: {count}");
-            Assert.IsTrue(cts.IsCancellationRequested);
-            Assert.IsTrue(count > 1, $"Count is {count}");
-            Assert.IsTrue(count <= 3, $"Count is {count}");
-        }
-
-        [TestMethod]
-        [Ignore]
-        [Timeout(40000)]
-        public async Task ActionIsSlowerThenBlockingTimer()
+        cts.Token.Register(() =>
         {
-            //CTS with 1 second timeout
-            int count = 0;
-            int interval = 10;
-            int runtime = 1000;
-            int maxRuns = runtime / interval;
-            var cts = new CancellationTokenSource(runtime);
-            var semaphore = new SemaphoreSlim(0, 1);
+            semaphore.Release();
+            Assert.Fail();
+        });
 
-            cts.Token.Register(() =>
+        _ = new BlockingTimer(async () =>
+        {
+            await Task.Delay(interval * 2, cts.Token);
+            if (count++ > maxRuns)
             {
-                semaphore.Release();
-            });
+                await cts.CancelAsync();
+            }
+        }, cts.Token, interval);
 
-            _ = new BlockingTimer(async () =>
-            {
-                await Task.Delay(interval * 2);
-                if (count++ > maxRuns)
-                {
-                    cts.Cancel();
-                    Assert.Fail();
-                }
-            }, cts.Token, interval);
+        await semaphore.WaitAsync().ConfigureAwait(false);
 
-            await semaphore.WaitAsync().ConfigureAwait(false);
-
-            Console.WriteLine($"Count: {count}/{maxRuns}");
-            Assert.IsTrue(cts.IsCancellationRequested);
-            Assert.IsTrue(count >= 1, $"Count is {count}/{maxRuns}");
-            Assert.IsTrue(count < maxRuns, $"Count is {count}/{maxRuns}");
-        }
+        Console.WriteLine($"Count: {count}/{maxRuns}");
+        Assert.IsTrue(cts.IsCancellationRequested);
+        Assert.IsTrue(count >= 1, $"Count is {count}/{maxRuns}");
+        Assert.IsTrue(count < maxRuns, $"Count is {count}/{maxRuns}");
+    }
         
-        [TestMethod]
-        [Timeout(20000)]
-        [Ignore]
-        public async Task StopMethodIsWorking()
+    [TestMethod]
+    [Timeout(20000)]
+    [Ignore]
+    public async Task StopMethodIsWorking()
+    {
+        int count = 0;
+
+        var timer = new BlockingTimer(async () =>
         {
-            int count = 0;
-
-            var timer = new BlockingTimer(async () =>
-            {
-                await Task.Delay(10000).ConfigureAwait(false);
-                count++;
-            }, 10);
+            await Task.Delay(10000).ConfigureAwait(false);
+            count++;
+        }, 10);
 
 
-            await Task.Delay(100).ConfigureAwait(false);
-            timer.Stop();
+        await Task.Delay(100).ConfigureAwait(false);
+        timer.Stop();
             
-            Assert.AreEqual(0, count, $"Count is {count}");
-        }
+        Assert.AreEqual(0, count, $"Count is {count}");
     }
 }
