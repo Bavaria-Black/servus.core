@@ -1,20 +1,67 @@
-# Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+# Servus.Core
 
-# Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+> A general-purpose .NET utility library. Filled with features that you didn't know you actually missed ;)
 
-# Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+[![NuGet](https://img.shields.io/nuget/v/Servus.Core.svg)](https://www.nuget.org/packages/Servus.Core/)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/Bavaria-Black/servus.core/ci.yml?branch=main)](https://github.com/Bavaria-Black/servus.core/actions)
+[![License](https://img.shields.io/github/license/Bavaria-Black/servus.core)](LICENSE)
+[![Downloads](https://img.shields.io/nuget/dt/Servus.Core.svg)](https://www.nuget.org/packages/Servus.Core/)
 
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
+## Overview
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+**Servus.Core** was born out of frustration - the kind every developer knows when you find yourself writing the same helper methods over and over again. This library is a collection of those "I wish this was built into .NET" utilities that somehow always end up missing from your toolkit.
+
+Whether it's string manipulation that actually makes sense, date handling that doesn't make you cry, or collection operations that just work the way you expect them to - Servus.Core has you covered. It's the Swiss Army knife for .NET developers who are tired of reinventing the wheel.
+
+## Why Servus.Core?
+
+- **Born from Real Projects**: Every utility comes from actual production use cases, not theoretical scenarios
+- **No more Copy-Paste Programming**: Stop copying helper methods between projects
+- **Just Works**: Simple utilities that do exactly what you expect without surprises
+
+## Installation
+
+### Package Manager
+```
+Install-Package Servus.Core
+```
+
+### .NET CLI
+```bash
+dotnet add package Servus.Core
+```
+
+### PackageReference
+```xml
+<PackageReference Include="Servus.Core" Version="1.0.0" />
+```
+
+## Contributing
+
+Contributions are welcome! This library grows with the community's needs.
+
+### How to Contribute
+
+1. **Fork** the repository
+2. **Create** a feature branch: `git checkout -b feature/amazing-utility`
+3. **Write** tests for your changes
+4. **Ensure** all tests pass: `dotnet test`
+5. **Submit** a Pull Request
+
+### Contribution Guidelines
+
+- Follow existing code style and conventions
+- Include unit tests for new features
+- Keep changes focused and atomic
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+**Servus and happy coding!** 🥨
+
+*Feel free to use it and feel free to contribute other useful stuff.*
+
+For questions or support, please [open an issue](https://github.com/Bavaria-Black/servus.core/issues).
