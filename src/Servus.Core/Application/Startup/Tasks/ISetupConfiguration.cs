@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 
@@ -12,4 +13,19 @@ public interface ISetupConfiguration
 public interface ISetupApplicationHost
 {
     void SetupApplication(WebApplication app, CancellationToken token);
+}
+
+public interface ISetupApplicationStartedTask
+{
+    void OnApplicationStarted(IServiceProvider serviceProvider);
+}
+
+public interface ISetupApplicationShutdownTask
+{
+    void OnApplicationShuttingDown(IServiceProvider serviceProvider);
+}
+
+public interface ISetupApplicationStoppedTask
+{
+    void OnApplicationStopped();
 }
