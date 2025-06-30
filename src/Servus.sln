@@ -18,6 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "files", "files", "{E7268A44
 	ProjectSection(SolutionItems) = preProject
 		..\azure-pipelines.yml = ..\azure-pipelines.yml
 		..\README.md = ..\README.md
+		..\.github\workflows\build-and-release.yml = ..\.github\workflows\build-and-release.yml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Servus.Core", "Servus.Core\Servus.Core.csproj", "{DBC75291-D401-4987-AB4A-229CD90CCDA6}"

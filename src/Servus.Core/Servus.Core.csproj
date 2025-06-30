@@ -1,4 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  
+  <PropertyGroup>
+    <Authors>Christian Dirnhofer, Andreas Huber, Max Dhom</Authors>
+    <Company>Bavaria-Black</Company>
+    <PackageIcon>logo.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/Bavaria-Black/servus.core</RepositoryUrl>
+  </PropertyGroup>
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -14,6 +22,7 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="../../README.md" />
+    <None Include="../../README.md" Pack="true" PackagePath="\" />
+    <None Include="../../logo.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 </Project>
