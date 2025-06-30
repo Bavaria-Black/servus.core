@@ -3,7 +3,7 @@
 > A general-purpose .NET utility library. Filled with features that you didn't know you actually missed ;)
 
 [![NuGet](https://img.shields.io/nuget/v/Servus.Core.svg)](https://www.nuget.org/packages/Servus.Core/)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/Bavaria-Black/servus.core/ci.yml?branch=main)](https://github.com/Bavaria-Black/servus.core/actions)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/Bavaria-Black/servus.core/build-and-release.yml?branch=develop)](https://github.com/Bavaria-Black/servus.core/actions)
 [![License](https://img.shields.io/github/license/Bavaria-Black/servus.core)](LICENSE)
 [![Downloads](https://img.shields.io/nuget/dt/Servus.Core.svg)](https://www.nuget.org/packages/Servus.Core/)
 
