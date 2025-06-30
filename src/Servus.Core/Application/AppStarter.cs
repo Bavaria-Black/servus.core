@@ -27,7 +27,6 @@ public static class AppStarter
     public static async Task RunAsync(WebApplicationBuilder builder, AppConfigurationBase configuration,
         CancellationToken token = default)
         => await InternalStartAsync(builder, configuration, app => app.RunAsync(), token);
-
     
     public static async Task StartAsync<T>(CancellationToken token)
         where T : AppConfigurationBase, new()
@@ -41,6 +40,7 @@ public static class AppStarter
         var builder = WebApplication.CreateBuilder(Environment.GetCommandLineArgs());
         await StartAsync(builder, configuration, token).ConfigureAwait(false);
     }
+
     public static async Task StartAsync(WebApplicationBuilder builder, AppConfigurationBase configuration,
         CancellationToken token)
         => await InternalStartAsync(builder, configuration, app => app.StartAsync(token), token);
@@ -62,13 +62,27 @@ public static class AppStarter
         }
     }
 
-    private static Task<WebApplication> CoreSetupAsync(WebApplicationBuilder builder, AppConfigurationBase configuration,
+    private static Task<WebApplication> CoreSetupAsync(WebApplicationBuilder builder,
+        AppConfigurationBase configuration,
         CancellationTokenSource cts)
     {
         configuration.SetupServices(builder.Services, builder.Configuration);
-        var app = builder.Build();
 
+        var app = builder.Build();
         configuration.InvokeIf<ISetupApplicationHost>(d => d.SetupApplication(app, cts.Token));
+
+        SetupApplicationLifetime(configuration, app);
+
         return Task.FromResult(app);
+    }
+
+    private static void SetupApplicationLifetime(AppConfigurationBase configuration, WebApplication app)
+    {
+        configuration.InvokeIf<ISetupApplicationStartedTask>(t =>
+            app.Lifetime.ApplicationStarted.Register(() => t.OnApplicationStarted(app.Services)));
+        configuration.InvokeIf<ISetupApplicationShutdownTask>(t =>
+            app.Lifetime.ApplicationStopping.Register(() => t.OnApplicationShuttingDown(app.Services)));
+        configuration.InvokeIf<ISetupApplicationStoppedTask>(t =>
+            app.Lifetime.ApplicationStopped.Register(t.OnApplicationStopped));
     }
 }
