@@ -5,6 +5,10 @@
         <TargetFramework>net8.0</TargetFramework>
         <LangVersion>12</LangVersion>
     </PropertyGroup>
+    
+    <PropertyGroup>
+        <IsPackable>False</IsPackable>
+    </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="BenchmarkDotNet" Version="0.15.2" />
