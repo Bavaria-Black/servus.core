@@ -7,20 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Servus.Core.Tests", "Servus
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Servus.Benchmarks", "Servus.Benchmarks\Servus.Benchmarks.csproj", "{357F95E4-AD95-4DAA-8623-E7A5AE905B21}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{3CD71B3A-9A18-403A-87B4-856BEE44CB21}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "powershell", "powershell", "{42427CE6-3E5D-42DB-922F-2027A952FC01}"
-	ProjectSection(SolutionItems) = preProject
-		..\build\powershell\notification.ps1 = ..\build\powershell\notification.ps1
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "files", "files", "{E7268A44-EA38-483A-9B1A-C48D58F8AEC9}"
-	ProjectSection(SolutionItems) = preProject
-		..\azure-pipelines.yml = ..\azure-pipelines.yml
-		..\README.md = ..\README.md
-		..\.github\workflows\build-and-release.yml = ..\.github\workflows\build-and-release.yml
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Servus.Core", "Servus.Core\Servus.Core.csproj", "{DBC75291-D401-4987-AB4A-229CD90CCDA6}"
 EndProject
 Global
@@ -46,7 +32,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{42427CE6-3E5D-42DB-922F-2027A952FC01} = {3CD71B3A-9A18-403A-87B4-856BEE44CB21}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C9E01EFA-6F6C-4C8F-978E-3AEE878DED69}
