@@ -50,6 +50,7 @@ public class TaskRegistryTests
         
         var cts = new CancellationTokenSource();
         await registry.RunAllAsyncParallel(app.Services, cts.Token);
+        await registry.RunAllAsync(app.Services, cts.Token);
     }
     
     [TestMethod]
