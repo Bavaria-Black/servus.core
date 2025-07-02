@@ -43,14 +43,14 @@ public class TaskRegistryTests
     {
         var builder = WebApplication.CreateBuilder();
         builder.Services.AddSingleton<TestInjectable>();
-        var registry = new TaskRegistry<IAsyncTask>();
+        var registry = new ActionRegistry<IAsyncTask>();
         registry.Register<TestTask>();
 
         var app = builder.Build();
         
         var cts = new CancellationTokenSource();
-        await registry.RunAllAsyncParallel(app.Services, cts.Token);
-        await registry.RunAllAsync(app.Services, cts.Token);
+        await registry.RunAsyncParallel(app.Services, (f,c) => f.RunAsync(c), cts.Token);
+        await registry.RunAllAsync(app.Services, f => f.RunAsync(cts.Token));
     }
     
     [TestMethod]
@@ -58,7 +58,7 @@ public class TaskRegistryTests
     {
         var builder = WebApplication.CreateBuilder();
         builder.Services.AddSingleton<TestInjectable>();
-        var registry = new TaskRegistry<IAsyncTask<bool>, bool>();
+        var registry = new ActionRegistry<IAsyncTask<bool>, bool>();
         registry.Register<TestTask>();
 
         var app = builder.Build();

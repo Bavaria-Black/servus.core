@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Builder;
 using Servus.Core.Application.Startup;
 using Servus.Core.Application.Startup.Tasks;
+using Servus.Core.Collections;
 using Servus.Core.Reflection;
+using Servus.Core.Threading.Tasks;
 
 
 namespace Servus.Core.Application;
@@ -114,7 +116,7 @@ public static class AppStarter
         }
     }
 
-    private static Task<WebApplication> CoreSetupAsync(WebApplicationBuilder builder,
+    private static async Task<WebApplication> CoreSetupAsync(WebApplicationBuilder builder,
         AppConfigurationBase configuration,
         CancellationTokenSource cts)
     {
@@ -124,8 +126,16 @@ public static class AppStarter
         configuration.InvokeIf<ISetupApplicationHost>(d => d.SetupApplication(app, cts.Token));
 
         SetupApplicationLifetime(configuration, app);
+        await SetupPreStartupTasks(configuration, app.Services, cts.Token);
+        return app;
+    }
 
-        return Task.FromResult(app);
+    private static async Task SetupPreStartupTasks(AppConfigurationBase configuration, IServiceProvider sp, CancellationToken token)
+    {
+        var registry = new ActionRegistry<IAsyncTask>();
+        configuration.InvokeIf<ISetupPreStartupTasks>(f => f.OnRegisterPreStartupTasks(registry));
+        
+        await registry.RunAllAsync(sp, f => f.RunAsync(token));
     }
 
     private static void SetupApplicationLifetime(AppConfigurationBase configuration, WebApplication app)

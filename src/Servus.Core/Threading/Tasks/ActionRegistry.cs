@@ -1,14 +1,60 @@
-﻿using Servus.Core.Application;
+﻿using System.Runtime.CompilerServices;
+using Servus.Core.Application;
 
+namespace Servus.Core.Threading.Tasks;
 
-namespace Servus.Core.Collections;
+public interface IActionRegistryRunner<out T>
+{
+    /// <summary>
+    /// Executes all registered actions synchronously using the provided executor function.
+    /// </summary>
+    /// <param name="sp">The service provider used to resolve registered types.</param>
+    /// <param name="executor">The function that defines how each action should be executed.</param>
+    /// <exception cref="InvalidOperationException">Thrown when a registered type cannot be resolved from the service provider.</exception>
+    void RunAll(IServiceProvider sp, Action<T> executor);
+
+    /// <summary>
+    /// Executes all registered actions asynchronously in parallel using the provided executor function.
+    /// </summary>
+    /// <param name="sp">The service provider used to resolve registered types.</param>
+    /// <param name="executor">The async function that defines how each action should be executed.</param>
+    /// <param name="cancellationToken">The cancellation token to cancel the parallel execution.</param>
+    /// <returns>A ValueTask representing the asynchronous parallel execution of all actions.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when a registered type cannot be resolved from the service provider.</exception>
+    /// <exception cref="OperationCanceledException">Thrown when the operation is cancelled via the cancellation token.</exception>
+    ValueTask RunAsyncParallel(IServiceProvider sp, Func<T, CancellationToken, ValueTask> executor, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Executes all registered actions asynchronously in sequence using the provided executor function.
+    /// </summary>
+    /// <param name="sp">The service provider used to resolve registered types.</param>
+    /// <param name="executor">The async function that defines how each action should be executed.</param>
+    /// <returns>A ValueTask representing the asynchronous sequential execution of all actions.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when a registered type cannot be resolved from the service provider.</exception>
+    ValueTask RunAllAsync(IServiceProvider sp, Func<T, ValueTask> executor);
+}
+
+public interface IActionRegistry<T>
+{
+    /// <summary>
+    /// Registers an action type to be resolved through dependency injection when executed.
+    /// </summary>
+    /// <typeparam name="TImplementation">The concrete implementation type that implements T.</typeparam>
+    void Register<TImplementation>() where TImplementation : T;
+
+    /// <summary>
+    /// Registers a pre-resolved action instance.
+    /// </summary>
+    /// <param name="instance">The action instance to register.</param>
+    void Register(T instance);
+}
 
 /// <summary>
 /// A registry that manages and executes a collection of actions of type T,
 /// supporting both type-based registration with dependency injection and instance-based registration.
 /// </summary>
 /// <typeparam name="T">The base type or interface that all registered actions must implement.</typeparam>
-public class ActionRegistry<T>
+public class ActionRegistry<T> : IActionRegistry<T>, IActionRegistryRunner<T>
 {
     private readonly List<T> _resolvedTasks = [];
     private readonly List<Type> _taskTypes = [];
@@ -91,6 +137,30 @@ public class ActionRegistry<T>
         foreach (var action in GetActions(sp))
         {
             await executor(action).AsTask();
+        }
+    }
+}
+
+public class ActionRegistry<TIn, TOut> : ActionRegistry<TIn> where TIn : IAsyncTask<TOut>
+{
+    /// <summary>
+    /// Executes all registered tasks asynchronously and yields their results as they complete.
+    /// </summary>
+    /// <param name="serviceProvider">The service provider used to resolve registered task types.</param>
+    /// <param name="token">The cancellation token to cancel the task execution. Default is default(CancellationToken).</param>
+    /// <returns>An async enumerable that yields the results of each executed task as they complete.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when a registered task type cannot be resolved from the service provider.</exception>
+    /// <exception cref="OperationCanceledException">Thrown when the operation is cancelled via the cancellation token.</exception>
+    /// <remarks>
+    /// Tasks are executed sequentially, and results are yielded as each task completes. 
+    /// The EnumeratorCancellation attribute ensures proper cancellation token propagation through the async enumerable.
+    /// </remarks>
+
+    public async IAsyncEnumerable<TOut> RunAllAsync(IServiceProvider serviceProvider, [EnumeratorCancellation] CancellationToken token = default)
+    {
+        foreach (var task in GetActions(serviceProvider))
+        {
+            yield return await task.RunAsync(token);
         }
     }
 }
