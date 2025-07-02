@@ -1,7 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Builder;
 using Servus.Core.Application.Startup;
 using Servus.Core.Application.Startup.Tasks;

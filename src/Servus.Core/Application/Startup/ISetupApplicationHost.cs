@@ -1,4 +1,3 @@
-using System.Threading;
 using Microsoft.AspNetCore.Builder;
 
 namespace Servus.Core.Application.Startup;

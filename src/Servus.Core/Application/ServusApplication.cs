@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Servus.Core.Application;
+﻿namespace Servus.Core.Application;
 
 public static class ServusApplication
 {

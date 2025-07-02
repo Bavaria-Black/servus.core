@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Servus.Core.Concurrency;
+﻿namespace Servus.Core.Concurrency;
 
 public static class NamedSemaphoreSlimStore
 {

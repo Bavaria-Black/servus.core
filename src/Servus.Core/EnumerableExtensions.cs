@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Servus.Core;
+﻿namespace Servus.Core;
 
 public static class CollectionExtensions
 {

@@ -1,9 +1,7 @@
 ﻿using Servus.Core.Encoding;
-using System;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
-using System.Threading.Tasks;
 
 [assembly: InternalsVisibleTo("Servus.Core.Tests")]
 namespace Servus.Core.Security.Hardware.Yubikey;

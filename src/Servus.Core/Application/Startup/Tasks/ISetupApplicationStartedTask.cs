@@ -1,5 +1,3 @@
-using System;
-
 namespace Servus.Core.Application.Startup.Tasks;
 
 public interface ISetupApplicationStartedTask
