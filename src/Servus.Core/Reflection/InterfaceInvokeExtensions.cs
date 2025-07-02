@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
-
-namespace Servus.Core.Reflection;
+﻿namespace Servus.Core.Reflection;
 
 public static class InterfaceInvokeExtensions
 {

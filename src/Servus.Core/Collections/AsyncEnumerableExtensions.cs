@@ -1,4 +1,4 @@
-﻿namespace Servus.Core.Enumerables;
+﻿namespace Servus.Core.Collections;
 
 public static class AsyncEnumerableExtensions
 {

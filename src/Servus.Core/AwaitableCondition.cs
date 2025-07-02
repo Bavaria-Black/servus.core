@@ -1,7 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-
-namespace Servus.Core;
+﻿namespace Servus.Core;
 
 public abstract class AwaitableCondition
 {

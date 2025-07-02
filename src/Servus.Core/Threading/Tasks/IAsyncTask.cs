@@ -1,4 +1,4 @@
-﻿namespace Servus.Core.Concurrency.Tasks;
+﻿namespace Servus.Core.Threading.Tasks;
 
 public interface IAsyncTask : ITaskMarker
 {

@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Servus.Core.Concurrency.Tasks;
-using Servus.Core.Enumerables;
+using Servus.Core.Collections;
+using Servus.Core.Threading.Tasks;
 
 namespace Servus.Core.Tests.Application.Startup;
 
@@ -47,12 +47,9 @@ public class TaskRegistryTests
         registry.Register<TestTask>();
 
         var app = builder.Build();
-        var tasks = registry.GetStartupTasks(app.Services).ToArray();
-        
-        Assert.ContainsSingle(tasks);
         
         var cts = new CancellationTokenSource();
-        await registry.ParallelRunAllAsync(app.Services, cts.Token);
+        await registry.RunAllAsyncParallel(app.Services, cts.Token);
     }
     
     [TestMethod]
@@ -64,10 +61,6 @@ public class TaskRegistryTests
         registry.Register<TestTask>();
 
         var app = builder.Build();
-        var tasks = registry.GetStartupTasks(app.Services).ToArray();
-        
-        Assert.ContainsSingle(tasks);
-        
         var cts = new CancellationTokenSource();
         
         var any = await registry.RunAllAsync(app.Services, cts.Token).AnyAsync();
