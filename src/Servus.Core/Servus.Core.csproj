@@ -28,4 +28,18 @@
     <None Include="../../.github/workflows/build-and-release.yml" Pack="true" PackagePath="\" />
     <None Include="../../LICENSE" Pack="true" PackagePath="\"/>
   </ItemGroup>
+  <Target Name="ServusLogo" BeforeTargets="Build">
+    <Message Text=" " Importance="high" />
+    <Message Text=" " Importance="high" /> 
+    <Message Text="                                   /\" Importance="high" />
+    <Message Text="                                  /  \" Importance="high" />
+    <Message Text="                                 /    \__" Importance="high" />
+    <Message Text="                           /\   /        \    /\" Importance="high" />
+    <Message Text="                          /  \_/          \__/  \" Importance="high" />
+    <Message Text="                         /                       \" Importance="high" />
+    <Message Text="                        /_________________________\" Importance="high" />
+    <Message Text="                                  servus!" Importance="high" />
+    <Message Text=" " Importance="high" />
+    <Message Text=" " Importance="high" />
+  </Target>
 </Project>

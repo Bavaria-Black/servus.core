@@ -1,12 +1,16 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
+using Servus.Core.Application.Startup;
 using Servus.Core.Application.Startup.Tasks;
 using Servus.Core.Reflection;
 
+
 namespace Servus.Core.Application;
 
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class AppStarter
 {
     public static async Task RunAsync<T>(CancellationToken token = default)
