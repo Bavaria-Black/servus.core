@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
 using Microsoft.AspNetCore.Builder;
 using Servus.Core.Application.Startup;
 using Servus.Core.Application.Startup.Tasks;
@@ -126,16 +127,27 @@ public static class AppStarter
         configuration.InvokeIf<ISetupApplicationHost>(d => d.SetupApplication(app, cts.Token));
 
         SetupApplicationLifetime(configuration, app);
-        await SetupPreStartupTasks(configuration, app.Services, cts.Token);
+        
+        await Setup<IStartupGate, ISetupStartupGates>(configuration, app.Services, cts.Token,
+            (setup, registry) => setup.OnRegisterStartupGates(registry),
+            (gate, token)  => gate.CheckAsync(token));
+
+        await Setup<IAsyncTask, ISetupPreStartupTasks>(configuration, app.Services, cts.Token,
+            (setup, registry) => setup.OnRegisterPreStartupTasks(registry),
+            (task, token) => task.RunAsync(token) 
+        );
+        
         return app;
     }
 
-    private static async Task SetupPreStartupTasks(AppConfigurationBase configuration, IServiceProvider sp, CancellationToken token)
+    private static async Task Setup<TType, TImplements>(AppConfigurationBase configuration, IServiceProvider sp,
+        CancellationToken token, Action<TImplements, ActionRegistry<TType>> setupMethod, Func<TType, CancellationToken, ValueTask> run)
+    where TImplements : class
     {
-        var registry = new ActionRegistry<IAsyncTask>();
-        configuration.InvokeIf<ISetupPreStartupTasks>(f => f.OnRegisterPreStartupTasks(registry));
+        var registry = new ActionRegistry<TType>();
+        configuration.InvokeIf<TImplements>(implements => setupMethod(implements, registry));
         
-        await registry.RunAllAsync(sp, f => f.RunAsync(token));
+        await registry.RunAllAsync(sp, run, token).ConfigureAwait(false);
     }
 
     private static void SetupApplicationLifetime(AppConfigurationBase configuration, WebApplication app)

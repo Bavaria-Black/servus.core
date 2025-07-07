@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,10 +6,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Servus.Core.Collections;
 using Servus.Core.Threading.Tasks;
 
-namespace Servus.Core.Tests.Application.Startup;
+namespace Servus.Core.Tests.Threading.Tasks;
 
 [TestClass]
-public class TaskRegistryTests
+public class ActionRegistryTests
 {
     public class TestInjectable
     {
@@ -50,7 +49,7 @@ public class TaskRegistryTests
         
         var cts = new CancellationTokenSource();
         await registry.RunAsyncParallel(app.Services, (f,c) => f.RunAsync(c), cts.Token);
-        await registry.RunAllAsync(app.Services, f => f.RunAsync(cts.Token));
+        await registry.RunAllAsync(app.Services, (f, t) => f.RunAsync(t), cts.Token);
     }
     
     [TestMethod]
