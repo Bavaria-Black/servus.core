@@ -8,7 +8,7 @@ public class Config : ManualConfig
 {
     public Config()
     {
-        Add(CsvMeasurementsExporter.Default);
-        Add(RPlotExporter.Default);
+        AddExporter(CsvMeasurementsExporter.Default);
+        AddExporter(RPlotExporter.Default);
     }
 }
