@@ -7,8 +7,8 @@ namespace Servus.Core.Tests.Collections;
 [TestClass]
 public class LazyValueCacheTests
 {
-    private LazyValueCache<string, string> _stringCache;
-    private LazyValueCache<int, object> _objectCache;
+    private LazyValueCache<string, string> _stringCache = null!;
+    private LazyValueCache<int, object> _objectCache = null!;
 
     [TestInitialize]
     public void Setup()
@@ -196,7 +196,7 @@ public class LazyValueCacheTests
     public void Get_NullProvider_ThrowsArgumentNullException()
     {
         // Act
-        _stringCache.Get("key", null);
+        _stringCache.Get("key", null!);
     }
 
     [TestMethod]

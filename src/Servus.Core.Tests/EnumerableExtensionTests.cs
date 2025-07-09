@@ -5,6 +5,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Servus.Core.Tests;
 
+#nullable disable
+
 [TestClass]
 public class EnumerableExtensionTests
 {
