@@ -7,7 +7,7 @@ namespace Servus.Core.Tests.Parsing.Text;
 [TestClass]
 public class LineKeyValueParserTests
 {
-    private LineKeyValueParser _parser;
+    private LineKeyValueParser _parser = null!;
 
     [TestInitialize]
     public void Init()

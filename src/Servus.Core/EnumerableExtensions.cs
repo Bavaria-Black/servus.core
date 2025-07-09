@@ -30,4 +30,41 @@ public static class EnumerableExtensions
     {
         return items.GroupBy(property).Select(x => x.First());
     }
+
+    public static int GetIndex<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(predicate);
+        
+        var index = 0;
+        var enumerator = source.GetEnumerator();
+        using var disposable = enumerator as IDisposable;
+        while (enumerator.MoveNext())
+        {
+            if (predicate(enumerator.Current)) return index;
+            index++;
+        }
+
+        return -1;
+    }
+
+    public static void ForEachIndexed<TSource>(this IEnumerable<TSource> source, Action<TSource, int> action)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(action);
+        
+        var index = 0;
+        source.ForEach(a => action(a, index++));
+    }
+
+    public static void ForEach<TSource>(this IEnumerable<TSource> source, Action<TSource> action)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(action);
+
+        foreach (var item in source)
+        {
+            action(item);
+        }
+    }
 }
