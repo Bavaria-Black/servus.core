@@ -27,7 +27,7 @@ public sealed class LazyValueCache<TKey, TValue> where TKey : notnull
         })!;
     }
 
-    public bool TryPeek(TKey type, [NotNullWhen(true)] out TValue? value)
+    public bool TryGetValue(TKey type, [NotNullWhen(true)] out TValue? value)
     {
         return _cache.TryGetValue(type, out value);
     }

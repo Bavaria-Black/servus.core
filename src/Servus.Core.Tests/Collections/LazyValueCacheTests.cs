@@ -306,7 +306,7 @@ public class LazyValueCacheTests
 
     #endregion
     
-    #region TryPeek Tests
+    #region TryGet Tests
 
         [TestMethod]
         [DataRow("key1", "value1")]
@@ -319,7 +319,7 @@ public class LazyValueCacheTests
             _stringCache.GetOrCreate(key, () => expectedValue); // Cache the value first
 
             // Act
-            var result = _stringCache.TryPeek(key, out var value);
+            var result = _stringCache.TryGetValue(key, out var value);
 
             // Assert
             Assert.IsTrue(result);
@@ -334,7 +334,7 @@ public class LazyValueCacheTests
         public void TryPeek_NonExistentKey_ReturnsFalseWithDefaultValue(string key)
         {
             // Act
-            var result = _stringCache.TryPeek(key, out var value);
+            var result = _stringCache.TryGetValue(key, out var value);
 
             // Assert
             Assert.IsFalse(result);
@@ -349,7 +349,7 @@ public class LazyValueCacheTests
             _objectCache.GetOrCreate(key, () => null); // Cache null value
 
             // Act
-            var result = _objectCache.TryPeek(key, out var value);
+            var result = _objectCache.TryGetValue(key, out var value);
 
             // Assert
             Assert.IsTrue(result);
@@ -364,8 +364,8 @@ public class LazyValueCacheTests
             intCache.GetOrCreate("int_key", () => 42);
 
             // Act
-            var existsResult = intCache.TryPeek("int_key", out var existingValue);
-            var notExistsResult = intCache.TryPeek("missing_key", out var missingValue);
+            var existsResult = intCache.TryGetValue("int_key", out var existingValue);
+            var notExistsResult = intCache.TryGetValue("missing_key", out var missingValue);
 
             // Assert
             Assert.IsTrue(existsResult);
@@ -382,7 +382,7 @@ public class LazyValueCacheTests
             var key = "test_key";
 
             // Act - TryPeek on non-existent key
-            var result = _stringCache.TryPeek(key, out var value);
+            var result = _stringCache.TryGetValue(key, out var value);
 
             // Assert
             Assert.IsFalse(result);
@@ -400,7 +400,7 @@ public class LazyValueCacheTests
             // Act - First use Get to cache
             var getValue = _stringCache.GetOrCreate(key, () => expectedValue);
             // Then use TryPeek
-            var peekResult = _stringCache.TryPeek(key, out var peekValue);
+            var peekResult = _stringCache.TryGetValue(key, out var peekValue);
 
             // Assert
             Assert.AreEqual(expectedValue, getValue);
@@ -417,7 +417,7 @@ public class LazyValueCacheTests
             _objectCache.GetOrCreate(key, () => expectedObject);
 
             // Act
-            var result = _objectCache.TryPeek(key, out var value);
+            var result = _objectCache.TryGetValue(key, out var value);
 
             // Assert
             Assert.IsTrue(result);
@@ -432,9 +432,9 @@ public class LazyValueCacheTests
             _stringCache.GetOrCreate("key2", () => "value2");
 
             // Act
-            var result1 = _stringCache.TryPeek("key1", out var value1);
-            var result2 = _stringCache.TryPeek("key2", out var value2);
-            var result3 = _stringCache.TryPeek("key3", out var value3);
+            var result1 = _stringCache.TryGetValue("key1", out var value1);
+            var result2 = _stringCache.TryGetValue("key2", out var value2);
+            var result3 = _stringCache.TryGetValue("key3", out var value3);
 
             // Assert
             Assert.IsTrue(result1);
