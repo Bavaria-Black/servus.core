@@ -305,4 +305,145 @@ public class LazyValueCacheTests
     }
 
     #endregion
+    
+    #region TryPeek Tests
+
+        [TestMethod]
+        [DataRow("key1", "value1")]
+        [DataRow("key2", "value2")]
+        [DataRow("", "empty_key_value")]
+        [DataRow("special@key#123", "special_value")]
+        public void TryPeek_ExistingKey_ReturnsTrueWithValue(string key, string expectedValue)
+        {
+            // Arrange
+            _stringCache.Get(key, () => expectedValue); // Cache the value first
+
+            // Act
+            var result = _stringCache.TryPeek(key, out var value);
+
+            // Assert
+            Assert.IsTrue(result);
+            Assert.AreEqual(expectedValue, value);
+        }
+
+        [TestMethod]
+        [DataRow("nonexistent1")]
+        [DataRow("nonexistent2")]
+        [DataRow("")]
+        [DataRow("never_cached")]
+        public void TryPeek_NonExistentKey_ReturnsFalseWithDefaultValue(string key)
+        {
+            // Act
+            var result = _stringCache.TryPeek(key, out var value);
+
+            // Assert
+            Assert.IsFalse(result);
+            Assert.IsNull(value); // Default value for reference types
+        }
+
+        [TestMethod]
+        public void TryPeek_NullValue_ReturnsTrueWithNull()
+        {
+            // Arrange
+            var key = 1;
+            _objectCache.Get(key, () => null); // Cache null value
+
+            // Act
+            var result = _objectCache.TryPeek(key, out var value);
+
+            // Assert
+            Assert.IsTrue(result);
+            Assert.IsNull(value);
+        }
+
+        [TestMethod]
+        public void TryPeek_ValueTypes_WorksCorrectly()
+        {
+            // Arrange
+            var intCache = new LazyValueCache<string, int>();
+            intCache.Get("int_key", () => 42);
+
+            // Act
+            var existsResult = intCache.TryPeek("int_key", out var existingValue);
+            var notExistsResult = intCache.TryPeek("missing_key", out var missingValue);
+
+            // Assert
+            Assert.IsTrue(existsResult);
+            Assert.AreEqual(42, existingValue);
+            Assert.IsFalse(notExistsResult);
+            Assert.AreEqual(0, missingValue); // Default value for int
+        }
+
+        [TestMethod]
+        public void TryPeek_DoesNotTriggerProvider()
+        {
+            // Arrange
+            var providerCalled = false;
+            var key = "test_key";
+
+            // Act - TryPeek on non-existent key
+            var result = _stringCache.TryPeek(key, out var value);
+
+            // Assert
+            Assert.IsFalse(result);
+            Assert.IsNull(value);
+            Assert.IsFalse(providerCalled, "TryPeek should not trigger any provider");
+        }
+
+        [TestMethod]
+        public void TryPeek_AfterGet_ReturnsCorrectValue()
+        {
+            // Arrange
+            var key = "combined_test";
+            var expectedValue = "test_value";
+
+            // Act - First use Get to cache
+            var getValue = _stringCache.Get(key, () => expectedValue);
+            // Then use TryPeek
+            var peekResult = _stringCache.TryPeek(key, out var peekValue);
+
+            // Assert
+            Assert.AreEqual(expectedValue, getValue);
+            Assert.IsTrue(peekResult);
+            Assert.AreEqual(expectedValue, peekValue);
+        }
+
+        [TestMethod]
+        public void TryPeek_ComplexObjects_ReturnsSameReference()
+        {
+            // Arrange
+            var key = 1;
+            var expectedObject = new { Name = "Test", Value = 123 };
+            _objectCache.Get(key, () => expectedObject);
+
+            // Act
+            var result = _objectCache.TryPeek(key, out var value);
+
+            // Assert
+            Assert.IsTrue(result);
+            Assert.AreSame(expectedObject, value);
+        }
+
+        [TestMethod]
+        public void TryPeek_MultipleKeys_ReturnsCorrectValues()
+        {
+            // Arrange
+            _stringCache.Get("key1", () => "value1");
+            _stringCache.Get("key2", () => "value2");
+
+            // Act
+            var result1 = _stringCache.TryPeek("key1", out var value1);
+            var result2 = _stringCache.TryPeek("key2", out var value2);
+            var result3 = _stringCache.TryPeek("key3", out var value3);
+
+            // Assert
+            Assert.IsTrue(result1);
+            Assert.AreEqual("value1", value1);
+            Assert.IsTrue(result2);
+            Assert.AreEqual("value2", value2);
+            Assert.IsFalse(result3);
+            Assert.IsNull(value3);
+        }
+
+        #endregion
 }
