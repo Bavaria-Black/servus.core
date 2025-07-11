@@ -27,7 +27,7 @@ public class LazyValueCacheTests
     public void Get_FirstCall_CallsProviderAndReturnsValue(string key, string expectedValue)
     {
         // Act
-        var result = _stringCache.Get(key, () => expectedValue);
+        var result = _stringCache.GetOrCreate(key, () => expectedValue);
 
         // Assert
         Assert.AreEqual(expectedValue, result);
@@ -48,9 +48,9 @@ public class LazyValueCacheTests
         }
 
         // Act - First call
-        var result1 = _stringCache.Get(key, Provider);
+        var result1 = _stringCache.GetOrCreate(key, Provider);
         // Act - Second call
-        var result2 = _stringCache.Get(key, Provider);
+        var result2 = _stringCache.GetOrCreate(key, Provider);
 
         // Assert
         Assert.AreEqual(expectedValue, result1);
@@ -66,22 +66,22 @@ public class LazyValueCacheTests
         var key2CallCount = 0;
 
         // Act
-        var result1a = _stringCache.Get("key1", () =>
+        var result1a = _stringCache.GetOrCreate("key1", () =>
         {
             key1CallCount++;
             return "value1";
         });
-        var result2a = _stringCache.Get("key2", () =>
+        var result2a = _stringCache.GetOrCreate("key2", () =>
         {
             key2CallCount++;
             return "value2";
         });
-        var result1b = _stringCache.Get("key1", () =>
+        var result1b = _stringCache.GetOrCreate("key1", () =>
         {
             key1CallCount++;
             return "value1";
         });
-        var result2b = _stringCache.Get("key2", () =>
+        var result2b = _stringCache.GetOrCreate("key2", () =>
         {
             key2CallCount++;
             return "value2";
@@ -111,7 +111,7 @@ public class LazyValueCacheTests
         var intCache = new LazyValueCache<int, int>();
 
         // Act
-        var result = intCache.Get(key, () => expectedValue);
+        var result = intCache.GetOrCreate(key, () => expectedValue);
 
         // Assert
         Assert.AreEqual(expectedValue, result);
@@ -124,8 +124,8 @@ public class LazyValueCacheTests
         var boolCache = new LazyValueCache<string, bool>();
 
         // Act
-        var trueResult = boolCache.Get("true_key", () => true);
-        var falseResult = boolCache.Get("false_key", () => false);
+        var trueResult = boolCache.GetOrCreate("true_key", () => true);
+        var falseResult = boolCache.GetOrCreate("false_key", () => false);
 
         // Assert
         Assert.IsTrue(trueResult);
@@ -144,12 +144,12 @@ public class LazyValueCacheTests
         var providerCallCount = 0;
 
         // Act
-        var result1 = _objectCache.Get(1, () =>
+        var result1 = _objectCache.GetOrCreate(1, () =>
         {
             providerCallCount++;
             return expectedObject;
         });
-        var result2 = _objectCache.Get(1, () =>
+        var result2 = _objectCache.GetOrCreate(1, () =>
         {
             providerCallCount++;
             return expectedObject;
@@ -170,12 +170,12 @@ public class LazyValueCacheTests
         var providerCallCount = 0;
 
         // Act
-        var result1 = _objectCache.Get(key, () =>
+        var result1 = _objectCache.GetOrCreate(key, () =>
         {
             providerCallCount++;
             return expectedValue;
         });
-        var result2 = _objectCache.Get(key, () =>
+        var result2 = _objectCache.GetOrCreate(key, () =>
         {
             providerCallCount++;
             return expectedValue;
@@ -196,7 +196,7 @@ public class LazyValueCacheTests
     public void Get_NullProvider_ThrowsArgumentNullException()
     {
         // Act
-        _stringCache.Get("key", null!);
+        _stringCache.GetOrCreate("key", null!);
     }
 
     [TestMethod]
@@ -204,7 +204,7 @@ public class LazyValueCacheTests
     public void Get_ProviderThrowsException_PropagatesException()
     {
         // Act
-        _stringCache.Get("key", () => throw new InvalidOperationException("Test exception"));
+        _stringCache.GetOrCreate("key", () => throw new InvalidOperationException("Test exception"));
     }
 
     [TestMethod]
@@ -220,8 +220,8 @@ public class LazyValueCacheTests
         }
 
         // Act & Assert
-        Assert.ThrowsException<InvalidOperationException>(() => _stringCache.Get("key", ThrowingProvider));
-        Assert.ThrowsException<InvalidOperationException>(() => _stringCache.Get("key", ThrowingProvider));
+        Assert.ThrowsException<InvalidOperationException>(() => _stringCache.GetOrCreate("key", ThrowingProvider));
+        Assert.ThrowsException<InvalidOperationException>(() => _stringCache.GetOrCreate("key", ThrowingProvider));
 
         Assert.AreEqual(2, callCount, "Provider should be called again after exception");
     }
@@ -240,9 +240,9 @@ public class LazyValueCacheTests
         }
 
         // Act & Assert
-        Assert.ThrowsException<InvalidOperationException>(() => _stringCache.Get("key", Provider));
-        var result = _stringCache.Get("key", Provider);
-        var cachedResult = _stringCache.Get("key", Provider);
+        Assert.ThrowsException<InvalidOperationException>(() => _stringCache.GetOrCreate("key", Provider));
+        var result = _stringCache.GetOrCreate("key", Provider);
+        var cachedResult = _stringCache.GetOrCreate("key", Provider);
 
         Assert.AreEqual("success", result);
         Assert.AreEqual("success", cachedResult);
@@ -267,9 +267,9 @@ public class LazyValueCacheTests
         }
 
         // Act
-        var result1 = _stringCache.Get("expensive", ExpensiveOperation);
-        var result2 = _stringCache.Get("expensive", ExpensiveOperation);
-        var result3 = _stringCache.Get("expensive", ExpensiveOperation);
+        var result1 = _stringCache.GetOrCreate("expensive", ExpensiveOperation);
+        var result2 = _stringCache.GetOrCreate("expensive", ExpensiveOperation);
+        var result3 = _stringCache.GetOrCreate("expensive", ExpensiveOperation);
 
         // Assert
         Assert.AreEqual("Result_1", result1);
@@ -286,12 +286,12 @@ public class LazyValueCacheTests
         var secondProviderCalled = false;
 
         // Act
-        var result1 = _stringCache.Get("key", () =>
+        var result1 = _stringCache.GetOrCreate("key", () =>
         {
             firstProviderCalled = true;
             return "first";
         });
-        var result2 = _stringCache.Get("key", () =>
+        var result2 = _stringCache.GetOrCreate("key", () =>
         {
             secondProviderCalled = true;
             return "second";
@@ -316,7 +316,7 @@ public class LazyValueCacheTests
         public void TryPeek_ExistingKey_ReturnsTrueWithValue(string key, string expectedValue)
         {
             // Arrange
-            _stringCache.Get(key, () => expectedValue); // Cache the value first
+            _stringCache.GetOrCreate(key, () => expectedValue); // Cache the value first
 
             // Act
             var result = _stringCache.TryPeek(key, out var value);
@@ -346,7 +346,7 @@ public class LazyValueCacheTests
         {
             // Arrange
             var key = 1;
-            _objectCache.Get(key, () => null); // Cache null value
+            _objectCache.GetOrCreate(key, () => null); // Cache null value
 
             // Act
             var result = _objectCache.TryPeek(key, out var value);
@@ -361,7 +361,7 @@ public class LazyValueCacheTests
         {
             // Arrange
             var intCache = new LazyValueCache<string, int>();
-            intCache.Get("int_key", () => 42);
+            intCache.GetOrCreate("int_key", () => 42);
 
             // Act
             var existsResult = intCache.TryPeek("int_key", out var existingValue);
@@ -398,7 +398,7 @@ public class LazyValueCacheTests
             var expectedValue = "test_value";
 
             // Act - First use Get to cache
-            var getValue = _stringCache.Get(key, () => expectedValue);
+            var getValue = _stringCache.GetOrCreate(key, () => expectedValue);
             // Then use TryPeek
             var peekResult = _stringCache.TryPeek(key, out var peekValue);
 
@@ -414,7 +414,7 @@ public class LazyValueCacheTests
             // Arrange
             var key = 1;
             var expectedObject = new { Name = "Test", Value = 123 };
-            _objectCache.Get(key, () => expectedObject);
+            _objectCache.GetOrCreate(key, () => expectedObject);
 
             // Act
             var result = _objectCache.TryPeek(key, out var value);
@@ -428,8 +428,8 @@ public class LazyValueCacheTests
         public void TryPeek_MultipleKeys_ReturnsCorrectValues()
         {
             // Arrange
-            _stringCache.Get("key1", () => "value1");
-            _stringCache.Get("key2", () => "value2");
+            _stringCache.GetOrCreate("key1", () => "value1");
+            _stringCache.GetOrCreate("key2", () => "value2");
 
             // Act
             var result1 = _stringCache.TryPeek("key1", out var value1);
