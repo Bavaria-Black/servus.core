@@ -2,7 +2,7 @@
 
 namespace Servus.Core.Conversion;
 
-public interface IValueConverter
+public interface IStringValueConverter
 {
     Type OutputType { get; }
     

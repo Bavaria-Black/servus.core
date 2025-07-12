@@ -5,12 +5,12 @@ namespace Servus.Core.Conversion;
 
 public class StringConverterCollection
 {
-    private readonly Dictionary<Type, IValueConverter> _converters = new ();
+    private readonly Dictionary<Type, IStringValueConverter> _converters = new ();
     private Func<Exception, object?> _exceptionHandler = (e) => null;
     
     public void RegisterExceptionHandler(Func<Exception, object?> handler) => _exceptionHandler = handler;
 
-    public void Register(IValueConverter converter) => _converters.TryAdd(converter.OutputType, converter);
+    public void Register(IStringValueConverter converter) => _converters.TryAdd(converter.OutputType, converter);
 
     public object? Convert<T>(string value) => Convert(typeof(T), value);
 

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Servus.Core.Conversion;
 
-public sealed class BoolValueConverter : IValueConverter
+public sealed class BoolValueConverter : IStringValueConverter
 {
     private readonly HashSet<string> _trueValues = [];
     private readonly HashSet<string> _falseValues = [];

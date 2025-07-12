@@ -391,7 +391,7 @@ namespace Servus.Core.Tests.Conversion
 
         #region Test Helper Classes
 
-        private class TestStringConverter : IValueConverter
+        private class TestStringConverter : IStringValueConverter
         {
             private readonly string _result;
 
@@ -406,7 +406,7 @@ namespace Servus.Core.Tests.Conversion
         
         private record KeyValue(string Key, string Value);
         
-        private class KeyValueConverter : IValueConverter
+        private class KeyValueConverter : IStringValueConverter
         {
             public Type OutputType => typeof(KeyValue);
             public object? Convert(string value)
