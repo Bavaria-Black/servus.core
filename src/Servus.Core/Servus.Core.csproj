@@ -5,6 +5,7 @@
     <Company>Bavaria-Black</Company>
     <PackageIcon>logo.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryUrl>https://github.com/Bavaria-Black/servus.core</RepositoryUrl>
   </PropertyGroup>
 
@@ -25,5 +26,6 @@
     <None Include="../../README.md" Pack="true" PackagePath="\" />
     <None Include="../../logo.png" Pack="true" PackagePath="\" />
     <None Include="../../.github/workflows/build-and-release.yml" Pack="true" PackagePath="\" />
+    <None Include="../../LICENSE" Pack="true" PackagePath="\"/>
   </ItemGroup>
 </Project>
