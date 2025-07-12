@@ -16,7 +16,7 @@ jobs:
     # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
     runs-on: ubuntu-latest
     outputs:
-      semVer: ${{ steps.gitversion.outputs.semVer }}
+      semVer: ${{ steps.gitversion.outputs.majorMinorPatch }}
       fullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}
     
     steps:
@@ -43,6 +43,7 @@ jobs:
       - name: Display GitVersion outputs
         run: |
           echo "Version: ${{ steps.gitversion.outputs.semVer }}"
+          echo "FullVersion: ${{ steps.gitversion.outputs.fullSemVer }}"
 
       - name: Restore dependencies
         run: dotnet restore ${{ env.PROJECT_PATH }}
