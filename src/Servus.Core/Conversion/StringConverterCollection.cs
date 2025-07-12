@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Servus.Core.Collections;
 
 namespace Servus.Core.Conversion;
 
@@ -10,7 +11,20 @@ public class StringConverterCollection
     
     public void RegisterExceptionHandler(Func<Exception, object?> handler) => _exceptionHandler = handler;
 
-    public void Register(IStringValueConverter converter) => _converters.TryAdd(converter.OutputType, converter);
+    public void Register(IStringValueConverter converter, InsertionBehavior behavior = InsertionBehavior.None)
+    {
+        switch (behavior)
+        {
+            case InsertionBehavior.OverwriteExisting:
+                _converters[converter.OutputType] = converter;
+                break;
+            case InsertionBehavior.ThrowOnExisting when !_converters.TryAdd(converter.OutputType, converter):
+                throw new ArgumentException("Converter already exists", nameof(converter));
+            default:
+                _converters.TryAdd(converter.OutputType, converter);
+                break;
+        }
+    }
 
     public object? Convert<T>(string value) => Convert(typeof(T), value);
 
