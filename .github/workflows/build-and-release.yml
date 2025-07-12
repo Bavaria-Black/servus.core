@@ -16,7 +16,7 @@ jobs:
     # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
     runs-on: ubuntu-latest
     outputs:
-      semVer: ${{ steps.gitversion.outputs.majorMinorPatch }}
+      nugetVersion: ${{ steps.gitversion.outputs.majorMinorPatch }}
       fullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}
     
     steps:
@@ -42,8 +42,8 @@ jobs:
 
       - name: Display GitVersion outputs
         run: |
-          echo "Version: ${{ steps.gitversion.outputs.semVer }}"
-          echo "FullVersion: ${{ steps.gitversion.outputs.fullSemVer }}"
+          echo "Nuget Version: ${{ steps.gitversion.outputs.majorMinorPatch }}"
+          echo "Full Version: ${{ steps.gitversion.outputs.fullSemVer }}"
 
       - name: Restore dependencies
         run: dotnet restore ${{ env.PROJECT_PATH }}
@@ -93,5 +93,5 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git tag -a "v${{ needs.build.outputs.semVer }}" -m "Release v${{ needs.build.outputs.semVer }}"
-          git push origin "v${{ needs.build.outputs.semVer }}"
+          git tag -a "v${{ needs.build.outputs.nugetVersion }}" -m "Release v${{ needs.build.outputs.nugetVersion }}"
+          git push origin "v${{ needs.build.outputs.nugetVersion }}"
