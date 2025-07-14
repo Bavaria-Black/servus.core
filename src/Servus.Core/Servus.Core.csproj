@@ -28,9 +28,6 @@
     <None Include="../../.github/workflows/build-and-release.yml" Pack="true" PackagePath="\" />
     <None Include="../../LICENSE" Pack="true" PackagePath="\"/>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Application\Startup\Checks\" />
-  </ItemGroup>
   <Target Name="ServusLogo" BeforeTargets="Build">
     <Message Text=" " Importance="high" />
     <Message Text=" " Importance="high" /> 

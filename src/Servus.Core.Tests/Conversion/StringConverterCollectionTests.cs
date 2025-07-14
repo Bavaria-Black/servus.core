@@ -7,7 +7,7 @@ namespace Servus.Core.Tests.Conversion
     [TestClass]
     public class StringConverterCollectionTests
     {
-        private StringConverterCollection _collection;
+        private StringConverterCollection _collection = new ();
 
         [TestInitialize]
         public void Setup()
@@ -261,7 +261,7 @@ namespace Servus.Core.Tests.Conversion
         public void Convert_WithCustomExceptionHandler_ReceivesCorrectException()
         {
             // Arrange
-            Exception capturedException = null;
+            Exception capturedException = null!;
             _collection.Register(new IntegerValueConverter());
             _collection.RegisterExceptionHandler(ex => { capturedException = ex; return null; });
 

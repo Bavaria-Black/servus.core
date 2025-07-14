@@ -1,8 +1,6 @@
-﻿using System;
-using System.Linq;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
-namespace Servus.Core.Tests;
+namespace Servus.Core;
 
 public static partial class StringExtensions
 {

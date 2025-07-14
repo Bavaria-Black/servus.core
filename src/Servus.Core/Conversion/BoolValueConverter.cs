@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Servus.Core.Conversion;
+﻿namespace Servus.Core.Conversion;
 
 public sealed class BoolValueConverter : IStringValueConverter
 {

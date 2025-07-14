@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Servus.Core.Conversion;
+﻿namespace Servus.Core.Conversion;
 
 public interface IStringValueConverter
 {

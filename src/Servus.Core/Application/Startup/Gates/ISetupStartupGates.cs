@@ -1,6 +1,6 @@
 using Servus.Core.Threading.Tasks;
 
-namespace Servus.Core.Application.Startup.Tasks;
+namespace Servus.Core.Application.Startup.Gates;
 
 public interface ISetupStartupGates
 {
