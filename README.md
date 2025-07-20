@@ -23,6 +23,14 @@ Whether it's string manipulation that actually makes sense, date handling that d
 - **No more Copy-Paste Programming**: Stop copying helper methods between projects
 - **Just Works**: Simple utilities that do exactly what you expect without surprises
 
+## Whats new?
+
+Here are a few new features and changes that were done in this library. This is not specifically pinned to Versions.
+
+ - Started to add documentation over at [Read the docs](https://servuscore.readthedocs.io/en/latest/)
+ - Added Healcheck SetupContainer
+ - AppBuilder for clean application startup
+
 ## Installation
 
 ### Package Manager
@@ -68,4 +76,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 *Feel free to use it and feel free to contribute other useful stuff.*
 
-For questions or support, please [open an issue](https://github.com/Bavaria-Black/servus.core/issues).
+For questions or support, please [open an issue](https://github.com/Bavaria-Black/servus.core/issues) and/or [read the docs](https://servuscore.readthedocs.io/en/latest/).
