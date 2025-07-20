@@ -7,6 +7,10 @@
 [![License](https://img.shields.io/github/license/Bavaria-Black/servus.core)](LICENSE)
 [![Downloads](https://img.shields.io/nuget/dt/Servus.Core.svg)](https://www.nuget.org/packages/Servus.Core/)
 
+<p align="center">
+     <img width="128" height="128" src="docs/src/_static/logo.png" alt="servus.akka logo">
+</p>
+
 ## Overview
 
 **Servus.Core** was born out of frustration - the kind every developer knows when you find yourself writing the same helper methods over and over again. This library is a collection of those "I wish this was built into .NET" utilities that somehow always end up missing from your toolkit.
