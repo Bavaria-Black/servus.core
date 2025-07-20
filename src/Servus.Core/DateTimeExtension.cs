@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Servus.Core;
+﻿namespace Servus.Core;
 
 public static class DateTimeExtension
 {

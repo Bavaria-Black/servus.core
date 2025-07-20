@@ -1,8 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace Servus.Core.Threading;
+﻿namespace Servus.Core.Threading;
 
 /// <summary>
 /// Wraps a <see cref="SemaphoreSlim"/> into a <see cref="IDisposable"/>.

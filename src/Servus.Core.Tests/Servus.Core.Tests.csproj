@@ -20,4 +20,8 @@
     <ProjectReference Include="..\Servus.Core\Servus.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Application\Startup\" />
+  </ItemGroup>
+
 </Project>

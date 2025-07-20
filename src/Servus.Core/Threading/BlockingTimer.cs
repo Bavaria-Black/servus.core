@@ -1,8 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace Servus.Core.Threading;
+﻿namespace Servus.Core.Threading;
 
 /// <summary>
 /// Timer that ensures, that the given timer action is only started once at a time.

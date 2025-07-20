@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Servus.Core.Gamification;
+﻿namespace Servus.Core.Gamification;
 
 public class AchievementProperty
 {

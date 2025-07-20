@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Servus.Core.Encoding;
+﻿namespace Servus.Core.Encoding;
 
 public class ModHexEncoding : System.Text.Encoding
 {
