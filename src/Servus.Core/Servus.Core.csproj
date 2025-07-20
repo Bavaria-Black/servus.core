@@ -6,7 +6,10 @@
     <PackageIcon>logo.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>https://servuscore.readthedocs.io</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Bavaria-Black/servus.core</RepositoryUrl>
+    <RepositoryType>git</RepositoryType> 
+    <Copyright>Copyright (c) Bavaria-Black 2025</Copyright>
   </PropertyGroup>
 
   <PropertyGroup>
