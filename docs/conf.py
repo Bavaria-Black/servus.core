@@ -1,19 +1,14 @@
-# Configuration file for the Sphinx documentation builder.
-#
-# For the full list of built-in configuration values, see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
 
-# -- Project information -----------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'Servus.Core'
-copyright = '2025, Christian Dirnhofer, Andreas Huber, Max Dhom'
+copyright = '2025, Bavaria-Black'
 author = 'Christian Dirnhofer, Andreas Huber, Max Dhom'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = []
+extensions = ['sphinx.ext.autosectionlabel'
+]
 
 templates_path = ['_templates']
 exclude_patterns = []
