@@ -3,10 +3,13 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Servus.Core's documentation!
-=======================================
+Servus to the Core documentation!
+=================================
 
-Servus.Core was born out of frustration - the kind every
+.. image:: _static/logo.png
+   :align: center
+
+**Servus.Core** was born out of frustration - the kind every
 developer knows when you find yourself writing the same
 helper methods over and over again. This library is a
 collection of those "I wish this was built into .NET"
@@ -15,7 +18,7 @@ utilities that somehow always end up missing from your toolkit.
 Whether it's string manipulation that actually makes sense,
 date handling that doesn't make you cry, or collection
 operations that just work the way you expect them to -
-Servus.Core has you covered. It's the Swiss Army knife for
+**Servus.Core** has you covered. It's the Swiss Army knife for
 .NET developers who are tired of reinventing the wheel.
 
 
