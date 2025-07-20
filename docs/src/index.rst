@@ -28,6 +28,7 @@ operations that just work the way you expect them to -
 
    Modules/Startup/main
    Modules/AwaitableConditions/index
+   Modules/Diagnostics/tracing
 
 .. toctree::
    :maxdepth: 2

@@ -9,12 +9,22 @@ public class WithTracingTests
 {
     private TestTracingClass _testObject = null!;
     private ActivitySource _activitySource = null!;
+    private ActivityListener _activityListener = null!;
 
     [TestInitialize]
     public void Setup()
     {
         _testObject = new TestTracingClass();
         _activitySource = new ActivitySource("TestSource");
+
+        // Set up ActivityListener to enable activity creation
+        _activityListener = new ActivityListener
+        {
+            ShouldListenTo = _ => true,
+            Sample = (ref ActivityCreationOptions<ActivityContext> options) => ActivitySamplingResult.AllData
+        };
+
+        ActivitySource.AddActivityListener(_activityListener);
     }
 
     [TestCleanup]
@@ -141,22 +151,14 @@ public class WithTracingTests
     {
         // Arrange
         using var activity = _activitySource.StartActivity("TestActivity");
-        if (activity != null)
-        {
-            // Act
-            ((IWithTracing) _testObject).AddTracing();
+        
+        // Act
+        ((IWithTracing) _testObject).AddTracing();
 
-            // Assert
-            Assert.AreEqual(activity.TraceId.ToHexString(), _testObject.TraceId);
-            Assert.AreEqual(activity.SpanId.ToHexString(), _testObject.SpanId);
-        }
-        else
-        {
-            // If no activity listener is configured, it will generate random IDs
-            ((IWithTracing) _testObject).AddTracing();
-            Assert.IsNotNull(_testObject.TraceId);
-            Assert.IsNotNull(_testObject.SpanId);
-        }
+        // Assert
+        Assert.IsNotNull(activity);
+        Assert.AreEqual(activity.TraceId.ToHexString(), _testObject.TraceId);
+        Assert.AreEqual(activity.SpanId.ToHexString(), _testObject.SpanId);
     }
 
     [TestMethod]
