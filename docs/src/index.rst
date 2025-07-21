@@ -32,6 +32,12 @@ operations that just work the way you expect them to -
 
 .. toctree::
    :maxdepth: 2
+   :caption: Collections:
+
+   Modules/Collections/CircularQueue
+
+.. toctree::
+   :maxdepth: 2
    :caption: Extensions:
 
    Modules/Reflection/ConditionalInvoke
