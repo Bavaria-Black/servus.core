@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Servus.Core;
+namespace Servus.Core.Text;
 
 public static partial class StringExtensions
 {
