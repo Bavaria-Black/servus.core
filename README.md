@@ -30,6 +30,10 @@ Here are a few new features and changes that were done in this library. This is 
  - Started to add documentation over at [Read the docs](https://servuscore.readthedocs.io/en/latest/)
  - Added Healcheck SetupContainer
  - AppBuilder for clean application startup
+ - More casing functions
+ - **MOVED** casing function to _Servus.Core.Text_
+ - Added ActivitySourceRegistry
+ - Added CircularQueue
 
 ## Installation
 
