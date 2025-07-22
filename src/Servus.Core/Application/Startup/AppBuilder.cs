@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.Metrics;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Servus.Core.Application.Startup.Gates;
 
 namespace Servus.Core.Application.Startup;
@@ -78,34 +75,6 @@ public class AppBuilder
     
     internal IHostApplicationBuilder GetHostBuilder() => _hostBuilder;
     internal IHost BuildHost(IHostApplicationBuilder builder) => _hostFactory(builder);
-}
-
-public interface ISetupContainer;
-
-public interface IConfigurationSetupContainer : ISetupContainer
-{
-    void SetupConfiguration(IConfigurationManager builder);
-}
-
-public interface ILoggingSetupContainer : ISetupContainer
-{
-    void SetupLogging(ILoggingBuilder builder);
-}
-
-public interface IServiceSetupContainer : ISetupContainer
-{
-    void SetupServices(IServiceCollection services, IConfiguration configuration);
-}
-
-public abstract class ApplicationSetupContainer<THost> : ApplicationSetupContainer
-    where THost : IApplicationBuilder
-{
-    protected sealed override void SetupApplication(IApplicationBuilder app)
-    {
-        SetupApplication((THost)app);        
-    }
-    
-    protected abstract void SetupApplication(THost app);
 }
 
 public abstract class ApplicationSetupContainer : ISetupContainer
