@@ -35,4 +35,64 @@ public class StringExtensionsTests
         // Assert
         Assert.AreEqual(expected, result);
     }
+    
+    [TestMethod]
+    [DataRow(null, "")]
+    [DataRow("", "")]
+    [DataRow("   ", "")]
+    [DataRow("camelCase", "camel.case")]
+    [DataRow("PascalCase", "pascal.case")]
+    [DataRow("IOName", "io.name")]
+    [DataRow("XMLHttpRequest", "xml.http.request")]
+    [DataRow("NameV1", "name.v1")]
+    [DataRow("Version1Name", "version.1.name")]
+    [DataRow("1Name", ".1.name")]
+    [DataRow("123", ".123")]
+    [DataRow("Some Name Here", "some.name.here")]
+    [DataRow("some.existing.snake.case", "some.existing.snake.case")]
+    [DataRow("Some.Mixed Case.Here", "some.mixed.case.here")]
+    [DataRow("XMLHttpRequestV2Handler", "xml.http.request.v2.handler")]
+    [DataRow("A", "a")]
+    [DataRow("HELLO", "hello")]
+    [DataRow("Multiple   Spaces", "multiple.spaces")]
+    [DataRow("  SomeValue  ", "some.value")]
+    [DataRow("Test123Value456End", "test.123.value.456.end")]
+    public void ToDotCase_VariousInputs_ReturnsExpectedResult(string input, string expected)
+    {
+        // Act
+        var result = input.ToDotCase();
+
+        // Assert
+        Assert.AreEqual(expected, result);
+    }
+    
+    [TestMethod]
+    [DataRow(null, "")]
+    [DataRow("", "")]
+    [DataRow("   ", "")]
+    [DataRow("camelCase", "camel-case")]
+    [DataRow("PascalCase", "pascal-case")]
+    [DataRow("IOName", "io-name")]
+    [DataRow("XMLHttpRequest", "xml-http-request")]
+    [DataRow("NameV1", "name-v1")]
+    [DataRow("Version1Name", "version-1-name")]
+    [DataRow("1Name", "-1-name")]
+    [DataRow("123", "-123")]
+    [DataRow("Some Name Here", "some-name-here")]
+    [DataRow("some-existing-snake-case", "some-existing-snake-case")]
+    [DataRow("Some-Mixed Case-Here", "some-mixed-case-here")]
+    [DataRow("XMLHttpRequestV2Handler", "xml-http-request-v2-handler")]
+    [DataRow("A", "a")]
+    [DataRow("HELLO", "hello")]
+    [DataRow("Multiple   Spaces", "multiple-spaces")]
+    [DataRow("  SomeValue  ", "some-value")]
+    [DataRow("Test123Value456End", "test-123-value-456-end")]
+    public void ToKebabCase_VariousInputs_ReturnsExpectedResult(string input, string expected)
+    {
+        // Act
+        var result = input.ToKebabCase();
+
+        // Assert
+        Assert.AreEqual(expected, result);
+    }
 }
