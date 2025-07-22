@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Servus.Core.Text;
 
 namespace Servus.Core.Tests;
 

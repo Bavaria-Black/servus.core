@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
 using Servus.Core.Collections;
+using Servus.Core.Text;
 
 namespace Servus.Core.Diagnostics;
 
