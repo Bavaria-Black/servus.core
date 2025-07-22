@@ -9,8 +9,9 @@ messages and events to maintain distributed tracing context.
 StartActivity
 ~~~~~~~~~~~~~
 
-The ``ActivitySourceRegistry.StartActivity<T>`` creates and starts an activity using the
-ActivitySource for type ``T`` and the tracing context from the message/event.
+The ``ActivitySourceRegistry.StartActivity<T>`` creates and starts an activity
+using the ActivitySource for type ``T`` and the tracing context from the
+message/event.
 
 Usage
 -----
@@ -52,18 +53,50 @@ Usage
         }
     }
 
-Naming
-------
+ActivitySourceName
+------------------
 
-Type names are automatically converted to snake_case:
+The ``ActivitySourceNameAttribute`` can be applied to classes to provide a
+consistent ActivitySource name without requiring explicit name parameters in
+method calls. This attribute eliminates the need to repeatedly specify the
+same source name across related operations.
 
-* ``OrderService`` → ``order_service``
-* ``PaymentProcessor`` → ``payment_processor``
+.. code-block:: csharp
 
-Best Practices
---------------
+  [ActivitySourceName("MyCompany.OrderProcessing")]
+  public class OrderService
+  {
+      // ActivitySource name is automatically resolved from the attribute
+  }
 
-1. Always call ``((IWithTracing)message).AddTracing()`` before sending messages/events
-2. Use descriptive, kebab-case activity names: ``"process-payment"``
-3. Use ``using`` statements for proper disposal
-4. Add relevant tags: ``activity?.SetTag("order.id", orderId)``
+ActivitySourceKey
+-----------------
+
+Use ``ActivitySourceKey`` to designate another class as the primary
+ActivitySource in the registry. This pattern allows you to centralize
+ActivitySource management in a base class while reducing the total number
+of ActivitySources needed across your application.
+
+.. code-block:: csharp
+
+  // This class becomes the root ActivitySource for derived classes
+  [ActivitySourceKey(typeof(OrderService))]
+  public class SubOrderProcess
+  {
+      public void DoWork()
+      {
+          // this will resolve the ActivitySource for OrderService
+          using var activity = ActivitySourceRegistry.StartActivity<SubOrderProcess>(
+              "do-work", message);
+      }
+  }
+
+  [ActivitySourceName("MyCompany.OrderProcessing")]
+  public class OrderService
+  {
+      // This is the main key that is used for the key to resolve the
+      // corresponding ActivitySource
+  }
+
+This approach promotes ActivitySource reuse and reduces configuration overhead
+while maintaining clean separation of concerns.
