@@ -104,6 +104,46 @@ public class ActivitySourceRegistryTests
     }
 
     [TestMethod]
+    public void StartActivity_WithDifferentTypes_ButSameRootSource()
+    {
+        // Arrange
+        const string activityName = "test-activity";
+        TestMessage trace = new("test trace");
+        ((IWithTracing)trace).AddTracing();
+
+        // Act
+        var result1 = ActivitySourceRegistry.StartActivity<RootSourceClass>(activityName, trace);
+        var result2 = ActivitySourceRegistry.StartActivity<TestClassWithAttribute>(activityName, trace);
+        
+        // Assert
+        Assert.IsNotNull(result1);
+        Assert.IsNotNull(result2);
+        Assert.AreNotSame(result1.Source, result2.Source);
+        Assert.AreEqual("root-source", result1.Source?.Name);
+        Assert.AreEqual("root-source", result2.Source?.Name);
+    }
+
+    [TestMethod]
+    public void StartActivity_WithDifferentTypes_ButSameSource()
+    {
+        // Arrange
+        const string activityName = "test-activity";
+        TestMessage trace = new("test trace");
+        ((IWithTracing)trace).AddTracing();
+
+        // Act
+        var result1 = ActivitySourceRegistry.StartActivity<TestClass>(activityName, trace);
+        var result2 = ActivitySourceRegistry.StartActivity<AnotherTestClassWithAttribute>(activityName, trace);
+
+        // Assert
+        Assert.IsNotNull(result1);
+        Assert.IsNotNull(result2);
+        Assert.AreNotSame(result1.Source, result2.Source);
+        Assert.AreEqual("test_class", result1.Source?.Name);
+        Assert.AreEqual("test_class", result2.Source?.Name);
+    }
+
+    [TestMethod]
     public void StartActivity_WithDefaultActivityKind_UsesConsumerKind()
     {
         // Arrange
@@ -188,11 +228,9 @@ public class ActivitySourceRegistryTests
     }
 
     [TestMethod]
-    public void Add_WithoutName_CreatesActivitySourceWithSnakeCaseName()
+    public void CreatesActivitySourceWithSnakeCaseName_WithoutAdding()
     {
         // Arrange & Act
-        ActivitySourceRegistry.Add<TestClass>();
-        
         TestMessage trace = new("test trace");
         ((IWithTracing)trace).AddTracing();
         var result = ActivitySourceRegistry.StartActivity<TestClass>("test-activity", trace);
@@ -221,7 +259,17 @@ public class ActivitySourceRegistryTests
 
     // Test classes for type parameter testing
     private class TestClass;
+    
+    [ActivitySourceName("root-source")]
+    private class RootSourceClass;
+    
     private class AnotherTestClass;
+    
+    [ActivitySourceKey(typeof(RootSourceClass))]
+    private class TestClassWithAttribute;
+    
+    [ActivitySourceKey(typeof(TestClass))]
+    private class AnotherTestClassWithAttribute;
     private class MyComplexTestClass;
     private class GenericTestClass<T>;
     private class CustomNameTestClass;
