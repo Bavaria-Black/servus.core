@@ -35,6 +35,7 @@ operations that just work the way you expect them to -
    :caption: Collections:
 
    Modules/Collections/CircularQueue
+   Modules/Collections/HandlerRegistry
 
 .. toctree::
    :maxdepth: 2
