@@ -5,16 +5,12 @@ Static utility for managing ``ActivitySource`` instances with type-based
 registration and automatic snake_case naming. Works with ``IWithTracing``
 messages and events to maintain distributed tracing context.
 
-
-StartActivity
-~~~~~~~~~~~~~
-
 The ``ActivitySourceRegistry.StartActivity<T>`` creates and starts an activity
 using the ActivitySource for type ``T`` and the tracing context from the
 message/event.
 
-Usage
------
+Basic usage
+-----------
 
 .. code-block:: csharp
 
@@ -53,8 +49,9 @@ Usage
         }
     }
 
-ActivitySourceName
-------------------
+
+ActivitySourceNameAttribute
+---------------------------
 
 The ``ActivitySourceNameAttribute`` can be applied to classes to provide a
 consistent ActivitySource name without requiring explicit name parameters in
@@ -69,8 +66,9 @@ same source name across related operations.
       // ActivitySource name is automatically resolved from the attribute
   }
 
-ActivitySourceKey
------------------
+
+ActivitySourceKeyAttribute
+--------------------------
 
 Use ``ActivitySourceKey`` to designate another class as the primary
 ActivitySource in the registry. This pattern allows you to centralize
