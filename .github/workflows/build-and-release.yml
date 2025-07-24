@@ -47,18 +47,18 @@ jobs:
 
       - name: Restore dependencies
         run: dotnet restore ${{ env.PROJECT_PATH }}
-        
-        # Triggering SonarQube analysis as results of it are required by Quality Gate check.
-      - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@master
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           
       - name: Build
         run: dotnet build --configuration Release --no-restore ${{ env.PROJECT_PATH }} /p:Version=${{ steps.gitversion.outputs.fullSemVer }}
 
       - name: Run tests
         run: dotnet test --configuration Release --no-build --collect:"XPlat Code Coverage;Format=opencover" --verbosity normal ${{ env.PROJECT_PATH }}
+        
+        # Triggering SonarQube analysis as results of it are required by Quality Gate check.
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Create NuGet package
         run: dotnet pack --configuration Release --no-build --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }} ${{ env.PROJECT_PATH }} /p:PackageVersion=${{ steps.gitversion.outputs.fullSemVer }}
