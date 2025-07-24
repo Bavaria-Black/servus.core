@@ -14,12 +14,13 @@ public class InsertAtExtensionTests
     {
         // Arrange
         var array = new[] {2, 3, 4};
+        var expected = new[] {1, 2, 3, 4};
 
         // Act
         var result = array.InsertAt(0, 1).ToArray();
 
         // Assert
-        CollectionAssert.AreEqual(new[] {1, 2, 3, 4}, result);
+        CollectionAssert.AreEqual(expected, result);
     }
 
     [TestMethod]
@@ -27,12 +28,14 @@ public class InsertAtExtensionTests
     {
         // Arrange
         var array = new[] {1, 2, 4, 5};
+        var expected = new[] {1, 2, 3, 4, 5};
+            
 
         // Act
         var result = array.InsertAt(2, 3).ToArray();
 
         // Assert
-        CollectionAssert.AreEqual(new[] {1, 2, 3, 4, 5}, result);
+        CollectionAssert.AreEqual(expected, result);
     }
 
     [TestMethod]
@@ -40,12 +43,13 @@ public class InsertAtExtensionTests
     {
         // Arrange
         var array = new[] {1, 2, 3};
+        var expected = new[] {1, 2, 3, 4};
 
         // Act
         var result = array.InsertAt(3, 4).ToArray();
 
         // Assert
-        CollectionAssert.AreEqual(new[] {1, 2, 3, 4}, result);
+        CollectionAssert.AreEqual(expected, result);
     }
 
     [TestMethod]

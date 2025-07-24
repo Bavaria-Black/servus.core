@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Servus.Core.Collections;
 
@@ -41,6 +40,8 @@ public class CircularQueueTests
     [TestMethod]
     public void Enqueue_MultipleItemsWithinCapacity_AddsAllItems()
     {
+        var expected = new[] {"A", "B", "C"};
+        
         // Act
         _queue.Enqueue("A");
         _queue.Enqueue("B");
@@ -48,7 +49,7 @@ public class CircularQueueTests
 
         // Assert
         Assert.AreEqual(3, _queue.Count);
-        CollectionAssert.AreEqual(new[] { "A", "B", "C" }, _queue.Items.ToArray());
+        CollectionAssert.AreEqual(expected, _queue.Items.ToArray());
     }
 
     [TestMethod]
@@ -58,18 +59,20 @@ public class CircularQueueTests
         _queue.Enqueue("A");
         _queue.Enqueue("B");
         _queue.Enqueue("C");
+        var expected = new[] {"B", "C", "D"};
 
         // Act
         _queue.Enqueue("D");
 
         // Assert
         Assert.AreEqual(3, _queue.Count);
-        CollectionAssert.AreEqual(new[] { "B", "C", "D" }, _queue.Items.ToArray());
+        CollectionAssert.AreEqual(expected, _queue.Items.ToArray());
     }
 
     [TestMethod]
     public void Enqueue_MultipleItemsExceedingCapacity_MaintainsCapacityAndOrder()
     {
+        var expected = new[] {"C", "D", "E"};
         // Act
         _queue.Enqueue("A");
         _queue.Enqueue("B");
@@ -79,7 +82,7 @@ public class CircularQueueTests
 
         // Assert
         Assert.AreEqual(3, _queue.Count);
-        CollectionAssert.AreEqual(new[] { "C", "D", "E" }, _queue.Items.ToArray());
+        CollectionAssert.AreEqual(expected, _queue.Items.ToArray());
     }
 
     [TestMethod]
@@ -216,13 +219,16 @@ public class CircularQueueTests
         _queue.Enqueue("B");
         _queue.Enqueue("C");
 
+        var expected = new[] { "A", "B", "C" };
+
         // Assert
-        CollectionAssert.AreEqual(new[] { "A", "B", "C" }, _queue.Items.ToArray());
+        CollectionAssert.AreEqual(expected, _queue.Items.ToArray());
     }
 
     [TestMethod]
     public void Items_AfterCapacityExceeded_ReturnsRemainingItems()
     {
+        var expected = new[] {"B", "C", "D"};
         // Arrange
         _queue.Enqueue("A");
         _queue.Enqueue("B");
@@ -230,7 +236,7 @@ public class CircularQueueTests
         _queue.Enqueue("D");
 
         // Assert
-        CollectionAssert.AreEqual(new[] { "B", "C", "D" }, _queue.Items.ToArray());
+        CollectionAssert.AreEqual(expected, _queue.Items.ToArray());
     }
 
     [TestMethod]
@@ -253,7 +259,8 @@ public class CircularQueueTests
         Assert.AreEqual("B", item2);
         Assert.AreEqual(2, _queue.Count);
 
-        CollectionAssert.AreEqual(new[] { "C", "D" }, _queue.Items.ToArray());
+        var expected = new[] {"C", "D"};
+        CollectionAssert.AreEqual(expected, _queue.Items.ToArray());
     }
 
     [TestMethod]
@@ -261,6 +268,7 @@ public class CircularQueueTests
     {
         // Arrange
         var intQueue = new CircularQueue<int>(2);
+        var expected = new[] {2, 3};
 
         // Act
         intQueue.Enqueue(1);
@@ -269,7 +277,7 @@ public class CircularQueueTests
 
         // Assert
         Assert.AreEqual(2, intQueue.Count);
-        CollectionAssert.AreEqual(new[] { 2, 3 }, intQueue.Items.ToArray());
+        CollectionAssert.AreEqual(expected, intQueue.Items.ToArray());
     }
 
     [TestMethod]
