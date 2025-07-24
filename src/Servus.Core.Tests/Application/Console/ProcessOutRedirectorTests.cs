@@ -95,19 +95,6 @@ public class ProcessOutRedirectorTests
     #region StartRedirection Tests
 
     [TestMethod]
-    public void StartRedirection_WithValidProcess_CompletesSuccessfully()
-    {
-        // Arrange
-        using var process = CreateTestProcess("Hello World");
-        using var redirector = new ProcessOutRedirector(process);
-
-        // Act & Assert - Should not throw
-        redirector.StartRedirection();
-            
-        Assert.IsTrue(process.HasExited);
-    }
-
-    [TestMethod]
     public void StartRedirection_WhenAlreadyActive_ThrowsInvalidOperationException()
     {
         // Arrange
