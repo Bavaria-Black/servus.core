@@ -28,8 +28,9 @@
   <ItemGroup>
     <None Include="../../README.md" Pack="true" PackagePath="\" />
     <None Include="../../docs/src/_static/logo.png" Pack="true" PackagePath="\" />
-    <None Include="../../.github/workflows/build-and-release.yml" Pack="true" PackagePath="\" />
     <None Include="../../LICENSE" Pack="true" PackagePath="\"/>
+    <None Include="../../.github/workflows/build-and-release.yml" />
+    <None Include="../../sonar-project.properties" />
   </ItemGroup>
   <Target Name="ServusLogo" BeforeTargets="Build">
     <Message Text=" " Importance="high" />
