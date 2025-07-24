@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using System.IO;
 
+namespace Servus.Core.Application.Console;
+
 /// <summary>
 /// Redirects a process's StandardOutput and StandardError to the current console output.
 /// </summary>
@@ -81,12 +83,12 @@ public class ProcessOutRedirector : IDisposable
         // Start the output redirection tasks
         _stdOutTask = RedirectStreamAsync(
             _process.StandardOutput,
-            Console.Out,
+            System.Console.Out,
             _cancellationTokenSource.Token);
 
         _stdErrTask = RedirectStreamAsync(
             _process.StandardError,
-            Console.Error,
+            System.Console.Error,
             _cancellationTokenSource.Token);
 
         // Wait for both tasks to complete (when process exits)

@@ -220,8 +220,8 @@ public class LazyValueCacheTests
         }
 
         // Act & Assert
-        Assert.ThrowsException<InvalidOperationException>(() => _stringCache.GetOrCreate("key", ThrowingProvider));
-        Assert.ThrowsException<InvalidOperationException>(() => _stringCache.GetOrCreate("key", ThrowingProvider));
+        Assert.ThrowsExactly<InvalidOperationException>(() => _stringCache.GetOrCreate("key", ThrowingProvider));
+        Assert.ThrowsExactly<InvalidOperationException>(() => _stringCache.GetOrCreate("key", ThrowingProvider));
 
         Assert.AreEqual(2, callCount, "Provider should be called again after exception");
     }
@@ -240,7 +240,7 @@ public class LazyValueCacheTests
         }
 
         // Act & Assert
-        Assert.ThrowsException<InvalidOperationException>(() => _stringCache.GetOrCreate("key", Provider));
+        Assert.ThrowsExactly<InvalidOperationException>(() => _stringCache.GetOrCreate("key", Provider));
         var result = _stringCache.GetOrCreate("key", Provider);
         var cachedResult = _stringCache.GetOrCreate("key", Provider);
 

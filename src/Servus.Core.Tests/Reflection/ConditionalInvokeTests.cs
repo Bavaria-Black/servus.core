@@ -25,7 +25,7 @@ public class ConditionalInvokeTests
         
     }
 
-    private BasisClass GetBasisClass() => new TestImplementation();
+    private static BasisClass GetBasisClass() => new TestImplementation();
     
     [TestMethod]
     public void ConditionalInvokeTest()
