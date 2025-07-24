@@ -6,7 +6,7 @@ namespace Servus.Core.Application.Console;
 /// <summary>
 /// Redirects a process's StandardOutput and StandardError to the current console output.
 /// </summary>
-public class ProcessOutRedirector : IDisposable
+public sealed class ProcessOutRedirector : IDisposable
 {
     private readonly Process _process;
     private readonly CancellationTokenSource _cancellationTokenSource;
@@ -79,7 +79,7 @@ public class ProcessOutRedirector : IDisposable
         _process.StartInfo.UseShellExecute = false;
         _process.StartInfo.RedirectStandardOutput = true;
         _process.StartInfo.RedirectStandardError = true;
-        
+
         // Start the output redirection tasks
         _stdOutTask = RedirectStreamAsync(
             _process.StandardOutput,
@@ -113,9 +113,9 @@ public class ProcessOutRedirector : IDisposable
     public async Task RedirectAndWaitAsync(int timeoutMs = -1)
     {
         var redirectionTask = StartRedirectionAsync();
-        using var cts = timeoutMs < 0 ?  new CancellationTokenSource() : new CancellationTokenSource(timeoutMs);
+        using var cts = timeoutMs < 0 ? new CancellationTokenSource() : new CancellationTokenSource(timeoutMs);
         var processExitTask = _process.WaitForExitAsync(cts.Token);
-        
+
         // Wait for either the process to exit or redirection to complete
         await Task.WhenAny(redirectionTask, processExitTask);
 
@@ -145,7 +145,7 @@ public class ProcessOutRedirector : IDisposable
             // Expected when cancellation is requested
         }
     }
-    
+
     /// <summary>
     /// Disposes the ProcessOutRedirector and stops any active redirection.
     /// </summary>
@@ -162,7 +162,7 @@ public class ProcessOutRedirector : IDisposable
             _cancellationTokenSource?.Dispose();
 
             // Wait a bit for tasks to complete
-            Task.WaitAll(new[] { _stdOutTask, _stdErrTask }.Where(t => t != null).ToArray()!, 1000);
+            Task.WaitAll(new[] {_stdOutTask, _stdErrTask}.Where(t => t != null).ToArray()!, 1000);
         }
         catch
         {
