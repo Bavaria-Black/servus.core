@@ -30,6 +30,6 @@ public class NamedSemaphoreSlimStoreTests
         Assert.AreEqual(1, semaphore2.RequestCounter);
 
         semaphore2.Dispose();
-        Assert.ThrowsException<ObjectDisposedException>(semaphore2.Wait);
+        Assert.ThrowsExactly<ObjectDisposedException>(semaphore2.Wait);
     }
 }

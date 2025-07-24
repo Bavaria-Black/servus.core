@@ -132,7 +132,7 @@ namespace Servus.Core.Tests.Reflection
             object? item = null;
 
             // Act & Assert
-            Assert.ThrowsException<ArgumentNullException>(() => item.Convert<string>());
+            Assert.ThrowsExactly<ArgumentNullException>(() => item.Convert<string>());
         }
 
         [TestMethod]
@@ -142,7 +142,7 @@ namespace Servus.Core.Tests.Reflection
             object item = 123;
 
             // Act & Assert
-            Assert.ThrowsException<InvalidCastException>(() => item.Convert<string>());
+            Assert.ThrowsExactly<InvalidCastException>(() => item.Convert<string>());
         }
 
         [TestMethod]
@@ -198,7 +198,7 @@ namespace Servus.Core.Tests.Reflection
             Func<object, string> converter = obj => obj.ToString()!;
 
             // Act & Assert
-            Assert.ThrowsException<ArgumentNullException>(() => item.Convert(converter));
+            Assert.ThrowsExactly<ArgumentNullException>(() => item.Convert(converter));
         }
 
         [TestMethod]
@@ -209,7 +209,7 @@ namespace Servus.Core.Tests.Reflection
             Func<object, string>? converter = null;
 
             // Act & Assert
-            Assert.ThrowsException<ArgumentNullException>(() => item.Convert(converter!));
+            Assert.ThrowsExactly<ArgumentNullException>(() => item.Convert(converter!));
         }
 
         [TestMethod]
@@ -252,7 +252,7 @@ namespace Servus.Core.Tests.Reflection
             Func<int, string> converter = num => $"Number: {num}";
 
             // Act & Assert
-            Assert.ThrowsException<ArgumentNullException>(() => item.Convert<int, string>(converter));
+            Assert.ThrowsExactly<ArgumentNullException>(() => item.Convert<int, string>(converter));
         }
 
         [TestMethod]
@@ -263,7 +263,7 @@ namespace Servus.Core.Tests.Reflection
             Func<int, string>? converter = null;
 
             // Act & Assert
-            Assert.ThrowsException<ArgumentNullException>(() => item.Convert<int, string>(converter!));
+            Assert.ThrowsExactly<ArgumentNullException>(() => item.Convert<int, string>(converter!));
         }
 
         [TestMethod]
