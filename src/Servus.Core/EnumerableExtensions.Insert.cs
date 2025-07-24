@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace Servus.Core;
+﻿namespace Servus.Core;
 
 public static partial class EnumerableExtensions
 {

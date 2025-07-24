@@ -96,6 +96,7 @@ public class HandlerRegistryTests
         _registry.Register(s => s.Contains("test"), _ => _handledItems.Add("first"));
         _registry.Register(s => s.Contains("test"), _ => _handledItems.Add("second"));
         _registry.Register(s => s.StartsWith("other"), _ => _handledItems.Add("third"));
+        var expected = new[] {"first", "second"};
         
         // Act
         var result = _registry.HandleAll("test item");
@@ -103,7 +104,7 @@ public class HandlerRegistryTests
         // Assert
         Assert.AreEqual(2, result);
         Assert.AreEqual(2, _handledItems.Count);
-        CollectionAssert.AreEqual(new[] { "first", "second" }, _handledItems);
+        CollectionAssert.AreEqual(expected, _handledItems);
     }
 
     [TestMethod]
@@ -183,6 +184,7 @@ public class HandlerRegistryTests
         _registry.Register(s => s.Contains("test"), _ => _handledItems.Add("first"));
         _registry.Register(s => s.Contains("test"), _ => _handledItems.Add("second"));
         _registry.Register(s => s.StartsWith("other"), _ => _handledItems.Add("third"));
+        var expected = new[] {"first", "second"};
         
         // Act
         var handlers = _registry.GetMatchingHandlers("test item").ToList();
@@ -195,7 +197,7 @@ public class HandlerRegistryTests
         {
             handler("test item");
         }
-        CollectionAssert.AreEqual(new[] { "first", "second" }, _handledItems);
+        CollectionAssert.AreEqual(expected, _handledItems);
     }
 
     [TestMethod]

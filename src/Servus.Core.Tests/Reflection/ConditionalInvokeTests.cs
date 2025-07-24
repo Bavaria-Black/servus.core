@@ -14,18 +14,13 @@ public class ConditionalInvokeTests
         public Task<bool> TestMethodAsync();
     }
 
-    internal class TestImplementation : BasisClass, ITestInterface
+    private class TestImplementation : ITestInterface
     {
         public bool TestMethod() => true;
         public Task<bool> TestMethodAsync()=> Task.FromResult(true);
     }
 
-    internal class BasisClass
-    {
-        
-    }
-
-    private static BasisClass GetBasisClass() => new TestImplementation();
+    private static TestImplementation GetBasisClass() => new();
     
     [TestMethod]
     public void ConditionalInvokeTest()

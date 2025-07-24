@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Exporters;
 using BenchmarkDotNet.Exporters.Csv;
 using BenchmarkDotNet.Loggers;
@@ -21,10 +20,10 @@ public class RPlotExporterExtended : IExporter
         const string scriptFileName = "BuildPlots.R";
         yield return Path.Combine(summary.ResultsDirectoryPath, scriptFileName);
 
-        string csvFullPath = CsvMeasurementsExporter.Default.GetArtifactFullName(summary);
-        string scriptFullPath = Path.Combine(summary.ResultsDirectoryPath, scriptFileName);
+        var csvFullPath = CsvMeasurementsExporter.Default.GetArtifactFullName(summary);
+        var scriptFullPath = Path.Combine(summary.ResultsDirectoryPath, scriptFileName);
 
-        if (!TryFindRScript(consoleLogger, out string rscriptPath))
+        if (!TryFindRScript(consoleLogger, out var rscriptPath))
         {
             yield break;
         }
@@ -65,10 +64,10 @@ public class RPlotExporterExtended : IExporter
 
     private static bool TryFindRScript(ILogger consoleLogger, out string rscriptPath)
     {
-        string rscriptExecutable = "Rscript.exe";
+        var rscriptExecutable = "Rscript.exe";
         rscriptPath = null;
 
-        string rHome = Environment.GetEnvironmentVariable("R_HOME");
+        var rHome = Environment.GetEnvironmentVariable("R_HOME");
         if (rHome != null)
         {
             rscriptPath = Path.Combine(rHome, "bin", rscriptExecutable);
@@ -87,18 +86,17 @@ public class RPlotExporterExtended : IExporter
 
         if (true)
         {
-            string programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-            string programFilesR = Path.Combine(programFiles, "R");
+            var programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+            var programFilesR = Path.Combine(programFiles, "R");
             if (Directory.Exists(programFilesR))
             {
-                foreach (string rRootDirectory in Directory.EnumerateDirectories(programFilesR))
+                foreach (var rRootDirectory in Directory.EnumerateDirectories(programFilesR))
                 {
-                    string rscriptPathCandidate = Path.Combine(rRootDirectory, "bin", rscriptExecutable);
-                    if (File.Exists(rscriptPathCandidate))
-                    {
-                        rscriptPath = rscriptPathCandidate;
-                        return true;
-                    }
+                    var rscriptPathCandidate = Path.Combine(rRootDirectory, "bin", rscriptExecutable);
+                    if (!File.Exists(rscriptPathCandidate)) continue;
+                    
+                    rscriptPath = rscriptPathCandidate;
+                    return true;
                 }
             }
         }
@@ -108,19 +106,19 @@ public class RPlotExporterExtended : IExporter
         return false;
     }
 
-    private static string? FindInPath(string fileName)
+    private static string FindInPath(string fileName)
     {
-        string path = Environment.GetEnvironmentVariable("PATH");
+        var path = Environment.GetEnvironmentVariable("PATH");
         if (path == null)
             return null;
 
-        string[] dirs = path.Split(Path.PathSeparator);
-        foreach (string dir in dirs)
+        var dirs = path.Split(Path.PathSeparator);
+        foreach (var dir in dirs)
         {
-            string trimmedDir = dir.Trim('\'', '"');
+            var trimmedDir = dir.Trim('\'', '"');
             try
             {
-                string filePath = Path.Combine(trimmedDir, fileName);
+                var filePath = Path.Combine(trimmedDir, fileName);
                 if (File.Exists(filePath))
                     return filePath;
             }
@@ -133,5 +131,3 @@ public class RPlotExporterExtended : IExporter
         return null;
     }
 }   
-
-public class RPlotExporterExtendedAttribute() : ExporterConfigBaseAttribute(RPlotExporterExtended.Default);
