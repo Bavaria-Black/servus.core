@@ -8,7 +8,7 @@ namespace Servus.Core.Tests;
 #nullable disable
 
 [TestClass]
-public class EnumerableExtensionTests
+public partial class EnumerableExtensionTests
 {
     class DummyClass
     {
