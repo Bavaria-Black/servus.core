@@ -34,6 +34,8 @@ Here are a few new features and changes that were done in this library. This is 
  - **MOVED** casing function to _Servus.Core.Text_
  - Added ActivitySourceRegistry
  - Added CircularQueue
+ - Added HandlerRegistry
+ - Added some Extension Methods for lists and types
 
 ## Installation
 
