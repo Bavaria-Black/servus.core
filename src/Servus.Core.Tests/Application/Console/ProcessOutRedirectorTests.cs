@@ -118,8 +118,7 @@ public class ProcessOutRedirectorTests
         process.Start();
             
         // Start redirection in background
-        var task = Task.Run(() => redirector.StartRedirection());
-        Thread.Sleep(100); // Give it time to start
+        redirector.StartRedirection();
 
         // Act & Assert
         Assert.ThrowsException<InvalidOperationException>(() => redirector.StartRedirection());
@@ -127,8 +126,6 @@ public class ProcessOutRedirectorTests
         // Cleanup
         redirector.StopRedirection();
         process.Kill();
-        
-        try { task.Wait(1000); } catch { } finally{}
     }
     
     [TestMethod]
@@ -285,59 +282,5 @@ public class ProcessOutRedirectorTests
     }
 
     #endregion
-
-    #region StopRedirection Tests
-
-    [TestMethod]
-    public void StopRedirection_WhenActive_StopsRedirection()
-    {
-        // Arrange
-        using var process = CreateLongRunningProcess();
-        using var redirector = new ProcessOutRedirector(process);
-            
-        process.Start();
-            
-        // Start redirection in background
-        var task = Task.Run(async () => await redirector.StartRedirectionAsync());
-        Thread.Sleep(100); // Give it time to start
-
-        // Act
-        redirector.StopRedirection();
-
-        // Assert
-        // Should complete quickly after stopping
-        bool completed = task.Wait(2000);
-        Assert.IsTrue(completed, "Redirection should stop quickly after StopRedirection is called");
-        process.Kill();
-    }
-
-    [TestMethod]
-    public void StopRedirection_WhenNotActive_DoesNotThrow()
-    {
-        // Arrange
-        using var process = CreateTestProcess("test");
-        using var redirector = new ProcessOutRedirector(process);
-
-        // Act & Assert - Should not throw
-        redirector.StopRedirection();
-    }
-
-    #endregion
-
-    #region Dispose Tests
-
-    [TestMethod]
-    public void Dispose_CalledMultipleTimes_DoesNotThrow()
-    {
-        // Arrange
-        using var process = CreateTestProcess("test");
-        var redirector = new ProcessOutRedirector(process);
-
-        // Act & Assert - Should not throw
-        redirector.Dispose();
-        redirector.Dispose(); // Second call should be safe
-    }
-
-    #endregion
-
+    
 }

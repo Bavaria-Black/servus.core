@@ -26,14 +26,11 @@ public class HandlerRegistry<T>
     public bool Handle(T item)
     {
         var handler = _handlers.FirstOrDefault(entry => entry.CanHandle(item));
-        
-        if (handler != null)
-        {
-            handler.Handler(item);
-            return true;
-        }
-        
-        return false;
+
+        if (handler == null) return false;
+        handler.Handler(item);
+        return true;
+
     }
 
     /// <summary>
@@ -112,5 +109,5 @@ public class HandlerRegistry<T>
         return true;
     }
 
-    private record HandlerEntry(Predicate<T> CanHandle, Action<T> Handler);
+    private sealed record HandlerEntry(Predicate<T> CanHandle, Action<T> Handler);
 }
