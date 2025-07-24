@@ -101,8 +101,6 @@ public class ProcessOutRedirectorTests
         // Arrange
         using var process = CreateTestProcess("Hello World");
         using var redirector = new ProcessOutRedirector(process);
-            
-        process.Start();
 
         // Act & Assert - Should not throw
         redirector.StartRedirection();
@@ -132,7 +130,7 @@ public class ProcessOutRedirectorTests
         
         try { task.Wait(1000); } catch { } finally{}
     }
-
+    
     [TestMethod]
     public void StartRedirection_WhenProcessHasExited_ThrowsInvalidOperationException()
     {
