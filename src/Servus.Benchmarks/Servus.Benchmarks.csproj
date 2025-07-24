@@ -17,5 +17,8 @@
     <ItemGroup>
       <ProjectReference Include="..\Servus.Core\Servus.Core.csproj" />
     </ItemGroup>
-
+    <PropertyGroup>
+        <!-- Exclude the project from analysis -->
+        <SonarQubeExclude>true</SonarQubeExclude>
+    </PropertyGroup>
 </Project>

@@ -345,8 +345,8 @@ public class LazyValueCacheTests
         public void TryPeek_NullValue_ReturnsTrueWithNull()
         {
             // Arrange
-            var key = 1;
-            _objectCache.GetOrCreate(key, () => null); // Cache null value
+            const int key = 1;
+            _objectCache.GetOrCreate(key, () => null!); // Cache null value
 
             // Act
             var result = _objectCache.TryGetValue(key, out var value);
@@ -378,8 +378,8 @@ public class LazyValueCacheTests
         public void TryPeek_DoesNotTriggerProvider()
         {
             // Arrange
-            var providerCalled = false;
-            var key = "test_key";
+            const bool providerCalled = false;
+            const string key = "test_key";
 
             // Act - TryPeek on non-existent key
             var result = _stringCache.TryGetValue(key, out var value);
@@ -394,8 +394,8 @@ public class LazyValueCacheTests
         public void TryPeek_AfterGet_ReturnsCorrectValue()
         {
             // Arrange
-            var key = "combined_test";
-            var expectedValue = "test_value";
+            const string key = "combined_test";
+            const string expectedValue = "test_value";
 
             // Act - First use Get to cache
             var getValue = _stringCache.GetOrCreate(key, () => expectedValue);
@@ -412,7 +412,7 @@ public class LazyValueCacheTests
         public void TryPeek_ComplexObjects_ReturnsSameReference()
         {
             // Arrange
-            var key = 1;
+            const int key = 1;
             var expectedObject = new { Name = "Test", Value = 123 };
             _objectCache.GetOrCreate(key, () => expectedObject);
 
