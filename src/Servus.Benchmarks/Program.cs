@@ -2,7 +2,6 @@
 using BenchmarkDotNet.Exporters;
 using BenchmarkDotNet.Exporters.Csv;
 using BenchmarkDotNet.Running;
-using Servus.Benchmarks;
 using Servus.Benchmarks.Collections;
 
 var config = ManualConfig.Create(DefaultConfig.Instance)
