@@ -40,8 +40,8 @@ public class HandlerRegistryTests
     public void Register_WithNullHandler_ShouldThrowArgumentNullException()
     {
         // Arrange, Act & Assert
-        Assert.ThrowsException<ArgumentNullException>(() =>
-            _registry.Register(s => true, null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() =>
+            _registry.Register(_ => true, null!));
     }
 
     [TestMethod]
@@ -93,9 +93,9 @@ public class HandlerRegistryTests
     public void HandleAll_WithMultipleMatchingHandlers_ShouldExecuteAllAndReturnCount()
     {
         // Arrange
-        _registry.Register(s => s.Contains("test"), s => _handledItems.Add("first"));
-        _registry.Register(s => s.Contains("test"), s => _handledItems.Add("second"));
-        _registry.Register(s => s.StartsWith("other"), s => _handledItems.Add("third"));
+        _registry.Register(s => s.Contains("test"), _ => _handledItems.Add("first"));
+        _registry.Register(s => s.Contains("test"), _ => _handledItems.Add("second"));
+        _registry.Register(s => s.StartsWith("other"), _ => _handledItems.Add("third"));
         
         // Act
         var result = _registry.HandleAll("test item");
@@ -180,9 +180,9 @@ public class HandlerRegistryTests
     public void GetMatchingHandlers_ShouldReturnAllMatchingHandlers()
     {
         // Arrange
-        _registry.Register(s => s.Contains("test"), s => _handledItems.Add("first"));
-        _registry.Register(s => s.Contains("test"), s => _handledItems.Add("second"));
-        _registry.Register(s => s.StartsWith("other"), s => _handledItems.Add("third"));
+        _registry.Register(s => s.Contains("test"), _ => _handledItems.Add("first"));
+        _registry.Register(s => s.Contains("test"), _ => _handledItems.Add("second"));
+        _registry.Register(s => s.StartsWith("other"), _ => _handledItems.Add("third"));
         
         // Act
         var handlers = _registry.GetMatchingHandlers("test item").ToList();
@@ -202,7 +202,7 @@ public class HandlerRegistryTests
     public void Stash_ShouldSaveCurrentHandlersAndClearRegistry()
     {
         // Arrange
-        _registry.Register(s => s.StartsWith("test"), s => _handledItems.Add("original"));
+        _registry.Register(s => s.StartsWith("test"), _ => _handledItems.Add("original"));
         
         // Act
         _registry.Stash();
@@ -216,9 +216,9 @@ public class HandlerRegistryTests
     public void Pop_WithStashedHandlers_ShouldRestoreHandlersAndReturnTrue()
     {
         // Arrange
-        _registry.Register(s => s.StartsWith("test"), s => _handledItems.Add("original"));
+        _registry.Register(s => s.StartsWith("test"), _ => _handledItems.Add("original"));
         _registry.Stash();
-        _registry.Register(s => s.StartsWith("new"), s => _handledItems.Add("new"));
+        _registry.Register(s => s.StartsWith("new"), _ => _handledItems.Add("new"));
         
         // Act
         var result = _registry.Pop();
@@ -248,13 +248,13 @@ public class HandlerRegistryTests
     public void StashAndPop_ShouldWorkWithMultipleLevels()
     {
         // Arrange
-        _registry.Register(s => s == "level1", s => _handledItems.Add("level1"));
+        _registry.Register(s => s == "level1", _ => _handledItems.Add("level1"));
         _registry.Stash();
         
-        _registry.Register(s => s == "level2", s => _handledItems.Add("level2"));
+        _registry.Register(s => s == "level2", _ => _handledItems.Add("level2"));
         _registry.Stash();
         
-        _registry.Register(s => s == "level3", s => _handledItems.Add("level3"));
+        _registry.Register(s => s == "level3", _ => _handledItems.Add("level3"));
         
         // Act & Assert
         Assert.IsTrue(_registry.CanHandle("level3"));
@@ -278,10 +278,10 @@ public class HandlerRegistryTests
     public void StashAndPop_ShouldReplaceCurrentHandlers()
     {
         // Arrange
-        _registry.Register(s => s == "original", s => _handledItems.Add("original"));
+        _registry.Register(s => s == "original", _ => _handledItems.Add("original"));
         _registry.Stash();
-        _registry.Register(s => s == "temp1", s => _handledItems.Add("temp1"));
-        _registry.Register(s => s == "temp2", s => _handledItems.Add("temp2"));
+        _registry.Register(s => s == "temp1", _ => _handledItems.Add("temp1"));
+        _registry.Register(s => s == "temp2", _ => _handledItems.Add("temp2"));
         
         // Act
         _registry.Pop();
