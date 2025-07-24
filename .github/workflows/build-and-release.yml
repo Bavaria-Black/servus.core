@@ -65,12 +65,21 @@ jobs:
 
       - name: Create NuGet package
         run: dotnet pack --configuration Release --no-build --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }} ${{ env.PROJECT_PATH }} /p:PackageVersion=${{ steps.gitversion.outputs.fullSemVer }}
-
+          
       - name: Upload package artifacts
         uses: actions/upload-artifact@v4
         with:
           name: nuget-packages
           path: ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg
+      
+      # Check the Quality Gate status.
+      - name: SonarQube Quality Gate check
+        id: sonarqube-quality-gate-check
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        with:
+          pollingTimeoutSec: 600
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   publish:
     runs-on: ubuntu-latest
