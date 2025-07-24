@@ -162,7 +162,11 @@ public class ProcessOutRedirectorTests
 
         // Act
         await redirector.StartRedirectionAsync();
+        
+        process.Kill();
 
+        await Task.Delay(100);
+        
         // Assert
         Assert.IsTrue(process.HasExited);
     }
