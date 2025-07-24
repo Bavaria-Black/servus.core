@@ -32,7 +32,7 @@ public class HandlerRegistryTests
     public void Register_WithNullCanHandle_ShouldThrowArgumentNullException()
     {
         // Arrange, Act & Assert
-        Assert.ThrowsException<ArgumentNullException>(() =>
+        Assert.ThrowsExactly<ArgumentNullException>(() =>
             _registry.Register(null!, s => _handledItems.Add(s)));
     }
 

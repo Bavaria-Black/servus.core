@@ -13,12 +13,12 @@ public class ActionRegistryTests
 {
     public class TestInjectable
     {
-        public Task RunAsync(CancellationToken token)
+        public static Task RunAsync(CancellationToken token)
         {
             return Task.CompletedTask;
         }
         
-        public Task<T> RunAsync<T>(T value, CancellationToken token)
+        public static Task<T> RunAsync<T>(T value, CancellationToken token)
         {
             return Task.FromResult(value);
         }
@@ -33,8 +33,8 @@ public class ActionRegistryTests
             _injectable = injectable;
         }
         
-        public async ValueTask RunAsync(CancellationToken token) => await _injectable.RunAsync(token);
-        async ValueTask<bool> IAsyncTask<bool>.RunAsync(CancellationToken token) => await _injectable.RunAsync(true, token);
+        public async ValueTask RunAsync(CancellationToken token) => await TestInjectable.RunAsync(token);
+        async ValueTask<bool> IAsyncTask<bool>.RunAsync(CancellationToken token) => await TestInjectable.RunAsync(true, token);
     }
     
     [TestMethod]
