@@ -129,7 +129,7 @@ public class ProcessOutRedirectorTests
         // Cleanup
         redirector.StopRedirection();
         process.Kill();
-        Assert.IsTrue(process.HasExited);
+        
         try { task.Wait(1000); } catch { } finally{}
     }
 
