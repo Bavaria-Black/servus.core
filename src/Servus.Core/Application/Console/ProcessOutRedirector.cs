@@ -55,11 +55,23 @@ public class ProcessOutRedirector : IDisposable
         if (_cancellationTokenSource.IsCancellationRequested)
             throw new InvalidOperationException("Redirection was already cancelled");
 
-        if (_process.HasExited)
-            throw new InvalidOperationException("Process has already exited");
-
         if (_stdOutTask != null || _stdErrTask != null)
             throw new InvalidOperationException("Redirection is already active");
+
+        var hasExited = false;
+        try
+        {
+            if (_process.HasExited)
+            {
+                hasExited = true;
+                throw new InvalidOperationException("Process has already exited");
+            }
+        }
+        catch (Exception) when (!hasExited) // Accessing HasExited when process not started also throws an exception
+        {
+            // start process if not started
+            _process.Start();
+        }
 
         // Configure the process for redirection
         _process.StartInfo.UseShellExecute = false;
