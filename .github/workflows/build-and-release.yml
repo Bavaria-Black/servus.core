@@ -61,7 +61,7 @@ jobs:
         run: dotnet test --configuration Release --no-build --collect:"XPlat Code Coverage;Format=opencover" --verbosity normal ${{ env.PROJECT_PATH }}
 
       - name: stop sonar scanner
-        run: dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.qualitygate.wait=true
+        run: dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
       - name: Create NuGet package
         run: dotnet pack --configuration Release --no-build --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }} ${{ env.PROJECT_PATH }} /p:PackageVersion=${{ steps.gitversion.outputs.fullSemVer }}
