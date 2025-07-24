@@ -160,19 +160,21 @@ public class InsertAtExtensionTests
         CollectionAssert.AreEqual(new[] { "apple", "banana", "cherry", "date" }, result);
     }
 
+
     [TestMethod]
     public void InsertAt_OriginalCollectionUnmodified_ShouldNotChangeOriginal()
     {
         // Arrange
         var original = new[] { 1, 2, 3 };
         var originalCopy = new[] { 1, 2, 3 };
+        var expected = new[] { 1, 10, 2, 3 };
         
         // Act
         var result = original.InsertAt(1, 10).ToArray();
         
         // Assert
         CollectionAssert.AreEqual(originalCopy, original); // Original unchanged
-        CollectionAssert.AreEqual(new[] { 1, 10, 2, 3 }, result);
+        CollectionAssert.AreEqual(expected, result);
     }
 
     [TestMethod]
@@ -211,18 +213,19 @@ public class InsertAtExtensionTests
     {
         // Arrange
         var customCollection = new CustomCollection<int> { 1, 3, 5 };
+        var expected = new[] {1, 2, 3, 5};
         
         // Act
         var result = customCollection.InsertAt(1, 2).ToArray();
         
         // Assert
-        CollectionAssert.AreEqual(new[] { 1, 2, 3, 5 }, result);
+        CollectionAssert.AreEqual(expected, result);
     }
 
     // Helper class to test ICollection<T> path
     private class CustomCollection<T> : ICollection<T>
     {
-        private readonly List<T> _items = new List<T>();
+        private readonly List<T> _items = [];
 
         public int Count => _items.Count;
         public bool IsReadOnly => false;
