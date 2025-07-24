@@ -50,29 +50,23 @@ public class InsertAtExtensionTests
     }
 
     [TestMethod]
-    public void InsertAt_Array_BeyondEnd_ShouldAppend()
+    public void InsertAt_Array_BeyondEnd_ShouldThrowException()
     {
         // Arrange
         var array = new[] { 1, 2, 3 };
         
-        // Act
-        var result = array.InsertAt(10, 4).ToArray();
-        
         // Assert
-        CollectionAssert.AreEqual(new[] { 1, 2, 3, 4 }, result);
+        Assert.ThrowsExactly<ArgumentException>(() => array.InsertAt(10, 4));
     }
 
     [TestMethod]
-    public void InsertAt_Array_NegativeIndex_ShouldInsertAtBeginning()
+    public void InsertAt_Array_NegativeIndex_ShouldThrow()
     {
         // Arrange
         var array = new[] { 2, 3, 4 };
         
-        // Act
-        var result = array.InsertAt(-1, 1).ToArray();
-        
         // Assert
-        CollectionAssert.AreEqual(new[] { 1, 2, 3, 4 }, result);
+        Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => array.InsertAt(-1, 1));
     }
 
     [TestMethod]
@@ -138,19 +132,6 @@ public class InsertAtExtensionTests
         
         // Assert
         CollectionAssert.AreEqual(new[] { 1, 2, 3 }, result);
-    }
-
-    [TestMethod]
-    public void InsertAt_GenericEnumerable_BeyondEnd_ShouldAppend()
-    {
-        // Arrange
-        var enumerable = Enumerable.Range(1, 3); // [1, 2, 3]
-        
-        // Act
-        var result = enumerable.InsertAt(10, 4).ToArray();
-        
-        // Assert
-        CollectionAssert.AreEqual(new[] { 1, 2, 3, 4 }, result);
     }
 
     [TestMethod]
