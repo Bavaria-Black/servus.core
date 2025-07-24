@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Servus.Core.Collections;
 
 namespace Servus.Core.Tests.Collections;
 
