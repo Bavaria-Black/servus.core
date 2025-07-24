@@ -23,7 +23,7 @@ public class AwaitableConditionTests
     public async Task AwaitableCondition_timeouts()
     {
         var condition = new MockAwaitableCondition(10);
-        await Assert.ThrowsExceptionAsync<TaskCanceledException>(async () =>
+        await Assert.ThrowsExactlyAsync<TaskCanceledException>(async () =>
         {
             await condition.WaitAsync();
         });
@@ -35,7 +35,7 @@ public class AwaitableConditionTests
         var cts = new CancellationTokenSource();
         var condition = new MockAwaitableCondition(cts.Token);
         cts.Cancel();
-        await Assert.ThrowsExceptionAsync<TaskCanceledException>(async () =>
+        await Assert.ThrowsExactlyAsync<TaskCanceledException>(async () =>
         {
             await condition.WaitAsync();
         });

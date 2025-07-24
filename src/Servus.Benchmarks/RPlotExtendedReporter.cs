@@ -7,6 +7,7 @@ using BenchmarkDotNet.Exporters;
 using BenchmarkDotNet.Exporters.Csv;
 using BenchmarkDotNet.Loggers;
 using BenchmarkDotNet.Reports;
+using Servus.Core.Application.Console;
 
 namespace Servus.Benchmarks;
 

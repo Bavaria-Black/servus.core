@@ -4,13 +4,14 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Servus.Core.Application.Console;
 
 namespace Servus.Core.Tests.Application.Console;
 
 [TestClass]
 public class ProcessOutRedirectorTests
 {
-    private Process CreateTestProcess(string arguments = "")
+    private static Process CreateTestProcess(string arguments = "")
     {
         // Use a simple command that works on both Windows and Unix
         var isWindows = Environment.OSVersion.Platform == PlatformID.Win32NT;
@@ -31,7 +32,7 @@ public class ProcessOutRedirectorTests
         };
     }
 
-    private Process CreateLongRunningProcess()
+    private static Process CreateLongRunningProcess()
     {
         var isWindows = Environment.OSVersion.Platform == PlatformID.Win32NT;
             
@@ -42,7 +43,7 @@ public class ProcessOutRedirectorTests
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = "cmd.exe",
-                    Arguments = "/c ping 127.0.0.1 -n 10",
+                    Arguments = "/c ping 127.0.0.1 -n 2",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -88,7 +89,7 @@ public class ProcessOutRedirectorTests
     public void Constructor_WithNullProcess_ThrowsArgumentNullException()
     {
         // Act & Assert
-        Assert.ThrowsException<ArgumentNullException>(() => new ProcessOutRedirector(null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() => new ProcessOutRedirector(null!));
     }
 
     #endregion
@@ -121,7 +122,7 @@ public class ProcessOutRedirectorTests
         redirector.StartRedirection();
 
         // Act & Assert
-        Assert.ThrowsException<InvalidOperationException>(() => redirector.StartRedirection());
+        Assert.ThrowsExactly<InvalidOperationException>(() => redirector.StartRedirection());
             
         // Cleanup
         redirector.StopRedirection();
@@ -139,7 +140,7 @@ public class ProcessOutRedirectorTests
         process.WaitForExit(5000); // Wait for process to exit
 
         // Act & Assert
-        Assert.ThrowsException<InvalidOperationException>(() => redirector.StartRedirection());
+        Assert.ThrowsExactly<InvalidOperationException>(() => redirector.StartRedirection());
     }
 
     #endregion
@@ -176,7 +177,7 @@ public class ProcessOutRedirectorTests
         redirector.StopRedirection(); // Cancel before starting
 
         // Act & Assert
-        await Assert.ThrowsExceptionAsync<InvalidOperationException>(
+        await Assert.ThrowsExactlyAsync<InvalidOperationException>(
             () => redirector.StartRedirectionAsync());
     }
 
