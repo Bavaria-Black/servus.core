@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿namespace Servus.Core.Collections;
 
 public class HandlerRegistry<T>
 {
-    private readonly List<HandlerEntry> _handlers = new List<HandlerEntry>();
-    private readonly Stack<List<HandlerEntry>> _stash = new Stack<List<HandlerEntry>>();
+    private readonly List<HandlerEntry> _handlers = [];
+    private readonly Stack<List<HandlerEntry>> _stash = [];
 
     /// <summary>
     /// Registers a handler with its associated condition.
@@ -96,7 +94,7 @@ public class HandlerRegistry<T>
     /// </summary>
     public void Stash()
     {
-        _stash.Push(new List<HandlerEntry>(_handlers));
+        _stash.Push([.._handlers]);
         _handlers.Clear();
     }
 
