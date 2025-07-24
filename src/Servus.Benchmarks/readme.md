@@ -14,7 +14,7 @@ The attribute `[RPlotExporter]` exporter creates nice plots using R and ggplot 2
 ## To setup R:
 
 Install [R open](https://chocolatey.org/packages/microsoft-r-open)
-`choco install microsoft-r-open`
+` winget install -e --id RProject.R`
 
 Create a system environment variable with the path to the R installation called R_HOME. Use the root of the R distribution and not the bin folder. For example: `R_HOME=C:\Program Files\Microsoft\R Open\R-3.5.3`. 
 
