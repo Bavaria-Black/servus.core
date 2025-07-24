@@ -1,6 +1,6 @@
 ﻿namespace Servus.Core;
 
-public static class EnumerableExtensions
+public static partial class EnumerableExtensions
 {
     /// <summary>
     /// Selects items from an IEnumerable which are distinct by the given property / properties.
@@ -63,4 +63,13 @@ public static class EnumerableExtensions
             action(item);
         }
     }
+    
+    public static bool Contains<T>(this IEnumerable<T> enumerable, Predicate<T> predicate) => enumerable.Any(a => predicate(a));
+
+    public static bool TryGet<T>(this IEnumerable<T> enumerable, Predicate<T> predicate, out T? entry)
+    {
+        entry = enumerable.FirstOrDefault(e => predicate(e));
+        return entry is not null;
+    }
+
 }

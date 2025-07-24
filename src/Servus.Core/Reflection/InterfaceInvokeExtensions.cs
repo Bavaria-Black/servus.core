@@ -13,7 +13,6 @@ public static class InterfaceInvokeExtensions
     /// If the entity does not implement TTarget, the method returns without executing the action.
     /// </remarks>
     public static void InvokeIf<TTarget>(this object entity, Action<TTarget> action)
-        where TTarget : class
     {
         if (entity is not TTarget ntt) return;
         action(ntt);
@@ -31,7 +30,6 @@ public static class InterfaceInvokeExtensions
     /// If the entity does not implement TTarget, the method returns a completed task without executing the action.
     /// </remarks>
     public static async Task InvokeIfAsync<TTarget>(this object entity, Func<TTarget, Task> action)
-        where TTarget : class
     {
         if (entity is not TTarget ntt) return;
         await action(ntt);
@@ -50,7 +48,6 @@ public static class InterfaceInvokeExtensions
     /// If the entity does not implement TTarget, the method returns the default value of TResult.
     /// </remarks>
     public static TResult? InvokeIf<TTarget, TResult>(this object entity, Func<TTarget, TResult> action)
-        where TTarget : class
     {
         return entity is not TTarget ntt ? default : action(ntt);
     }
@@ -68,7 +65,6 @@ public static class InterfaceInvokeExtensions
     /// If the entity does not implement TTarget, the method returns a completed task with the default value of TResult.
     /// </remarks>
     public static async Task<TResult?> InvokeIfAsync<TTarget, TResult>(this object entity, Func<TTarget, Task<TResult>> action)
-        where TTarget : class
     {
         if (entity is not TTarget ntt) return default;
         return await action(ntt);
