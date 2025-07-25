@@ -22,5 +22,10 @@ public class TypeRegistry<TValue>
     public TValue GetOrAdd<TKey>(Func<TValue> factory) => GetOrAdd(typeof(TKey), factory);
 
     public TValue GetOrAdd(Type key, Func<TValue> factory)
-        => Dictionary.GetOrAdd(key, (_) => factory());
+    {
+        ArgumentNullException.ThrowIfNull(key);
+        ArgumentNullException.ThrowIfNull(factory);
+        
+        return Dictionary.GetOrAdd(key, (_) => factory());   
+    }
 }

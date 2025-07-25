@@ -176,6 +176,7 @@ public partial class EnumerableExtensionTests
             source.ForEachIndexed((item, index) => results.Add($"({item},{index})"));
 
             // Assert
+            Assert.IsFalse(source.IsEmpty());
             CollectionAssert.AreEqual(expected, results);
         }
 
