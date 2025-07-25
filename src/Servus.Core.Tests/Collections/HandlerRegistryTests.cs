@@ -101,6 +101,27 @@ public class HandlerRegistryTests
     }
 
     [TestMethod]
+    public void Handle_AnyHandler_WithTypeObject()
+    {
+        // Arrange
+        _registry.Register<string>(s => s.Contains("test"), _ => _handledItems.Add("first"));
+        _registry.Register<object>(_ => true, o =>_handledItems.Add("any"));
+        _registry.Register<string>(s => s.Contains("leberkas"), _ => _handledItems.Add("second"));
+        
+        // Act
+        var result = _registry.Handle("test item");
+        var resultAny = _registry.Handle("leberkas");
+        
+        // Assert
+        Assert.IsTrue(result);
+        Assert.AreEqual(2, _handledItems.Count);
+        Assert.AreEqual("first", _handledItems[0]);
+        
+        Assert.IsTrue(resultAny);
+        Assert.AreEqual("any", _handledItems[1]);
+    }
+
+    [TestMethod]
     public void HandleAll_WithMultipleMatchingHandlers_ShouldExecuteAllAndReturnCount()
     {
         // Arrange
