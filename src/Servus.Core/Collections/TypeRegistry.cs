@@ -6,19 +6,21 @@ public class TypeRegistry<TValue>
 {
     protected readonly ConcurrentDictionary<Type, TValue> Dictionary = [];
 
-    public void Add<TKey>(TValue value)
-    {
-        Dictionary.AddOrUpdate(typeof(TKey), value, (_, _) => value);
-    }
+    public void Add<TKey>(TValue value) => Add(typeof(TKey), value);
 
-    public TValue Get<TKey>()
+    public void Add(Type key, TValue value) 
+        => Dictionary.AddOrUpdate(key, value, (_, _) => value);
+
+    public TValue Get<TKey>() => Get(typeof(TKey));
+
+    public TValue Get(Type key)
     {
-        if (!Dictionary.TryGetValue(typeof(TKey), out var value)) throw new KeyNotFoundException();
+        if (!Dictionary.TryGetValue(key, out var value)) throw new KeyNotFoundException();
         return value;
     }
 
-    public TValue GetOrAdd<TKey>(Func<TValue> factory)
-    {
-        return Dictionary.GetOrAdd(typeof(TKey), (_) => factory());
-    }
+    public TValue GetOrAdd<TKey>(Func<TValue> factory) => GetOrAdd(typeof(TKey), factory);
+
+    public TValue GetOrAdd(Type key, Func<TValue> factory)
+        => Dictionary.GetOrAdd(key, (_) => factory());
 }
