@@ -107,7 +107,7 @@ public class HandlerRegistry
     public IEnumerable<Action<object>> GetMatchingHandlers(object item)
     {
         return _handlers
-            .Where(i => i.Type.IsAssignableTo(item.GetType()))
+            .Where(i => i.Type.IsAssignableTo(item.GetType()) || i.Type == typeof(object))
             .Where(entry => entry.CanHandle(item))
             .Select(entry => entry.Handler);
     }
