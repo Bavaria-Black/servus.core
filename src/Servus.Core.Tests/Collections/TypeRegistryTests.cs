@@ -300,7 +300,7 @@ namespace Servus.Core.Tests.Collections;
             var registry = new TypeRegistry<string>();
 
             // Act
-            var result = registry.GetOrAdd<int>(() => null);
+            var result = registry.GetOrAdd<int>(() => null!);
 
             // Assert
             Assert.IsNull(result);
