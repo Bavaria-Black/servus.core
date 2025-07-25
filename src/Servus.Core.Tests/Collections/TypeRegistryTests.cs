@@ -137,7 +137,7 @@ namespace Servus.Core.Tests.Collections;
             var registry = new TypeRegistry<string>();
 
             // Act & Assert
-            Assert.ThrowsException<ArgumentNullException>(() => registry.Add(null!, "value"));
+            Assert.ThrowsExactly<ArgumentNullException>(() => registry.Add(null!, "value"));
         }
 
         [TestMethod]
@@ -185,7 +185,7 @@ namespace Servus.Core.Tests.Collections;
             var registry = new TypeRegistry<string>();
 
             // Act & Assert
-            Assert.ThrowsException<KeyNotFoundException>(() => registry.Get<int>());
+            Assert.ThrowsExactly<KeyNotFoundException>(() => registry.Get<int>());
         }
 
         [TestMethod]
@@ -229,7 +229,7 @@ namespace Servus.Core.Tests.Collections;
             var keyType = typeof(int);
 
             // Act & Assert
-            Assert.ThrowsException<KeyNotFoundException>(() => registry.Get(keyType));
+            Assert.ThrowsExactly<KeyNotFoundException>(() => registry.Get(keyType));
         }
 
         [TestMethod]
@@ -239,7 +239,7 @@ namespace Servus.Core.Tests.Collections;
             var registry = new TypeRegistry<string>();
 
             // Act & Assert
-            Assert.ThrowsException<ArgumentNullException>(() => registry.Get(null!));
+            Assert.ThrowsExactly<ArgumentNullException>(() => registry.Get(null!));
         }
 
         #endregion
@@ -290,7 +290,7 @@ namespace Servus.Core.Tests.Collections;
             var registry = new TypeRegistry<string>();
 
             // Act & Assert
-            Assert.ThrowsException<ArgumentNullException>(() => registry.GetOrAdd<int>(null!));
+            Assert.ThrowsExactly<ArgumentNullException>(() => registry.GetOrAdd<int>(null!));
         }
 
         [TestMethod]
@@ -357,7 +357,7 @@ namespace Servus.Core.Tests.Collections;
             var registry = new TypeRegistry<string>();
 
             // Act & Assert
-            Assert.ThrowsException<ArgumentNullException>(() => 
+            Assert.ThrowsExactly<ArgumentNullException>(() => 
                 registry.GetOrAdd(null!, () => "value"));
         }
 
@@ -369,7 +369,7 @@ namespace Servus.Core.Tests.Collections;
             var keyType = typeof(int);
 
             // Act & Assert
-            Assert.ThrowsException<ArgumentNullException>(() => 
+            Assert.ThrowsExactly<ArgumentNullException>(() => 
                 registry.GetOrAdd(keyType, null!));
         }
 
