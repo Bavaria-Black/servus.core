@@ -8,38 +8,31 @@
 public sealed class BlockingTimer : IDisposable
 {
     private readonly Action _timerAction;
-    private readonly CancellationTokenSource _cancellationTokenSource;
+    private CancellationTokenSource? _cancellationTokenSource;
     private readonly double _intervalMilliseconds;
     private Task? _task;
 
     /// <summary>
     /// Creates and starts the timer, until the cancellation via the provided cancellation token is requested
     /// </summary>
-    public BlockingTimer(Action timerAction, double intervalInMilliseconds)
+    public BlockingTimer(Action timerAction, double intervalInMilliseconds, CancellationToken cancellationToken = default)
     {
-        _timerAction = timerAction;
-        _intervalMilliseconds = intervalInMilliseconds;
-        _cancellationTokenSource = new CancellationTokenSource();
-        Start();
-    }
+        ArgumentNullException.ThrowIfNull(timerAction);
+        ArgumentNullException.ThrowIfNull(intervalInMilliseconds);
         
-    /// <summary>
-    /// Creates and starts the timer, until the cancellation via the provided cancellation token is requested
-    /// </summary>
-    public BlockingTimer(Action timerAction, CancellationToken cancellationToken, double intervalInMilliseconds)
-    {
         _timerAction = timerAction;
         _intervalMilliseconds = intervalInMilliseconds;
         _cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         Start();
     }
-        
+
     private void Start()
     {
         try
         {
-            _task = Task.Factory.StartNew(ExecuteTimerLoop, _cancellationTokenSource.Token,
-                TaskCreationOptions.LongRunning, TaskScheduler.Default).Unwrap();
+            if (_cancellationTokenSource != null)
+                _task = Task.Factory.StartNew(ExecuteTimerLoop, _cancellationTokenSource.Token,
+                    TaskCreationOptions.LongRunning, TaskScheduler.Default).Unwrap();
         }
         catch (OperationCanceledException)
         {
@@ -52,15 +45,23 @@ public sealed class BlockingTimer : IDisposable
     /// </summary>
     public void Stop()
     {
-        _cancellationTokenSource.Cancel();
+        _cancellationTokenSource?.Cancel();
 
         // Wait for the scheduled task to complete
-        _task?.Wait();
+        try
+        {
+
+            _task?.Wait();
+        }
+        catch (Exception)
+        {
+            // nop
+        }
     }
-        
+
     private async Task ExecuteTimerLoop()
     {
-        while (!_cancellationTokenSource.Token.IsCancellationRequested)
+        while ((!_cancellationTokenSource?.Token.IsCancellationRequested) ?? false)
         {
             try
             {
@@ -83,14 +84,19 @@ public sealed class BlockingTimer : IDisposable
     {
         var waitFor = nextExecutionTime - DateTime.Now;
 
-        return waitFor > TimeSpan.Zero 
-            ? Task.Delay(waitFor, _cancellationTokenSource.Token)
+        return waitFor > TimeSpan.Zero
+            ? Task.Delay(waitFor, _cancellationTokenSource?.Token ?? CancellationToken.None)
             : Task.CompletedTask;
     }
 
     public void Dispose()
     {
-        _cancellationTokenSource.Dispose();
+        Stop();
+        
+        _cancellationTokenSource?.Dispose();
+        _cancellationTokenSource = null;
+
         _task?.Dispose();
+        _task = null;
     }
 }
