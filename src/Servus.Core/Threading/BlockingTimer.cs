@@ -5,7 +5,7 @@
 /// If the action run's longer then the specified interval, it waits until the action is executed.
 /// The timer start's once it is constructed and can be stopped via a cancellation token.
 /// </summary>
-public class BlockingTimer
+public sealed class BlockingTimer : IDisposable
 {
     private readonly Action _timerAction;
     private readonly CancellationTokenSource _cancellationTokenSource;
@@ -86,5 +86,11 @@ public class BlockingTimer
         return waitFor > TimeSpan.Zero 
             ? Task.Delay(waitFor, _cancellationTokenSource.Token)
             : Task.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+        _cancellationTokenSource.Dispose();
+        _task?.Dispose();
     }
 }
