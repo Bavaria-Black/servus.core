@@ -1,21 +1,34 @@
 ﻿namespace Servus.Core.Collections;
 
-public class HandlerRegistry<T>
+public class HandlerRegistry
 {
     private readonly List<HandlerEntry> _handlers = [];
     private readonly Stack<List<HandlerEntry>> _stash = [];
+
+    /// <summary>
+    /// Registers a handler.
+    /// </summary>
+    /// <param name="handler">The action to execute when the type matches</param>
+    public void Register<T>(Action<T> handler) => Register(_ => true, handler);
 
     /// <summary>
     /// Registers a handler with its associated condition.
     /// </summary>
     /// <param name="canHandle">The condition that determines if the handler should be executed</param>
     /// <param name="handler">The action to execute when the condition matches</param>
-    public void Register(Predicate<T> canHandle, Action<T> handler)
+    public void Register<T>(Predicate<T> canHandle, Action<T> handler)
     {
         ArgumentNullException.ThrowIfNull(canHandle);
         ArgumentNullException.ThrowIfNull(handler);
 
-        _handlers.Add(new HandlerEntry(canHandle, handler));
+        var (predicate, action) = Wrap(canHandle, handler);
+        _handlers.Add(new HandlerEntry(typeof(T), predicate, action));
+    }
+
+    private static (Predicate<object> canHandle, Action<object> handler) Wrap<T>(Predicate<T> canHandle,
+        Action<T> handler)
+    {
+        return (o => canHandle((T) o), o => handler((T) o));
     }
 
     /// <summary>
@@ -23,14 +36,13 @@ public class HandlerRegistry<T>
     /// </summary>
     /// <param name="item">The item to handle</param>
     /// <returns>True if a handler was executed, false otherwise</returns>
-    public bool Handle(T item)
+    public bool Handle(object item)
     {
-        var handler = _handlers.FirstOrDefault(entry => entry.CanHandle(item));
+        var handler = GetMatchingHandlers(item).FirstOrDefault();
 
         if (handler == null) return false;
-        handler.Handler(item);
+        handler(item);
         return true;
-
     }
 
     /// <summary>
@@ -38,15 +50,15 @@ public class HandlerRegistry<T>
     /// </summary>
     /// <param name="item">The item to handle</param>
     /// <returns>The number of handlers that were executed</returns>
-    public int HandleAll(T item)
+    public int HandleAll(object item)
     {
-        var matchingHandlers = _handlers.Where(entry => entry.CanHandle(item)).ToList();
-        
+        var matchingHandlers = GetMatchingHandlers(item).ToList();
+
         foreach (var entry in matchingHandlers)
         {
-            entry.Handler(item);
+            entry(item);
         }
-        
+
         return matchingHandlers.Count;
     }
 
@@ -55,9 +67,9 @@ public class HandlerRegistry<T>
     /// </summary>
     /// <param name="item">The item to check</param>
     /// <returns>True if at least one handler can handle the item</returns>
-    public bool CanHandle(T item)
+    public bool CanHandle(object item)
     {
-        return _handlers.Any(entry => entry.CanHandle(item));
+        return GetMatchingHandlers(item).Any();
     }
 
     /// <summary>
@@ -79,9 +91,10 @@ public class HandlerRegistry<T>
     /// </summary>
     /// <param name="item">The item to match against</param>
     /// <returns>An enumerable of matching handlers</returns>
-    public IEnumerable<Action<T>> GetMatchingHandlers(T item)
+    public IEnumerable<Action<object>> GetMatchingHandlers(object item)
     {
         return _handlers
+            .Where(i => i.Type.IsAssignableTo(item.GetType()))
             .Where(entry => entry.CanHandle(item))
             .Select(entry => entry.Handler);
     }
@@ -109,5 +122,5 @@ public class HandlerRegistry<T>
         return true;
     }
 
-    private sealed record HandlerEntry(Predicate<T> CanHandle, Action<T> Handler);
+    private sealed record HandlerEntry(Type Type, Predicate<object> CanHandle, Action<object> Handler);
 }
