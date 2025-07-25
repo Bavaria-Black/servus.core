@@ -18,16 +18,29 @@ public class HandlerRegistry
     /// <param name="handler">The action to execute when the condition matches</param>
     public void Register<T>(Predicate<T> canHandle, Action<T> handler)
     {
+        var (predicate, action) = Wrap(canHandle, handler);
+        Register(typeof(T), predicate, action);
+    }
+
+    /// <summary>
+    /// Registers a handler with its associated condition.
+    /// </summary>
+    /// <param name="type">The type of the object to handle</param>
+    /// <param name="canHandle">The condition that determines if the handler should be executed</param>
+    /// <param name="handler">The action to execute when the condition matches</param>
+    public void Register(Type type, Predicate<object> canHandle, Action<object> handler)
+    {
         ArgumentNullException.ThrowIfNull(canHandle);
         ArgumentNullException.ThrowIfNull(handler);
-
-        var (predicate, action) = Wrap(canHandle, handler);
-        _handlers.Add(new HandlerEntry(typeof(T), predicate, action));
+        
+        _handlers.Add(new HandlerEntry(type, canHandle, handler));
     }
 
     private static (Predicate<object> canHandle, Action<object> handler) Wrap<T>(Predicate<T> canHandle,
         Action<T> handler)
     {
+        ArgumentNullException.ThrowIfNull(canHandle);
+        ArgumentNullException.ThrowIfNull(handler);
         return (o => canHandle((T) o), o => handler((T) o));
     }
 
