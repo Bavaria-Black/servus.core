@@ -52,6 +52,7 @@ jobs:
         run: dotnet tool install --global dotnet-sonarscanner
         
       - name: start sonar scanner
+        if: ${{ secrets.SONAR_TOKEN != '' }}
         run: dotnet sonarscanner begin /o:"bavaria-black" /k:"servus-core" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.opencover.reportsPaths=**/*.opencover.xml
 
       - name: Build
@@ -61,6 +62,7 @@ jobs:
         run: dotnet test --configuration Release --no-build --collect:"XPlat Code Coverage;Format=opencover" --verbosity normal ${{ env.PROJECT_PATH }}
 
       - name: stop sonar scanner
+        if: ${{ secrets.SONAR_TOKEN != '' }}
         run: dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
       - name: Create NuGet package
