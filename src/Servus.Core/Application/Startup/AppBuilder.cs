@@ -33,6 +33,12 @@ public class AppBuilder
 
     public AppBuilder WithSetup(ISetupContainer container)
     {
+        if (container is IHostBuilderSetupContainer hostBuilder && _hostBuilder is WebApplicationBuilder builder)
+        {
+            hostBuilder.ConfigureHostBuilder(builder.Host);
+            return this;
+        }
+        
         _appSetupContainer.Add(container);
         return this;
     }
