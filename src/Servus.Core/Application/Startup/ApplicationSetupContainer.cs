@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Hosting;
 
 namespace Servus.Core.Application.Startup;
 
