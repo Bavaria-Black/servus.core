@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Hosting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Servus.Core.Application.Startup;
 
@@ -19,6 +20,16 @@ public class AppConfigurationTestBase : ApplicationSetupContainer<WebApplication
 {
     protected override void SetupApplication(WebApplication app)
     {
+    }
+}
+
+public class HostBuilderSetupContainer : IHostBuilderSetupContainer
+{
+    public bool WasCalled { get; set; }
+    
+    public void ConfigureHostBuilder(IHostBuilder builder)
+    {
+        WasCalled = true;
     }
 }
 
@@ -47,7 +58,6 @@ public class AppStartupTests
         await cts.CancelAsync();
     }
 
-
     [TestMethod]
     public async Task FailedStartup()
     {
@@ -61,5 +71,16 @@ public class AppStartupTests
         
         await Assert.ThrowsAsync<NotImplementedException>(async () =>
             await app.StartAsync(cts.Token));
+    }
+
+    [TestMethod]
+    public void HostBuilderSetup()
+    {
+        var container = new HostBuilderSetupContainer();
+        _ = AppBuilder.Create()
+            .WithSetup(container)
+            .Build();
+        
+        Assert.IsTrue(container.WasCalled);
     }
 }
