@@ -6,7 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Servus.Core.Application.Startup;
 
-namespace Servus.Core.Tests.Application;
+namespace Servus.Core.Tests.Application.Startup;
 
 public class FailureAppConfigurationTestBase : ApplicationSetupContainer
 {
