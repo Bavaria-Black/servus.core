@@ -44,7 +44,7 @@ public class AppBuilder
 
     private void SetupWebApplicationBuilder(ISetupContainer container, WebApplicationBuilder builder)
     {
-        builder.WhenType<IHostBuilderSetupContainer>(b => b.ConfigureHostBuilder(builder.Host));
+        container.WhenType<IHostBuilderSetupContainer>(b => b.ConfigureHostBuilder(builder.Host));
     }
 
     public AppBuilder WithStartupGate(Func<Task<bool>> gate) => WithStartupGate(new ActionStartupGate(gate));
