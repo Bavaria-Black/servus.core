@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
 using Servus.Core.Application.Startup.Gates;
+using Servus.Core.Functional;
 
 namespace Servus.Core.Application.Startup;
 
@@ -30,17 +32,19 @@ public class AppBuilder
 
     public AppBuilder WithSetup<TContainer>() where TContainer : class, ISetupContainer, new() 
         => WithSetup(new TContainer());
-
+    
     public AppBuilder WithSetup(ISetupContainer container)
     {
-        if (container is IHostBuilderSetupContainer hostBuilder && _hostBuilder is WebApplicationBuilder builder)
-        {
-            hostBuilder.ConfigureHostBuilder(builder.Host);
-            return this;
-        }
+        _hostBuilder.WhenType<WebApplicationBuilder>(b => SetupWebApplicationBuilder(container, b));
+        container.WhenType<IHostApplicationBuilderSetupContainer>(b => b.ConfigureHostApplicationBuilder(_hostBuilder));
         
         _appSetupContainer.Add(container);
         return this;
+    }
+
+    private void SetupWebApplicationBuilder(ISetupContainer container, WebApplicationBuilder builder)
+    {
+        builder.WhenType<IHostBuilderSetupContainer>(b => b.ConfigureHostBuilder(builder.Host));
     }
 
     public AppBuilder WithStartupGate(Func<Task<bool>> gate) => WithStartupGate(new ActionStartupGate(gate));
