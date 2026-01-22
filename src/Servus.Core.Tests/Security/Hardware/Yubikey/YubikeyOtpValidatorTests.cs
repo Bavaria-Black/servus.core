@@ -1,26 +1,25 @@
 ﻿using Servus.Core.Security.Hardware.Yubikey;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace Servus.Core.Tests.Security.Hardware.Yubikey;
 
-[TestClass]
 public class YubikeyOtpValidatorTests
 {
-    [TestMethod]
+    [Fact]
     public void ExtractClientId()
     {
         const string otp = "vvvvvvcurikvhjcvnlnbecbkubjvuittbifhndhn";
         var clientId = YubikeyOtpValidator.ExtractClientId(otp);
-        Assert.AreEqual("vvvvvvcu", clientId);
+        Assert.Equal("vvvvvvcu", clientId);
     }
 
-    [TestMethod]
+    [Fact]
     public async Task ValidateAsync()
     {
         const string otp = "vvvvvvcurikvhjcvnlnbecbkubjvuittbifhndhn";
         var validator = new YubikeyOtpValidator(82, "asadfdsdfs");
         var result = await validator.ValidateAsync(otp);
-        Assert.IsTrue(result);
+        Assert.True(result);
     }
 }

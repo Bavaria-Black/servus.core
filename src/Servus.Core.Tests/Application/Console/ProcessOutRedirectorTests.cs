@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Servus.Core.Application.Console;
+using Xunit;
 
 namespace Servus.Core.Tests.Application.Console;
 
-[TestClass]
 public class ProcessOutRedirectorTests
 {
     private static Process CreateTestProcess(string arguments = "")
@@ -68,7 +67,7 @@ public class ProcessOutRedirectorTests
 
     #region Constructor Tests
 
-    [TestMethod]
+    [Fact]
     public void Constructor_WithValidProcess_InitializesCorrectly()
     {
         // Arrange
@@ -78,23 +77,23 @@ public class ProcessOutRedirectorTests
         using var redirector = new ProcessOutRedirector(process);
 
         // Assert
-        Assert.IsFalse(process.StartInfo.UseShellExecute);
-        Assert.IsTrue(process.StartInfo.RedirectStandardOutput);
-        Assert.IsTrue(process.StartInfo.RedirectStandardError);
+        Assert.False(process.StartInfo.UseShellExecute);
+        Assert.True(process.StartInfo.RedirectStandardOutput);
+        Assert.True(process.StartInfo.RedirectStandardError);
     }
 
-    [TestMethod]
+    [Fact]
     public void Constructor_WithNullProcess_ThrowsArgumentNullException()
     {
         // Act & Assert
-        Assert.ThrowsExactly<ArgumentNullException>(() => new ProcessOutRedirector(null!));
+        Assert.Throws<ArgumentNullException>(() => new ProcessOutRedirector(null!));
     }
 
     #endregion
 
     #region StartRedirection Tests
 
-    [TestMethod]
+    [Fact]
     public void StartRedirection_WhenAlreadyActive_ThrowsInvalidOperationException()
     {
         // Arrange
@@ -107,14 +106,14 @@ public class ProcessOutRedirectorTests
         redirector.StartRedirection();
 
         // Act & Assert
-        Assert.ThrowsExactly<InvalidOperationException>(() => redirector.StartRedirection());
+        Assert.Throws<InvalidOperationException>(() => redirector.StartRedirection());
             
         // Cleanup
         redirector.StopRedirection();
         process.Kill();
     }
     
-    [TestMethod]
+    [Fact]
     public void StartRedirection_WhenProcessHasExited_ThrowsInvalidOperationException()
     {
         // Arrange
@@ -125,14 +124,14 @@ public class ProcessOutRedirectorTests
         process.WaitForExit(5000); // Wait for process to exit
 
         // Act & Assert
-        Assert.ThrowsExactly<InvalidOperationException>(() => redirector.StartRedirection());
+        Assert.Throws<InvalidOperationException>(() => redirector.StartRedirection());
     }
 
     #endregion
 
     #region StartRedirectionAsync Tests
 
-    [TestMethod]
+    [Fact]
     public async Task StartRedirectionAsync_WithValidProcess_CompletesSuccessfully()
     {
         // Arrange
@@ -149,10 +148,10 @@ public class ProcessOutRedirectorTests
         await Task.Delay(100);
         
         // Assert
-        Assert.IsTrue(process.HasExited);
+        Assert.True(process.HasExited);
     }
 
-    [TestMethod]
+    [Fact]
     public async Task StartRedirectionAsync_WhenCancelled_ThrowsInvalidOperationException()
     {
         // Arrange
@@ -162,7 +161,7 @@ public class ProcessOutRedirectorTests
         redirector.StopRedirection(); // Cancel before starting
 
         // Act & Assert
-        await Assert.ThrowsExactlyAsync<InvalidOperationException>(
+        await Assert.ThrowsAsync<InvalidOperationException>(
             () => redirector.StartRedirectionAsync());
     }
 
@@ -170,7 +169,7 @@ public class ProcessOutRedirectorTests
 
     #region RedirectAndWait Tests
 
-    [TestMethod]
+    [Fact]
     public void RedirectAndWait_WithQuickProcess_ReturnsExitCode()
     {
         // Arrange
@@ -183,11 +182,11 @@ public class ProcessOutRedirectorTests
         redirector.RedirectAndWait(5000);
 
         // Assert
-        Assert.AreEqual(0, process.ExitCode); 
-        Assert.IsTrue(process.HasExited);
+        Assert.Equal(0, process.ExitCode); 
+        Assert.True(process.HasExited);
     }
 
-    [TestMethod]
+    [Fact]
     public void RedirectAndWait_WithTimeout_ReturnsWhenProcessCompletes()
     {
         // Arrange
@@ -202,15 +201,15 @@ public class ProcessOutRedirectorTests
 
         // Assert
         stopwatch.Stop();
-        Assert.IsTrue(stopwatch.ElapsedMilliseconds < 5000); // Should complete quickly
-        Assert.AreEqual(0, process.ExitCode);
+        Assert.True(stopwatch.ElapsedMilliseconds < 5000); // Should complete quickly
+        Assert.Equal(0, process.ExitCode);
     }
 
     #endregion
 
     #region RedirectAndWaitAsync Tests
 
-    [TestMethod]
+    [Fact]
     public async Task RedirectAndWaitAsync_WithQuickProcess_ReturnsExitCode()
     {
         // Arrange
@@ -223,11 +222,11 @@ public class ProcessOutRedirectorTests
         await redirector.RedirectAndWaitAsync(5000);
 
         // Assert
-        Assert.AreEqual(0, process.ExitCode); 
-        Assert.IsTrue(process.HasExited);
+        Assert.Equal(0, process.ExitCode); 
+        Assert.True(process.HasExited);
     }
 
-    [TestMethod]
+    [Fact]
     public async Task RedirectAndWaitAsync_WithInfiniteTimeout_CompletesWhenProcessExits()
     {
         // Arrange
@@ -240,11 +239,11 @@ public class ProcessOutRedirectorTests
         await redirector.RedirectAndWaitAsync(-1);
 
         // Assert
-        Assert.AreEqual(0, process.ExitCode); 
-        Assert.IsTrue(process.HasExited);
+        Assert.Equal(0, process.ExitCode); 
+        Assert.True(process.HasExited);
     }
 
-    [TestMethod]
+    [Fact]
     public async Task RedirectAndWaitAsync_WithLongRunningProcess_HandlesTimeout()
     {
         // Arrange
@@ -255,14 +254,14 @@ public class ProcessOutRedirectorTests
         var stopwatch = Stopwatch.StartNew();
 
         // Act
-        await Assert.ThrowsExactlyAsync<TaskCanceledException>(async () => await redirector.RedirectAndWaitAsync(1000)); // Short timeout
+        await Assert.ThrowsAsync<TaskCanceledException>(async () => await redirector.RedirectAndWaitAsync(1000)); // Short timeout
 
         // Assert
         stopwatch.Stop();
         
         // The process should be killed due to timeout
-        Assert.IsTrue(stopwatch.ElapsedMilliseconds >= 1000);
-        Assert.IsFalse(process.HasExited);
+        Assert.True(stopwatch.ElapsedMilliseconds >= 1000);
+        Assert.False(process.HasExited);
         
         process.Kill();
     }

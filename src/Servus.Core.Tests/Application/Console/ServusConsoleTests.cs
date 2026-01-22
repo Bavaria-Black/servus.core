@@ -1,62 +1,61 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Servus.Core.Application.Console;
+using Xunit;
 
 namespace Servus.Core.Tests.Application.Console;
 
-[TestClass]
 public class ServusConsoleTests
 {
-    [TestMethod]
+    [Fact]
     public void WriteColoredTests()
     {
         using var redirector = new ConsoleRedirector();
 
-        Assert.IsEmpty(redirector.ToString());
+        Assert.Empty(redirector.ToString());
         ServusConsole.WriteColored("Leberkas", ConsoleColor.Black);
-        Assert.AreEqual("Leberkas", redirector.ToString());
+        Assert.Equal("Leberkas", redirector.ToString());
     }
 
-    [TestMethod]
+    [Fact]
     public void WriteLineColoredTests()
     {
         using var redirector = new ConsoleRedirector();
 
-        Assert.IsEmpty(redirector.ToString());
+        Assert.Empty(redirector.ToString());
         ServusConsole.WriteLineColored("Leberkas", ConsoleColor.Black);
-        Assert.AreEqual("Leberkas" + Environment.NewLine, redirector.ToString());
+        Assert.Equal("Leberkas" + Environment.NewLine, redirector.ToString());
     }
 
-    [TestMethod]
+    [Fact]
     public void WriteKeyValueTests()
     {
         using var redirector = new ConsoleRedirector();
 
-        Assert.IsEmpty(redirector.ToString());
+        Assert.Empty(redirector.ToString());
         var kvp = new KeyValuePair<string, string>("Key", "Value");
         ServusConsole.PrintKeyValue(kvp);
-        Assert.AreEqual(" [Key]           => Value" + Environment.NewLine, redirector.ToString());
+        Assert.Equal(" [Key]           => Value" + Environment.NewLine, redirector.ToString());
     }
 
-    [TestMethod]
+    [Fact]
     public void WriteKeyValueNonDefaultTests()
     {
         using var redirector = new ConsoleRedirector();
 
-        Assert.IsEmpty(redirector.ToString());
+        Assert.Empty(redirector.ToString());
         var kvp = new KeyValuePair<int, int>(1, 555);
         ServusConsole.PrintKeyValue(kvp);
-        Assert.AreEqual(" [1]             => 555" + Environment.NewLine, redirector.ToString());
+        Assert.Equal(" [1]             => 555" + Environment.NewLine, redirector.ToString());
     }
 
-    [TestMethod]
+    [Fact]
     public void PrintLineTests()
     {
         using var redirector = new ConsoleRedirector();
-        Assert.IsEmpty(redirector.ToString());
+        Assert.Empty(redirector.ToString());
         
         ServusConsole.PrintLine(10, '_');
-        Assert.AreEqual("__________" + Environment.NewLine, redirector.ToString());
+        Assert.Equal("__________" + Environment.NewLine, redirector.ToString());
     }
 }

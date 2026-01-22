@@ -3,17 +3,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using Servus.Core.Threading;
 
 namespace Servus.Core.Tests.Threading;
 
-[TestClass]
 public class BlockingTimerTests
 {
     #region Constructor Tests
 
-    [TestMethod]
+    [Fact]
     public async Task Constructor_WithActionAndInterval_StartsTimerAutomatically()
     {
         // Arrange
@@ -24,20 +23,20 @@ public class BlockingTimerTests
         await Task.Delay(250);
 
         // Assert
-        Assert.IsTrue(executionCount >= 2, $"Expected at least 2 executions, got {executionCount}");
+        Assert.True(executionCount >= 2, $"Expected at least 2 executions, got {executionCount}");
         return;
 
         void TimerAction() => Interlocked.Increment(ref executionCount);
     }
 
-    [TestMethod]
+    [Fact]
     public void Constructor_WithNullAction_ThrowsArgumentNullException()
     {
         // Act & Assert
-        Assert.ThrowsExactly<ArgumentNullException>(() => new BlockingTimer(null!, 100));
+        Assert.Throws<ArgumentNullException>(() => new BlockingTimer(null!, 100));
     }
 
-    [TestMethod]
+    [Fact]
     public async Task Constructor_WithZeroInterval_AllowsZeroInterval()
     {
         // Arrange
@@ -46,14 +45,14 @@ public class BlockingTimerTests
         // Act & Assert - Should not throw
         using var timer = new BlockingTimer(TimerAction, 0);
         await Task.Delay(50);
-        
-        Assert.IsTrue(executionCount > 0);
+
+        Assert.True(executionCount > 0);
         return;
 
         void TimerAction() => Interlocked.Increment(ref executionCount);
     }
 
-    [TestMethod]
+    [Fact]
     public async Task Constructor_WithNegativeInterval_AllowsNegativeInterval()
     {
         // Arrange
@@ -62,8 +61,8 @@ public class BlockingTimerTests
         // Act & Assert - Should not throw, behaves like zero interval
         using var timer = new BlockingTimer(TimerAction, -100);
         await Task.Delay(50);
-            
-        Assert.IsTrue(executionCount > 0);
+
+        Assert.True(executionCount > 0);
         return;
 
         void TimerAction() => Interlocked.Increment(ref executionCount);
@@ -73,7 +72,7 @@ public class BlockingTimerTests
 
     #region Constructor with CancellationToken Tests
 
-    [TestMethod]
+    [Fact]
     public async Task Constructor_WithCancellationToken_StartsTimerAutomatically()
     {
         // Arrange
@@ -85,12 +84,12 @@ public class BlockingTimerTests
         await Task.Delay(250, cts.Token);
 
         // Assert
-        Assert.IsTrue(executionCount >= 2);
+        Assert.True(executionCount >= 2);
         return;
         void TimerAction() => Interlocked.Increment(ref executionCount);
     }
 
-    [TestMethod]
+    [Fact]
     public async Task Constructor_WithCancelledToken_StopsImmediately()
     {
         // Arrange
@@ -103,12 +102,12 @@ public class BlockingTimerTests
         await Task.Delay(250);
 
         // Assert
-        Assert.AreEqual(0, executionCount, "Timer should not execute when token is already cancelled");
+        Assert.Equal(0, executionCount);
         return;
         void TimerAction() => Interlocked.Increment(ref executionCount);
     }
 
-    [TestMethod]
+    [Fact]
     public async Task Constructor_WithTokenCancelledAfterStart_StopsExecution()
     {
         // Arrange
@@ -119,34 +118,34 @@ public class BlockingTimerTests
         using var timer = new BlockingTimer(TimerAction, 100, cts.Token);
         await Task.Delay(150, cts.Token);
         var countBeforeCancel = executionCount;
-            
+
         await cts.CancelAsync();
         await Task.Delay(200);
         var countAfterCancel = executionCount;
 
         // Assert
-        Assert.IsTrue(countBeforeCancel > 0, "Timer should have executed before cancellation");
-        Assert.AreEqual(countBeforeCancel, countAfterCancel, "Timer should stop executing after cancellation");
+        Assert.True(countBeforeCancel > 0, "Timer should have executed before cancellation");
+        Assert.Equal(countBeforeCancel, countAfterCancel);
         return;
         void TimerAction() => Interlocked.Increment(ref executionCount);
     }
 
-    [TestMethod]
+    [Fact]
     public void Constructor_WithNullActionAndCancellationToken_ThrowsArgumentNullException()
     {
         // Arrange
         using var cts = new CancellationTokenSource();
 
         // Act & Assert
-        Assert.ThrowsExactly<ArgumentNullException>(() => 
-            new BlockingTimer(null!,100, cts.Token));
+        Assert.Throws<ArgumentNullException>(() =>
+            new BlockingTimer(null!, 100, cts.Token));
     }
 
     #endregion
 
     #region Timer Execution Tests
 
-    [TestMethod]
+    [Fact]
     public async Task TimerExecution_WithRegularInterval_ExecutesAtExpectedFrequency()
     {
         // Arrange
@@ -167,26 +166,26 @@ public class BlockingTimerTests
         // Assert
         lock (lockObj)
         {
-            Assert.IsTrue(executionTimes.Count >= 3, $"Expected at least 3 executions, got {executionTimes.Count}");
-                
+            Assert.True(executionTimes.Count >= 3, $"Expected at least 3 executions, got {executionTimes.Count}");
+
             // Check intervals between executions (allowing some tolerance)
             for (int i = 1; i < executionTimes.Count; i++)
             {
                 var interval = (executionTimes[i] - executionTimes[i - 1]).TotalMilliseconds;
-                Assert.IsTrue(interval >= 90 && interval <= 150, 
+                Assert.True(interval >= 90 && interval <= 150,
                     $"Interval {i} was {interval}ms, expected ~100ms");
             }
         }
     }
 
-    [TestMethod]
+    [Fact]
     public async Task TimerExecution_WithSlowAction_WaitsForActionToComplete()
     {
         // Arrange
         var executionCount = 0;
         var executionTimes = new List<DateTime>();
         var lockObj = new object();
-            
+
         Action slowAction = () =>
         {
             lock (lockObj)
@@ -204,7 +203,7 @@ public class BlockingTimerTests
 
         // Assert
         // With 200ms action time, we should have fewer executions than interval would suggest
-        Assert.IsTrue(executionCount >= 2 && executionCount <= 3, 
+        Assert.True(executionCount >= 2 && executionCount <= 3,
             $"Expected 2-3 executions due to blocking, got {executionCount}");
 
         lock (lockObj)
@@ -213,19 +212,19 @@ public class BlockingTimerTests
             for (int i = 1; i < executionTimes.Count; i++)
             {
                 var interval = (executionTimes[i] - executionTimes[i - 1]).TotalMilliseconds;
-                Assert.IsTrue(interval >= 190, 
+                Assert.True(interval >= 190,
                     $"Interval {i} was {interval}ms, should be at least 200ms due to slow action");
             }
         }
     }
 
-    [TestMethod]
+    [Fact]
     public async Task TimerExecution_WithExceptionInAction_ContinuesExecution()
     {
         // Arrange
         var executionCount = 0;
         var exceptionCount = 0;
-            
+
         Action faultyAction = () =>
         {
             var count = Interlocked.Increment(ref executionCount);
@@ -241,15 +240,15 @@ public class BlockingTimerTests
         await Task.Delay(300);
 
         // Assert
-        Assert.IsTrue(executionCount > 3, "Timer should continue executing after exception");
-        Assert.AreEqual(1, exceptionCount, "Exception should have been thrown once");
+        Assert.True(executionCount > 3, "Timer should continue executing after exception");
+        Assert.Equal(1, exceptionCount);
     }
 
     #endregion
 
     #region Stop Method Tests
 
-    [TestMethod]
+    [Fact]
     public async Task Stop_WithRunningTimer_StopsExecution()
     {
         // Arrange
@@ -260,19 +259,19 @@ public class BlockingTimerTests
         // Act
         await Task.Delay(125);
         var countBeforeStop = executionCount;
-            
+
         timer.Stop();
         await Task.Delay(150);
         var countAfterStop = executionCount;
 
         // Assert
-        Assert.IsTrue(countBeforeStop > 0, "Timer should have executed before stopping");
-        Assert.AreEqual(countBeforeStop, countAfterStop, "Timer should not execute after stopping");
-            
+        Assert.True(countBeforeStop > 0, "Timer should have executed before stopping");
+        Assert.Equal(countBeforeStop, countAfterStop);
+
         timer.Dispose();
     }
 
-    [TestMethod]
+    [Fact]
     public void Stop_CalledMultipleTimes_DoesNotThrow()
     {
         // Arrange
@@ -284,18 +283,18 @@ public class BlockingTimerTests
         timer.Stop();
         timer.Stop(); // Second call should be safe
         timer.Stop(); // Third call should be safe
-            
+
         timer.Dispose();
     }
 
-    [TestMethod]
+    [Fact]
     public async Task Stop_WaitsForCurrentExecution_CompletesCleanly()
     {
         // Arrange
         var executionStarted = false;
         var executionCompleted = false;
         var stopCalled = false;
-            
+
         Action longAction = () =>
         {
             executionStarted = true;
@@ -309,17 +308,17 @@ public class BlockingTimerTests
 
         // Act
         await Task.Delay(50);
-        Assert.IsTrue(executionStarted, "Execution should have started");
-            
+        Assert.True(executionStarted, "Execution should have started");
+
         stopCalled = true;
         var stopwatch = Stopwatch.StartNew();
         timer.Stop(); // This should wait for execution to complete
         stopwatch.Stop();
 
         // Assert
-        Assert.IsTrue(executionCompleted, "Execution should have completed before Stop() returned");
-        Assert.IsTrue(stopwatch.ElapsedMilliseconds >= 90, "Stop() should have waited for execution to complete");
-            
+        Assert.True(executionCompleted, "Execution should have completed before Stop() returned");
+        Assert.True(stopwatch.ElapsedMilliseconds >= 90, "Stop() should have waited for execution to complete");
+
         timer.Dispose();
     }
 
@@ -327,7 +326,7 @@ public class BlockingTimerTests
 
     #region Dispose Tests
 
-    [TestMethod]
+    [Fact]
     public async Task Dispose_WithRunningTimer_StopsAndDisposesCleanly()
     {
         // Arrange
@@ -338,17 +337,17 @@ public class BlockingTimerTests
         // Act
         await Task.Delay(125);
         var countBeforeDispose = executionCount;
-            
+
         timer.Dispose();
         await Task.Delay(150); // Wait after disposing
         var countAfterDispose = executionCount;
 
         // Assert
-        Assert.IsTrue(countBeforeDispose > 0, "Timer should have executed before disposing");
-        Assert.AreEqual(countBeforeDispose, countAfterDispose, "Timer should not execute after disposing");
+        Assert.True(countBeforeDispose > 0, "Timer should have executed before disposing");
+        Assert.Equal(countBeforeDispose, countAfterDispose);
     }
 
-    [TestMethod]
+    [Fact]
     public void Dispose_CalledMultipleTimes_DoesNotThrow()
     {
         // Arrange
@@ -362,7 +361,7 @@ public class BlockingTimerTests
         timer.Dispose(); // Third call should be safe
     }
 
-    [TestMethod]
+    [Fact]
     public async Task Dispose_WithUsingStatement_DisposesAutomatically()
     {
         // Arrange
@@ -383,22 +382,22 @@ public class BlockingTimerTests
         var countAfterWait = executionCount;
 
         // Assert
-        Assert.IsTrue(finalCount > 0, "Timer should have executed within using block");
-        Assert.AreEqual(finalCount, countAfterWait, "Timer should not execute after dispose");
+        Assert.True(finalCount > 0, "Timer should have executed within using block");
+        Assert.Equal(finalCount, countAfterWait);
     }
 
     #endregion
 
     #region Timing and Performance Tests
 
-    [TestMethod]
+    [Fact]
     public async Task TimerAccuracy_WithPreciseInterval_MaintainsAccuracy()
     {
         // Arrange
         var executionTimes = new List<DateTime>();
         var lockObj = new object();
         const int intervalMs = 50;
-            
+
         Action timerAction = () =>
         {
             lock (lockObj)
@@ -414,26 +413,26 @@ public class BlockingTimerTests
         // Assert
         lock (lockObj)
         {
-            Assert.IsTrue(executionTimes.Count >= 5, $"Expected at least 5 executions, got {executionTimes.Count}");
-                
+            Assert.True(executionTimes.Count >= 5, $"Expected at least 5 executions, got {executionTimes.Count}");
+
             // Calculate average interval
             var totalInterval = (executionTimes[^1] - executionTimes[0]).TotalMilliseconds;
             var averageInterval = totalInterval / (executionTimes.Count - 1);
-                
+
             // Allow 30% tolerance for timing variations
-            Assert.IsTrue(averageInterval is >= intervalMs * 0.7 and <= intervalMs * 1.3,
+            Assert.True(averageInterval is >= intervalMs * 0.7 and <= intervalMs * 1.3,
                 $"Average interval was {averageInterval}ms, expected ~{intervalMs}ms");
         }
     }
 
-    [TestMethod]
+    [Fact]
     public async Task BlockingBehavior_WithVerySlowAction_ExecutesSequentially()
     {
         // Arrange
         var executionStarts = new List<DateTime>();
         var executionEnds = new List<DateTime>();
         var lockObj = new object();
-            
+
         Action slowAction = () =>
         {
             var start = DateTime.Now;
@@ -441,7 +440,7 @@ public class BlockingTimerTests
             {
                 executionStarts.Add(start);
             }
-                
+
             var end = DateTime.Now;
             lock (lockObj)
             {
@@ -456,14 +455,14 @@ public class BlockingTimerTests
         // Assert
         lock (lockObj)
         {
-            Assert.IsTrue(executionStarts.Count >= 2, "Should have multiple executions");
-            Assert.AreEqual(executionStarts.Count, executionEnds.Count, "All executions should complete");
-                
+            Assert.True(executionStarts.Count >= 2, "Should have multiple executions");
+            Assert.Equal(executionStarts.Count, executionEnds.Count);
+
             // Verify no overlapping executions (blocking behavior)
             for (int i = 1; i < executionStarts.Count; i++)
             {
-                Assert.IsTrue(executionStarts[i] >= executionEnds[i - 1],
-                    $"Execution {i} started before execution {i-1} ended - not blocking properly");
+                Assert.True(executionStarts[i] >= executionEnds[i - 1],
+                    $"Execution {i} started before execution {i - 1} ended - not blocking properly");
             }
         }
     }
@@ -472,7 +471,7 @@ public class BlockingTimerTests
 
     #region Edge Cases and Error Handling
 
-    [TestMethod]
+    [Fact]
     public async Task EdgeCase_ActionThrowsOperationCanceledException_HandledGracefully()
     {
         // Arrange
@@ -489,11 +488,11 @@ public class BlockingTimerTests
         // Act & Assert - Should not throw
         using var timer = new BlockingTimer(actionWithCancel, 50);
         await Task.Delay(200);
-            
-        Assert.IsTrue(executionCount > 2, "Timer should continue after OperationCanceledException");
+
+        Assert.True(executionCount > 2, "Timer should continue after OperationCanceledException");
     }
 
-    [TestMethod]
+    [Fact]
     public async Task EdgeCase_VeryHighFrequency_HandlesCorrectly()
     {
         // Arrange
@@ -503,10 +502,10 @@ public class BlockingTimerTests
         using var timer = new BlockingTimer(TimerAction, 2); // 1ms interval
         await Task.Delay(100);
         timer.Stop();
-        
+
         // Assert
-        Assert.IsTrue(executionCount > 5, "Should execute many times with 1ms interval");
-        Assert.IsTrue(executionCount < 100, "Should not execute unreasonably often");
+        Assert.True(executionCount > 5, "Should execute many times with 1ms interval");
+        Assert.True(executionCount < 100, "Should not execute unreasonably often");
         return;
         void TimerAction() => Interlocked.Increment(ref executionCount);
     }
@@ -515,14 +514,14 @@ public class BlockingTimerTests
 
     #region Integration Tests
 
-    [TestMethod]
+    [Fact]
     public async Task Integration_FullLifecycle_WorksCorrectly()
     {
         // Arrange
         var executionLog = new List<string>();
         var lockObj = new object();
         var executionNumber = 0;
-            
+
         Action logAction = () =>
         {
             var num = Interlocked.Increment(ref executionNumber);
@@ -536,26 +535,26 @@ public class BlockingTimerTests
         using (new BlockingTimer(logAction, 75))
         {
             await Task.Delay(200);
-                
+
             lock (lockObj)
             {
                 var countDuringRun = executionLog.Count;
-                Assert.IsTrue(countDuringRun >= 2, "Should execute during normal operation");
+                Assert.True(countDuringRun >= 2, "Should execute during normal operation");
             }
-                
+
             // Timer will be disposed here
         }
-            
+
         await Task.Delay(100);
-            
+
         // Assert
         lock (lockObj)
         {
-            Assert.IsTrue(executionLog.Count >= 2, "Should have executed multiple times");
+            Assert.True(executionLog.Count >= 2, "Should have executed multiple times");
             // Verify log contains expected format
             foreach (var entry in executionLog)
             {
-                Assert.IsTrue(entry.StartsWith("Execution"), $"Invalid log entry: {entry}");
+                Assert.True(entry.StartsWith("Execution"), $"Invalid log entry: {entry}");
             }
         }
     }

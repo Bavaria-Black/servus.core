@@ -1,43 +1,41 @@
 ﻿using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using Servus.Core.Collections;
 
 namespace Servus.Core.Tests.Collections;
 
-[TestClass]
 public class CircularQueueTests
 {
     private CircularQueue<string> _queue = null!;
 
-    [TestInitialize]
-    public void TestInitialize()
+    public CircularQueueTests()
     {
         _queue = new CircularQueue<string>(3);
     }
 
-    [TestMethod]
+    [Fact]
     public void Constructor_WithValidCapacity_CreatesEmptyQueue()
     {
         // Arrange & Act
         var queue = new CircularQueue<int>(5);
 
         // Assert
-        Assert.AreEqual(0, queue.Count);
-        Assert.AreEqual(5, queue.Capacity);
+        Assert.Equal(0, queue.Count);
+        Assert.Equal(5, queue.Capacity);
     }
 
-    [TestMethod]
+    [Fact]
     public void Enqueue_SingleItem_AddsItemToQueue()
     {
         // Act
         _queue.Enqueue("A");
 
         // Assert
-        Assert.AreEqual(1, _queue.Count);
-        Assert.IsTrue(_queue.Items.Contains("A"));
+        Assert.Equal(1, _queue.Count);
+        Assert.True(_queue.Items.Contains("A"));
     }
 
-    [TestMethod]
+    [Fact]
     public void Enqueue_MultipleItemsWithinCapacity_AddsAllItems()
     {
         var expected = new[] {"A", "B", "C"};
@@ -48,11 +46,11 @@ public class CircularQueueTests
         _queue.Enqueue("C");
 
         // Assert
-        Assert.AreEqual(3, _queue.Count);
-        CollectionAssert.AreEqual(expected, _queue.Items.ToArray());
+        Assert.Equal(3, _queue.Count);
+        Assert.Equal(expected, _queue.Items.ToArray());
     }
 
-    [TestMethod]
+    [Fact]
     public void Enqueue_ItemsExceedingCapacity_RemovesOldestItems()
     {
         // Arrange
@@ -65,11 +63,11 @@ public class CircularQueueTests
         _queue.Enqueue("D");
 
         // Assert
-        Assert.AreEqual(3, _queue.Count);
-        CollectionAssert.AreEqual(expected, _queue.Items.ToArray());
+        Assert.Equal(3, _queue.Count);
+        Assert.Equal(expected, _queue.Items.ToArray());
     }
 
-    [TestMethod]
+    [Fact]
     public void Enqueue_MultipleItemsExceedingCapacity_MaintainsCapacityAndOrder()
     {
         var expected = new[] {"C", "D", "E"};
@@ -81,22 +79,22 @@ public class CircularQueueTests
         _queue.Enqueue("E");
 
         // Assert
-        Assert.AreEqual(3, _queue.Count);
-        CollectionAssert.AreEqual(expected, _queue.Items.ToArray());
+        Assert.Equal(3, _queue.Count);
+        Assert.Equal(expected, _queue.Items.ToArray());
     }
 
-    [TestMethod]
+    [Fact]
     public void TryDequeue_EmptyQueue_ReturnsFalseAndDefaultValue()
     {
         // Act
         var result = _queue.TryDequeue(out var item);
 
         // Assert
-        Assert.IsFalse(result);
-        Assert.IsNull(item);
+        Assert.False(result);
+        Assert.Null(item);
     }
 
-    [TestMethod]
+    [Fact]
     public void TryDequeue_QueueWithItems_ReturnsTrueAndFirstItem()
     {
         // Arrange
@@ -107,12 +105,12 @@ public class CircularQueueTests
         var result = _queue.TryDequeue(out var item);
 
         // Assert
-        Assert.IsTrue(result);
-        Assert.AreEqual("A", item);
-        Assert.AreEqual(1, _queue.Count);
+        Assert.True(result);
+        Assert.Equal("A", item);
+        Assert.Equal(1, _queue.Count);
     }
 
-    [TestMethod]
+    [Fact]
     public void TryDequeue_MultipleDequeues_ReturnsItemsInFIFOOrder()
     {
         // Arrange
@@ -121,20 +119,20 @@ public class CircularQueueTests
         _queue.Enqueue("C");
 
         // Act & Assert
-        Assert.IsTrue(_queue.TryDequeue(out var item1));
-        Assert.AreEqual("A", item1);
+        Assert.True(_queue.TryDequeue(out var item1));
+        Assert.Equal("A", item1);
 
-        Assert.IsTrue(_queue.TryDequeue(out var item2));
-        Assert.AreEqual("B", item2);
+        Assert.True(_queue.TryDequeue(out var item2));
+        Assert.Equal("B", item2);
 
-        Assert.IsTrue(_queue.TryDequeue(out var item3));
-        Assert.AreEqual("C", item3);
+        Assert.True(_queue.TryDequeue(out var item3));
+        Assert.Equal("C", item3);
 
-        Assert.IsFalse(_queue.TryDequeue(out var item4));
-        Assert.IsNull(item4);
+        Assert.False(_queue.TryDequeue(out var item4));
+        Assert.Null(item4);
     }
 
-    [TestMethod]
+    [Fact]
     public void TryDequeue_AfterCapacityExceeded_ReturnsRemainingItems()
     {
         // Arrange
@@ -144,38 +142,38 @@ public class CircularQueueTests
         _queue.Enqueue("D"); // Should remove "A"
 
         // Act & Assert
-        Assert.IsTrue(_queue.TryDequeue(out var item1));
-        Assert.AreEqual("B", item1);
+        Assert.True(_queue.TryDequeue(out var item1));
+        Assert.Equal("B", item1);
 
-        Assert.IsTrue(_queue.TryDequeue(out var item2));
-        Assert.AreEqual("C", item2);
+        Assert.True(_queue.TryDequeue(out var item2));
+        Assert.Equal("C", item2);
 
-        Assert.IsTrue(_queue.TryDequeue(out var item3));
-        Assert.AreEqual("D", item3);
+        Assert.True(_queue.TryDequeue(out var item3));
+        Assert.Equal("D", item3);
     }
 
-    [TestMethod]
+    [Fact]
     public void Count_EmptyQueue_ReturnsZero()
     {
         // Assert
-        Assert.AreEqual(0, _queue.Count);
+        Assert.Equal(0, _queue.Count);
     }
 
-    [TestMethod]
+    [Fact]
     public void Count_AfterEnqueue_ReturnsCorrectCount()
     {
         // Act & Assert
         _queue.Enqueue("A");
-        Assert.AreEqual(1, _queue.Count);
+        Assert.Equal(1, _queue.Count);
 
         _queue.Enqueue("B");
-        Assert.AreEqual(2, _queue.Count);
+        Assert.Equal(2, _queue.Count);
 
         _queue.Enqueue("C");
-        Assert.AreEqual(3, _queue.Count);
+        Assert.Equal(3, _queue.Count);
     }
 
-    [TestMethod]
+    [Fact]
     public void Count_AfterCapacityExceeded_ReturnsCapacity()
     {
         // Act
@@ -186,10 +184,10 @@ public class CircularQueueTests
         _queue.Enqueue("E");
 
         // Assert
-        Assert.AreEqual(3, _queue.Count);
+        Assert.Equal(3, _queue.Count);
     }
 
-    [TestMethod]
+    [Fact]
     public void Count_AfterDequeue_DecreasesCorrectly()
     {
         // Arrange
@@ -198,20 +196,20 @@ public class CircularQueueTests
 
         // Act & Assert
         _queue.TryDequeue(out _);
-        Assert.AreEqual(1, _queue.Count);
+        Assert.Equal(1, _queue.Count);
 
         _queue.TryDequeue(out _);
-        Assert.AreEqual(0, _queue.Count);
+        Assert.Equal(0, _queue.Count);
     }
 
-    [TestMethod]
+    [Fact]
     public void Items_EmptyQueue_ReturnsEmptyEnumerable()
     {
         // Assert
-        Assert.IsFalse(_queue.Items.Any());
+        Assert.False(_queue.Items.Any());
     }
 
-    [TestMethod]
+    [Fact]
     public void Items_WithItems_ReturnsItemsInCorrectOrder()
     {
         // Arrange
@@ -222,10 +220,10 @@ public class CircularQueueTests
         var expected = new[] { "A", "B", "C" };
 
         // Assert
-        CollectionAssert.AreEqual(expected, _queue.Items.ToArray());
+        Assert.Equal(expected, _queue.Items.ToArray());
     }
 
-    [TestMethod]
+    [Fact]
     public void Items_AfterCapacityExceeded_ReturnsRemainingItems()
     {
         var expected = new[] {"B", "C", "D"};
@@ -236,34 +234,34 @@ public class CircularQueueTests
         _queue.Enqueue("D");
 
         // Assert
-        CollectionAssert.AreEqual(expected, _queue.Items.ToArray());
+        Assert.Equal(expected, _queue.Items.ToArray());
     }
 
-    [TestMethod]
+    [Fact]
     public void EnqueueDequeue_MixedOperations_MaintainsCorrectState()
     {
         // Act & Assert
         _queue.Enqueue("A");
         _queue.Enqueue("B");
-        Assert.AreEqual(2, _queue.Count);
+        Assert.Equal(2, _queue.Count);
 
         _queue.TryDequeue(out var item1);
-        Assert.AreEqual("A", item1);
-        Assert.AreEqual(1, _queue.Count);
+        Assert.Equal("A", item1);
+        Assert.Equal(1, _queue.Count);
 
         _queue.Enqueue("C");
         _queue.Enqueue("D");
-        Assert.AreEqual(3, _queue.Count);
+        Assert.Equal(3, _queue.Count);
 
         _queue.TryDequeue(out var item2);
-        Assert.AreEqual("B", item2);
-        Assert.AreEqual(2, _queue.Count);
+        Assert.Equal("B", item2);
+        Assert.Equal(2, _queue.Count);
 
         var expected = new[] {"C", "D"};
-        CollectionAssert.AreEqual(expected, _queue.Items.ToArray());
+        Assert.Equal(expected, _queue.Items.ToArray());
     }
 
-    [TestMethod]
+    [Fact]
     public void CircularQueue_WithDifferentTypes_WorksCorrectly()
     {
         // Arrange
@@ -276,11 +274,11 @@ public class CircularQueueTests
         intQueue.Enqueue(3); // Should remove 1
 
         // Assert
-        Assert.AreEqual(2, intQueue.Count);
-        CollectionAssert.AreEqual(expected, intQueue.Items.ToArray());
+        Assert.Equal(2, intQueue.Count);
+        Assert.Equal(expected, intQueue.Items.ToArray());
     }
 
-    [TestMethod]
+    [Fact]
     public void CircularQueue_WithCustomObjects_WorksCorrectly()
     {
         // Arrange
@@ -295,13 +293,13 @@ public class CircularQueueTests
         queue.Enqueue(obj3); // Should remove obj1
 
         // Assert
-        Assert.AreEqual(2, queue.Count);
+        Assert.Equal(2, queue.Count);
         var items = queue.Items.ToArray();
-        Assert.AreEqual(2, items[0].Id);
-        Assert.AreEqual(3, items[1].Id);
+        Assert.Equal(2, items[0].Id);
+        Assert.Equal(3, items[1].Id);
     }
 
-    [TestMethod]
+    [Fact]
     public void CircularQueue_LargeCapacity_WorksCorrectly()
     {
         // Arrange
@@ -314,9 +312,9 @@ public class CircularQueueTests
         }
 
         // Assert
-        Assert.AreEqual(1000, largeQueue.Count);
-        Assert.AreEqual(500, largeQueue.Items.First()); // Should start from 500
-        Assert.AreEqual(1499, largeQueue.Items.Last());  // Should end at 1499
+        Assert.Equal(1000, largeQueue.Count);
+        Assert.Equal(500, largeQueue.Items.First()); // Should start from 500
+        Assert.Equal(1499, largeQueue.Items.Last());  // Should end at 1499
     }
 }
 

@@ -1,23 +1,22 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.ComponentModel.DataAnnotations;
+using Xunit;
 using Servus.Core.Conversion;
 
 namespace Servus.Core.Tests.Conversion
 {
-    [TestClass]
     public class StringConverterCollectionTests
     {
         private StringConverterCollection _collection = new ();
 
-        [TestInitialize]
-        public void Setup()
+        public StringConverterCollectionTests()
         {
             _collection = new StringConverterCollection();
         }
 
         #region Register Tests
 
-        [TestMethod]
+        [Fact]
         public void Register_ValidConverter_ConverterIsRegistered()
         {
             // Arrange
@@ -28,10 +27,10 @@ namespace Servus.Core.Tests.Conversion
             var result = _collection.Convert<string>("test");
 
             // Assert
-            Assert.AreEqual("test", result);
+            Assert.Equal("test", result);
         }
 
-        [TestMethod]
+        [Fact]
         public void Register_DuplicateType_FirstConverterIsKept()
         {
             // Arrange
@@ -45,18 +44,18 @@ namespace Servus.Core.Tests.Conversion
             var result = _collection.Convert<string>("test");
 
             // Assert
-            Assert.AreEqual("test", result); // Should use first converter
+            Assert.Equal("test", result); // Should use first converter
         }
 
         #endregion
 
         #region Convert Generic Tests
 
-        [TestMethod]
-        [DataRow("42", 42)]
-        [DataRow("-123", -123)]
-        [DataRow("0", 0)]
-        [DataRow("2147483647", 2147483647)]
+        [Theory]
+        [InlineData("42", 42)]
+        [InlineData("-123", -123)]
+        [InlineData("0", 0)]
+        [InlineData("2147483647", 2147483647)]
         public void Convert_Integer_ReturnsCorrectValue(string input, int expected)
         {
             // Arrange
@@ -66,14 +65,14 @@ namespace Servus.Core.Tests.Conversion
             var result = _collection.Convert<int>(input);
 
             // Assert
-            Assert.AreEqual(expected, result);
+            Assert.Equal(expected, result);
         }
 
-        [TestMethod]
-        [DataRow("3.14", 3.14)]
-        [DataRow("-2.5", -2.5)]
-        [DataRow("0.0", 0.0)]
-        [DataRow("123.456789", 123.456789)]
+        [Theory]
+        [InlineData("3.14", 3.14)]
+        [InlineData("-2.5", -2.5)]
+        [InlineData("0.0", 0.0)]
+        [InlineData("123.456789", 123.456789)]
         public void Convert_Double_ReturnsCorrectValue(string input, double expected)
         {
             // Arrange
@@ -83,14 +82,14 @@ namespace Servus.Core.Tests.Conversion
             var result = _collection.Convert<double>(input);
 
             // Assert
-            Assert.AreEqual(expected, result);
+            Assert.Equal(expected, result);
         }
 
-        [TestMethod]
-        [DataRow("3.14", 3.14f)]
-        [DataRow("-2.5", -2.5f)]
-        [DataRow("0.0", 0.0f)]
-        [DataRow("123.45", 123.45f)]
+        [Theory]
+        [InlineData("3.14", 3.14f)]
+        [InlineData("-2.5", -2.5f)]
+        [InlineData("0.0", 0.0f)]
+        [InlineData("123.45", 123.45f)]
         public void Convert_Float_ReturnsCorrectValue(string input, float expected)
         {
             // Arrange
@@ -100,22 +99,22 @@ namespace Servus.Core.Tests.Conversion
             var result = _collection.Convert<float>(input);
 
             // Assert
-            Assert.AreEqual(expected, result);
+            Assert.Equal(expected, result);
         }
 
-        [TestMethod]
-        [DataRow("true", true)]
-        [DataRow("false", false)]
-        [DataRow("True", true)]
-        [DataRow("False", false)]
-        [DataRow("TRUE", true)]
-        [DataRow("FALSE", false)]
-        [DataRow("y", true)]
-        [DataRow("n", false)]
-        [DataRow("ja", true)]
-        [DataRow("na", false)]
-        [DataRow("JA", true)]
-        [DataRow("NA", false)]
+        [Theory]
+        [InlineData("true", true)]
+        [InlineData("false", false)]
+        [InlineData("True", true)]
+        [InlineData("False", false)]
+        [InlineData("TRUE", true)]
+        [InlineData("FALSE", false)]
+        [InlineData("y", true)]
+        [InlineData("n", false)]
+        [InlineData("ja", true)]
+        [InlineData("na", false)]
+        [InlineData("JA", true)]
+        [InlineData("NA", false)]
         public void Convert_Bool_ReturnsCorrectValue(string input, bool expected)
         {
             // Arrange
@@ -125,14 +124,14 @@ namespace Servus.Core.Tests.Conversion
             var result = _collection.Convert<bool>(input);
 
             // Assert
-            Assert.AreEqual(expected, result);
+            Assert.Equal(expected, result);
         }
 
-        [TestMethod]
-        [DataRow("hello")]
-        [DataRow("")]
-        [DataRow("  spaces  ")]
-        [DataRow("special@chars#123")]
+        [Theory]
+        [InlineData("hello")]
+        [InlineData("")]
+        [InlineData("  spaces  ")]
+        [InlineData("special@chars#123")]
         public void Convert_String_ReturnsInputValue(string input)
         {
             // Arrange
@@ -142,25 +141,25 @@ namespace Servus.Core.Tests.Conversion
             var result = _collection.Convert<string>(input);
 
             // Assert
-            Assert.AreEqual(input, result);
+            Assert.Equal(input, result);
         }
 
-        [TestMethod]
+        [Fact]
         public void Convert_UnregisteredType_ReturnsNull()
         {
             // Act
             var result = _collection.Convert<DateTime>("2023-01-01");
 
             // Assert
-            Assert.IsNull(result);
+            Assert.Null(result);
         }
 
         #endregion
         
         #region Convert KeyValue Tests
 
-        [TestMethod]
-        public void Convert_ByType_ReturnsCorrectValue()
+        [Fact]
+        public void Convert_ByGenericType_ReturnsCorrectValue()
         {
             
             // Arrange
@@ -171,18 +170,18 @@ namespace Servus.Core.Tests.Conversion
             var result = _collection.Convert<KeyValue>("42;45");
 
             // Assert
-            Assert.AreEqual(expected, result);
+            Assert.Equal(expected, result);
         }
         
         #endregion
 
         #region Convert Type Tests
 
-        [TestMethod]
-        [DataRow(typeof(int), "42", 42)]
-        [DataRow(typeof(double), "3.14", 3.14)]
-        [DataRow(typeof(bool), "true", true)]
-        [DataRow(typeof(string), "test", "test")]
+        [Theory]
+        [InlineData(typeof(int), "42", 42)]
+        [InlineData(typeof(double), "3.14", 3.14)]
+        [InlineData(typeof(bool), "true", true)]
+        [InlineData(typeof(string), "test", "test")]
         public void Convert_ByType_ReturnsCorrectValue(Type targetType, string input, object expected)
         {
             // Arrange
@@ -192,28 +191,28 @@ namespace Servus.Core.Tests.Conversion
             var result = _collection.Convert(targetType, input);
 
             // Assert
-            Assert.AreEqual(expected, result);
+            Assert.Equal(expected, result);
         }
 
-        [TestMethod]
+        [Fact]
         public void Convert_ByType_UnregisteredType_ReturnsNull()
         {
             // Act
             var result = _collection.Convert(typeof(DateTime), "2023-01-01");
 
             // Assert
-            Assert.IsNull(result);
+            Assert.Null(result);
         }
 
         #endregion
 
         #region Exception Handling Tests
 
-        [TestMethod]
-        [DataRow("not_a_number")]
-        [DataRow("abc")]
-        [DataRow("12.34")] // Invalid for int
-        [DataRow("")]
+        [Theory]
+        [InlineData("not_a_number")]
+        [InlineData("abc")]
+        [InlineData("12.34")] // Invalid for int
+        [InlineData("")]
         public void Convert_InvalidInteger_ReturnsNull(string invalidInput)
         {
             // Arrange
@@ -223,14 +222,14 @@ namespace Servus.Core.Tests.Conversion
             var result = _collection.Convert<int>(invalidInput);
 
             // Assert
-            Assert.IsNull(result);
+            Assert.Null(result);
         }
 
-        [TestMethod]
-        [DataRow("not_a_bool")]
-        [DataRow("yes")]
-        [DataRow("1")]
-        [DataRow("0")]
+        [Theory]
+        [InlineData("not_a_bool")]
+        [InlineData("yes")]
+        [InlineData("1")]
+        [InlineData("0")]
         public void Convert_InvalidBool_ReturnsNull(string invalidInput)
         {
             // Arrange
@@ -240,10 +239,10 @@ namespace Servus.Core.Tests.Conversion
             var result = _collection.Convert<bool>(invalidInput);
 
             // Assert
-            Assert.IsNull(result);
+            Assert.Null(result);
         }
 
-        [TestMethod]
+        [Fact]
         public void Convert_WithCustomExceptionHandler_ReturnsHandlerResult()
         {
             // Arrange
@@ -254,10 +253,10 @@ namespace Servus.Core.Tests.Conversion
             var result = _collection.Convert<int>("invalid");
 
             // Assert
-            Assert.AreEqual(-1, result);
+            Assert.Equal(-1, result);
         }
 
-        [TestMethod]
+        [Fact]
         public void Convert_WithCustomExceptionHandler_ReceivesCorrectException()
         {
             // Arrange
@@ -269,11 +268,11 @@ namespace Servus.Core.Tests.Conversion
             _collection.Convert<int>("invalid");
 
             // Assert
-            Assert.IsNotNull(capturedException);
-            Assert.IsInstanceOfType(capturedException, typeof(FormatException));
+            Assert.NotNull(capturedException);
+            Assert.IsType<FormatException>(capturedException);
         }
 
-        [TestMethod]
+        [Fact]
         public void RegisterExceptionHandler_MultipleRegistrations_LastHandlerIsUsed()
         {
             // Arrange
@@ -285,92 +284,92 @@ namespace Servus.Core.Tests.Conversion
             var result = _collection.Convert<int>("invalid");
 
             // Assert
-            Assert.AreEqual("second", result);
+            Assert.Equal("second", result);
         }
 
         #endregion
 
         #region Individual Converter Tests
 
-        [TestMethod]
+        [Fact]
         public void StringValueConverter_OutputType_ReturnsStringType()
         {
             // Arrange
             var converter = new StringValueConverter();
 
             // Act & Assert
-            Assert.AreEqual(typeof(string), converter.OutputType);
+            Assert.Equal(typeof(string), converter.OutputType);
         }
 
-        [TestMethod]
+        [Fact]
         public void IntegerValueConverter_OutputType_ReturnsIntType()
         {
             // Arrange
             var converter = new IntegerValueConverter();
 
             // Act & Assert
-            Assert.AreEqual(typeof(int), converter.OutputType);
+            Assert.Equal(typeof(int), converter.OutputType);
         }
 
-        [TestMethod]
+        [Fact]
         public void DoubleValueConverter_OutputType_ReturnsDoubleType()
         {
             // Arrange
             var converter = new DoubleValueConverter();
 
             // Act & Assert
-            Assert.AreEqual(typeof(double), converter.OutputType);
+            Assert.Equal(typeof(double), converter.OutputType);
         }
 
-        [TestMethod]
+        [Fact]
         public void FloatValueConverter_OutputType_ReturnsFloatType()
         {
             // Arrange
             var converter = new FloatValueConverter();
 
             // Act & Assert
-            Assert.AreEqual(typeof(float), converter.OutputType);
+            Assert.Equal(typeof(float), converter.OutputType);
         }
 
-        [TestMethod]
+        [Fact]
         public void BoolValueConverter_OutputType_ReturnsBoolType()
         {
             // Arrange
             var converter = new BoolValueConverter();
 
             // Act & Assert
-            Assert.AreEqual(typeof(bool), converter.OutputType);
+            Assert.Equal(typeof(bool), converter.OutputType);
         }
 
         #endregion
 
         #region Integration Tests
 
-        [TestMethod]
+        [Fact]
         public void RegisterAllConverters_MultipleConversions_WorkCorrectly()
         {
             // Arrange
             RegisterAllBasicConverters();
 
             // Act & Assert
-            Assert.AreEqual("test", _collection.Convert<string>("test"));
-            Assert.AreEqual(42, _collection.Convert<int>("42"));
-            Assert.AreEqual(3.14, _collection.Convert<double>("3.14"));
-            Assert.AreEqual(2.5f, _collection.Convert<float>("2.5"));
-            Assert.AreEqual(true, _collection.Convert<bool>("true"));
+            Assert.Equal("test", _collection.Convert<string>("test"));
+            Assert.Equal(42, _collection.Convert<int>("42"));
+            Assert.Equal(3.14, _collection.Convert<double>("3.14"));
+            Assert.Equal(2.5f, _collection.Convert<float>("2.5"));
+            Assert.Equal(true, _collection.Convert<bool>("true"));
         }
 
-        [TestMethod]
+        [Fact]
         public void Convert_MixedValidAndInvalidInputs_HandlesCorrectly()
         {
             // Arrange
             RegisterAllBasicConverters();
 
             // Act & Assert
-            Assert.AreEqual(42, _collection.Convert<int>("42")); // Valid
-            Assert.IsNull(_collection.Convert<int>("invalid")); // Invalid
-            Assert.AreEqual(true, _collection.Convert<bool>("true")); // Valid
-            Assert.IsNull(_collection.Convert<bool>("maybe")); // Invalid
+            Assert.Equal(42, _collection.Convert<int>("42")); // Valid
+            Assert.Null(_collection.Convert<int>("invalid")); // Invalid
+            Assert.Equal(true, _collection.Convert<bool>("true")); // Valid
+            Assert.Null(_collection.Convert<bool>("maybe")); // Invalid
         }
 
         #endregion

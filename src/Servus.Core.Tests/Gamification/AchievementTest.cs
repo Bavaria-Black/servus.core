@@ -1,12 +1,11 @@
 ﻿using Servus.Core.Gamification;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace Servus.Core.Tests.Gamification;
 
-[TestClass]
 public class AchievementTest
 {
-    [TestMethod]
+    [Fact]
     public void BasicAchievementTest()
     {
         var achievements = new AchievementCollection();
@@ -30,38 +29,38 @@ public class AchievementTest
             }
         };
 
-        Assert.IsFalse(leberkasUnlocked);
-        Assert.IsFalse(leberkasSupremeUnlocked);
+        Assert.False(leberkasUnlocked);
+        Assert.False(leberkasSupremeUnlocked);
 
         achievements.SetValue("retries", 1);
         achievements.SetValue("points", 400);
 
-        Assert.IsFalse(leberkasUnlocked);
-        Assert.IsFalse(leberkasSupremeUnlocked);
+        Assert.False(leberkasUnlocked);
+        Assert.False(leberkasSupremeUnlocked);
 
         achievements.SetValue("points", 500);
 
-        Assert.IsTrue(leberkasUnlocked);
-        Assert.IsFalse(leberkasSupremeUnlocked);
+        Assert.True(leberkasUnlocked);
+        Assert.False(leberkasSupremeUnlocked);
 
         achievements.SetValue("retries", 0);
 
-        Assert.IsTrue(leberkasUnlocked);
-        Assert.IsTrue(leberkasSupremeUnlocked);
+        Assert.True(leberkasUnlocked);
+        Assert.True(leberkasSupremeUnlocked);
 
         leberkasUnlocked = false;
         leberkasSupremeUnlocked = false;
 
         achievements.SetValue("points", 300);
-        Assert.IsFalse(leberkasUnlocked);
-        Assert.IsFalse(leberkasSupremeUnlocked);
+        Assert.False(leberkasUnlocked);
+        Assert.False(leberkasSupremeUnlocked);
 
         achievements.SetValue("points", 3000);
-        Assert.IsFalse(leberkasUnlocked);
-        Assert.IsFalse(leberkasSupremeUnlocked);
+        Assert.False(leberkasUnlocked);
+        Assert.False(leberkasSupremeUnlocked);
     }
 
-    [TestMethod]
+    [Fact]
     public void DoubleValueCalculatedEvalAchievementTest()
     {
         var achievements = new AchievementCollection();
@@ -81,10 +80,10 @@ public class AchievementTest
         // the sum of both double values are not exact, due to the nature of a double
         // CompareRule equals should only be used when integers are used or for booleans
         achievements.SetValue("retries", (0.2d + 0.1d));
-        Assert.IsFalse(achievementUnlocked);
+        Assert.False(achievementUnlocked);
     }
 
-    [TestMethod]
+    [Fact]
     public void IntegerValueCalculatedEvalAchievementTest()
     {
         var achievements = new AchievementCollection();
@@ -102,10 +101,10 @@ public class AchievementTest
         };
 
         achievements.SetValue("retries", 2 + 1);
-        Assert.IsTrue(achievementUnlocked);
+        Assert.True(achievementUnlocked);
     }
 
-    [TestMethod]
+    [Fact]
     public void GreaterThenTest()
     {
         var achievements = new AchievementCollection();
@@ -123,13 +122,13 @@ public class AchievementTest
         };
 
         achievements.SetValue("retries", 2 + 1);
-        Assert.IsFalse(achievementUnlocked);
+        Assert.False(achievementUnlocked);
 
         achievements.SetValue("retries", 2 + 2);
-        Assert.IsTrue(achievementUnlocked);
+        Assert.True(achievementUnlocked);
     }
 
-    [TestMethod]
+    [Fact]
     public void GreaterOrEqualsTest()
     {
         var achievements = new AchievementCollection();
@@ -154,13 +153,13 @@ public class AchievementTest
         };
 
         achievements.SetValue("retries", 2 + 1);
-        Assert.IsTrue(achievementUnlocked);
+        Assert.True(achievementUnlocked);
 
         achievements.SetValue("retries2", 2 + 500);
-        Assert.IsTrue(achievementUnlocked2);
+        Assert.True(achievementUnlocked2);
     }
 
-    [TestMethod]
+    [Fact]
     public void LowerThenTest()
     {
         var achievements = new AchievementCollection();
@@ -178,13 +177,13 @@ public class AchievementTest
         };
 
         achievements.SetValue("retries", 3);
-        Assert.IsFalse(achievementUnlocked);
+        Assert.False(achievementUnlocked);
 
         achievements.SetValue("retries", 2);
-        Assert.IsTrue(achievementUnlocked);
+        Assert.True(achievementUnlocked);
     }
 
-    [TestMethod]
+    [Fact]
     public void LowerOrEqualsTest()
     {
         var achievements = new AchievementCollection();
@@ -208,9 +207,9 @@ public class AchievementTest
         };
 
         achievements.SetValue("retries", 3);
-        Assert.IsTrue(achievementUnlocked);
+        Assert.True(achievementUnlocked);
 
         achievements.SetValue("retries2", 2);
-        Assert.IsTrue(achievementUnlocked2);
+        Assert.True(achievementUnlocked2);
     }
 }

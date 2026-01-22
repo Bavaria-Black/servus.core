@@ -1,31 +1,29 @@
 ﻿using Servus.Core.Parsing.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using System;
 
 namespace Servus.Core.Tests.Parsing.Text;
 
-[TestClass]
 public class LineKeyValueParserTests
 {
     private LineKeyValueParser _parser = null!;
 
-    [TestInitialize]
-    public void Init()
+    public LineKeyValueParserTests()
     {
         _parser = new LineKeyValueParser('=');
     }
 
-    [TestMethod]
-    [DataRow("h=z3FaW23KmdHWIyBA99Cztqu7MHc=", "h", "z3FaW23KmdHWIyBA99Cztqu7MHc=")]
-    [DataRow("sl=25", "sl", "25")]
+    [Theory]
+    [InlineData("h=z3FaW23KmdHWIyBA99Cztqu7MHc=", "h", "z3FaW23KmdHWIyBA99Cztqu7MHc=")]
+    [InlineData("sl=25", "sl", "25")]
     public void ParseLineTest(string input, string key, string value)
     {
         var parsed = _parser.ParseLine(input);
-        Assert.AreEqual(key, parsed.Key);
-        Assert.AreEqual(value, parsed.Value);
+        Assert.Equal(key, parsed.Key);
+        Assert.Equal(value, parsed.Value);
     }
 
-    [TestMethod]
+    [Fact]
     public void ParseMultiline()
     {
         var lines = "h=z3FaW23KmdHWIyBA99Cztqu7MHc=" + Environment.NewLine +
@@ -38,27 +36,27 @@ public class LineKeyValueParserTests
         var results = _parser.Parse(lines);
         var r = results.GetEnumerator();
         r.MoveNext();
-        Assert.AreEqual("h", r.Current.Key);
-        Assert.AreEqual("z3FaW23KmdHWIyBA99Cztqu7MHc=", r.Current.Value);
+        Assert.Equal("h", r.Current.Key);
+        Assert.Equal("z3FaW23KmdHWIyBA99Cztqu7MHc=", r.Current.Value);
 
         r.MoveNext();
-        Assert.AreEqual("t", r.Current.Key);
-        Assert.AreEqual("2019-09-15T09:13:15Z0817", r.Current.Value);
+        Assert.Equal("t", r.Current.Key);
+        Assert.Equal("2019-09-15T09:13:15Z0817", r.Current.Value);
 
         r.MoveNext();
-        Assert.AreEqual("otp", r.Current.Key);
-        Assert.AreEqual("cccccclibubjhkuttefctkgejjgerdjfihbkhtddivju", r.Current.Value);
+        Assert.Equal("otp", r.Current.Key);
+        Assert.Equal("cccccclibubjhkuttefctkgejjgerdjfihbkhtddivju", r.Current.Value);
 
         r.MoveNext();
-        Assert.AreEqual("nonce", r.Current.Key);
-        Assert.AreEqual("aef3a7835277a28da831005c2ae3b919e2076a62", r.Current.Value);
+        Assert.Equal("nonce", r.Current.Key);
+        Assert.Equal("aef3a7835277a28da831005c2ae3b919e2076a62", r.Current.Value);
 
         r.MoveNext();
-        Assert.AreEqual("sl", r.Current.Key);
-        Assert.AreEqual("25", r.Current.Value);
+        Assert.Equal("sl", r.Current.Key);
+        Assert.Equal("25", r.Current.Value);
 
         r.MoveNext();
-        Assert.AreEqual("status", r.Current.Key);
-        Assert.AreEqual("OK", r.Current.Value);
+        Assert.Equal("status", r.Current.Key);
+        Assert.Equal("OK", r.Current.Value);
     }
 }

@@ -1,18 +1,18 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Servus.Core.Application.Console;
+﻿using Servus.Core.Application.Console;
+using Xunit;
 
 namespace Servus.Core.Tests.Application.Console;
 
-[TestClass]
 public class ConsoleRedirectorTests
 {
-    [TestMethod]
+    [Fact]
     public void RedirectTests()
     {
         using var redirector = new ConsoleRedirector();
         
-        Assert.IsEmpty(redirector.ToString());
+        Assert.Empty(redirector.ToString());
+        // ReSharper disable once Xunit.XunitTestWithConsoleOutput
         System.Console.Write("Leberkas");
-        Assert.AreEqual("Leberkas", redirector.ToString());
+        Assert.Equal("Leberkas", redirector.ToString());
     }    
 }

@@ -3,8 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Servus.Core.Application.Startup;
+using Xunit;
 
 namespace Servus.Core.Tests.Application.Startup;
 
@@ -33,10 +33,9 @@ public class HostBuilderSetupContainer : IHostBuilderSetupContainer
     }
 }
 
-[TestClass]
 public class AppStartupTests
 {
-    [TestMethod]
+    [Fact]
     public async Task SuccessfulStartup()
     {
         var gateIsOpen = false;
@@ -50,15 +49,15 @@ public class AppStartupTests
             })
             .Build();
 
-        Assert.IsFalse(gateIsOpen);
+        Assert.False(gateIsOpen);
         
         await app.StartAsync(cts.Token);
         
-        Assert.IsTrue(gateIsOpen);
+        Assert.True(gateIsOpen);
         await cts.CancelAsync();
     }
 
-    [TestMethod]
+    [Fact]
     public async Task FailedStartup()
     {
         var cts = new CancellationTokenSource();
@@ -73,7 +72,7 @@ public class AppStartupTests
             await app.StartAsync(cts.Token));
     }
 
-    [TestMethod]
+    [Fact]
     public void HostBuilderSetup()
     {
         var container = new HostBuilderSetupContainer();
@@ -81,6 +80,6 @@ public class AppStartupTests
             .WithSetup(container)
             .Build();
         
-        Assert.IsTrue(container.WasCalled);
+        Assert.True(container.WasCalled);
     }
 }
