@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  
+
   <PropertyGroup>
     <Authors>Christian Dirnhofer, Andreas Huber, Max Dhom</Authors>
     <Company>Bavaria-Black</Company>
@@ -8,8 +8,8 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://servuscore.readthedocs.io</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Bavaria-Black/servus.core</RepositoryUrl>
-    <RepositoryType>git</RepositoryType> 
-    <Copyright>Copyright (c) Bavaria-Black 2025</Copyright>
+    <RepositoryType>git</RepositoryType>
+    <Copyright>Copyright (c) Bavaria-Black 2025-$([System.DateTime]::Now.Year)</Copyright>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -19,30 +19,30 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.*" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.*" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="[9.0.0,)"/>
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="[9.0.0,)"/>
   </ItemGroup>
   <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App"/>
   </ItemGroup>
   <ItemGroup>
-    <None Include="../../README.md" Pack="true" PackagePath="\" />
-    <None Include="../../docs/src/_static/logo.png" Pack="true" PackagePath="\" />
-    <None Include="../../LICENSE" Pack="true" PackagePath="\"/>
-    <None Include="../../.github/workflows/build-and-release.yml" />
+    <None Include="../../README.md" Pack="true" Visible="false" PackagePath="\"/>
+    <None Include="../../docs/src/_static/logo.png" Pack="true" Visible="false" PackagePath="\"/>
+    <None Include="../../LICENSE" Pack="true" Visible="false" PackagePath="\"/>
+    <None Include="../../.github/workflows/build-and-release.yml"/>
   </ItemGroup>
   <Target Name="ServusLogo" BeforeTargets="Build">
-    <Message Text=" " Importance="high" />
-    <Message Text=" " Importance="high" /> 
-    <Message Text="                                   /\" Importance="high" />
-    <Message Text="                                  /  \" Importance="high" />
-    <Message Text="                                 /    \__" Importance="high" />
-    <Message Text="                           /\   /        \    /\" Importance="high" />
-    <Message Text="                          /  \_/          \__/  \" Importance="high" />
-    <Message Text="                         /                       \" Importance="high" />
-    <Message Text="                        /_________________________\" Importance="high" />
-    <Message Text="                                  servus!" Importance="high" />
-    <Message Text=" " Importance="high" />
-    <Message Text=" " Importance="high" />
+    <Message Text=" " Importance="high"/>
+    <Message Text=" " Importance="high"/>
+    <Message Text="                                   /\" Importance="high"/>
+    <Message Text="                                  /  \" Importance="high"/>
+    <Message Text="                                 /    \__" Importance="high"/>
+    <Message Text="                           /\   /        \    /\" Importance="high"/>
+    <Message Text="                          /  \_/          \__/  \" Importance="high"/>
+    <Message Text="                         /                       \" Importance="high"/>
+    <Message Text="                        /_________________________\" Importance="high"/>
+    <Message Text="                                  servus!" Importance="high"/>
+    <Message Text=" " Importance="high"/>
+    <Message Text=" " Importance="high"/>
   </Target>
 </Project>
