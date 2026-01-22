@@ -1,15 +1,14 @@
-﻿namespace Servus.Core.Tests;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Xunit;
 
-[TestClass]
+namespace Servus.Core.Tests;
+
 public class InsertAtExtensionTests
 {
-    [TestMethod]
+    [Fact]
     public void InsertAt_Array_AtBeginning_ShouldInsertCorrectly()
     {
         // Arrange
@@ -20,10 +19,10 @@ public class InsertAtExtensionTests
         var result = array.InsertAt(0, 1).ToArray();
 
         // Assert
-        CollectionAssert.AreEqual(expected, result);
+        Assert.Equal(expected, result);
     }
 
-    [TestMethod]
+    [Fact]
     public void InsertAt_Array_AtMiddle_ShouldInsertCorrectly()
     {
         // Arrange
@@ -35,10 +34,10 @@ public class InsertAtExtensionTests
         var result = array.InsertAt(2, 3).ToArray();
 
         // Assert
-        CollectionAssert.AreEqual(expected, result);
+        Assert.Equal(expected, result);
     }
 
-    [TestMethod]
+    [Fact]
     public void InsertAt_Array_AtEnd_ShouldInsertCorrectly()
     {
         // Arrange
@@ -49,30 +48,30 @@ public class InsertAtExtensionTests
         var result = array.InsertAt(3, 4).ToArray();
 
         // Assert
-        CollectionAssert.AreEqual(expected, result);
+        Assert.Equal(expected, result);
     }
 
-    [TestMethod]
+    [Fact]
     public void InsertAt_Array_BeyondEnd_ShouldThrowException()
     {
         // Arrange
         var array = new[] {1, 2, 3};
 
         // Assert
-        Assert.ThrowsExactly<ArgumentException>(() => array.InsertAt(10, 4));
+        Assert.Throws<ArgumentException>(() => array.InsertAt(10, 4));
     }
 
-    [TestMethod]
+    [Fact]
     public void InsertAt_Array_NegativeIndex_ShouldThrow()
     {
         // Arrange
         var array = new[] {2, 3, 4};
 
         // Assert
-        Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => array.InsertAt(-1, 1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => array.InsertAt(-1, 1));
     }
 
-    [TestMethod]
+    [Fact]
     public void InsertAt_EmptyArray_ShouldCreateSingleElementArray()
     {
         // Arrange
@@ -83,10 +82,10 @@ public class InsertAtExtensionTests
         var result = array.InsertAt(0, 42).ToArray();
 
         // Assert
-        CollectionAssert.AreEqual(expected, result);
+        Assert.Equal(expected, result);
     }
 
-    [TestMethod]
+    [Fact]
     public void InsertAt_List_AtMiddle_ShouldInsertCorrectly()
     {
         // Arrange
@@ -97,10 +96,10 @@ public class InsertAtExtensionTests
         var result = list.InsertAt(2, 3).ToArray();
 
         // Assert
-        CollectionAssert.AreEqual(expected, result);
+        Assert.Equal(expected, result);
     }
 
-    [TestMethod]
+    [Fact]
     public void InsertAt_List_AtBeginning_ShouldInsertCorrectly()
     {
         // Arrange
@@ -111,10 +110,10 @@ public class InsertAtExtensionTests
         var result = list.InsertAt(0, "a").ToArray();
 
         // Assert
-        CollectionAssert.AreEqual(expected, result);
+        Assert.Equal(expected, result);
     }
 
-    [TestMethod]
+    [Fact]
     public void InsertAt_Collection_ShouldInsertCorrectly()
     {
         // Arrange
@@ -125,10 +124,10 @@ public class InsertAtExtensionTests
         var result = collection.InsertAt(1, 2).ToArray();
 
         // Assert
-        CollectionAssert.AreEqual(expected, result);
+        Assert.Equal(expected, result);
     }
 
-    [TestMethod]
+    [Fact]
     public void InsertAt_GenericEnumerable_ShouldInsertCorrectly()
     {
         // Arrange
@@ -139,10 +138,10 @@ public class InsertAtExtensionTests
         var result = enumerable.InsertAt(1, 2).ToArray();
 
         // Assert
-        CollectionAssert.AreEqual(expected, result);
+        Assert.Equal(expected, result);
     }
 
-    [TestMethod]
+    [Fact]
     public void InsertAt_EmptyEnumerable_ShouldCreateSingleElement()
     {
         // Arrange
@@ -153,10 +152,10 @@ public class InsertAtExtensionTests
         var result = enumerable.InsertAt(0, 42).ToArray();
 
         // Assert
-        CollectionAssert.AreEqual(expected, result);
+        Assert.Equal(expected, result);
     }
 
-    [TestMethod]
+    [Fact]
     public void InsertAt_WithReferenceTypes_ShouldWorkCorrectly()
     {
         // Arrange
@@ -167,11 +166,11 @@ public class InsertAtExtensionTests
         var result = strings.InsertAt(1, "banana").ToArray();
 
         // Assert
-        CollectionAssert.AreEqual(expected, result);
+        Assert.Equal(expected, result);
     }
 
 
-    [TestMethod]
+    [Fact]
     public void InsertAt_OriginalCollectionUnmodified_ShouldNotChangeOriginal()
     {
         // Arrange
@@ -183,11 +182,11 @@ public class InsertAtExtensionTests
         var result = original.InsertAt(1, 10).ToArray();
 
         // Assert
-        CollectionAssert.AreEqual(originalCopy, original); // Original unchanged
-        CollectionAssert.AreEqual(expected, result);
+        Assert.Equal(originalCopy, original); // Original unchanged
+        Assert.Equal(expected, result);
     }
 
-    [TestMethod]
+    [Fact]
     public void InsertAt_LargeArray_ShouldPerformCorrectly()
     {
         // Arrange
@@ -197,13 +196,13 @@ public class InsertAtExtensionTests
         var result = largeArray.InsertAt(500, -1).ToArray();
 
         // Assert
-        Assert.AreEqual(1001, result.Length);
-        Assert.AreEqual(-1, result[500]);
-        Assert.AreEqual(499, result[499]);
-        Assert.AreEqual(500, result[501]);
+        Assert.Equal(1001, result.Length);
+        Assert.Equal(-1, result[500]);
+        Assert.Equal(499, result[499]);
+        Assert.Equal(500, result[501]);
     }
 
-    [TestMethod]
+    [Fact]
     public void InsertAt_DifferentTypes_ArrayVsList_ShouldProduceSameResult()
     {
         // Arrange
@@ -215,10 +214,10 @@ public class InsertAtExtensionTests
         var listResult = list.InsertAt(2, 3).ToArray();
 
         // Assert
-        CollectionAssert.AreEqual(arrayResult, listResult);
+        Assert.Equal(arrayResult, listResult);
     }
 
-    [TestMethod]
+    [Fact]
     public void InsertAt_CustomCollection_ShouldUseCollectionPath()
     {
         // Arrange
@@ -229,7 +228,7 @@ public class InsertAtExtensionTests
         var result = customCollection.InsertAt(1, 2).ToArray();
 
         // Assert
-        CollectionAssert.AreEqual(expected, result);
+        Assert.Equal(expected, result);
     }
 
     // Helper class to test ICollection<T> path

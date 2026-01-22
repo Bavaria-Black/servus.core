@@ -1,15 +1,14 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
 using Servus.Core.Reflection;
+using Xunit;
 
 namespace Servus.Core.Tests.Reflection
 {
-    [TestClass]
     public class TypeCheckExtensionsTests
     {
         #region TryConvert<TTarget> Tests
 
-        [TestMethod]
+        [Fact]
         public void TryConvert_WhenItemIsOfTargetType_ReturnsTrue()
         {
             // Arrange
@@ -19,12 +18,12 @@ namespace Servus.Core.Tests.Reflection
             var result = item.TryConvert<string>(out var value);
 
             // Assert
-            Assert.IsTrue(result);
-            Assert.AreEqual("Hello World", value);
+            Assert.True(result);
+            Assert.Equal("Hello World", value);
         }
 
-        [TestMethod]
-        public void TryConvert_WhenItemIsNull_ReturnsFalse()
+        [Fact]
+        public void TryConvert_WhenItemNull_ReturnsFalse()
         {
             // Arrange
             object? item = null;
@@ -33,11 +32,11 @@ namespace Servus.Core.Tests.Reflection
             var result = item.TryConvert<string>(out var value);
 
             // Assert
-            Assert.IsFalse(result);
-            Assert.IsNull(value);
+            Assert.False(result);
+            Assert.Null(value);
         }
 
-        [TestMethod]
+        [Fact]
         public void TryConvert_WhenItemIsNotOfTargetType_ReturnsFalse()
         {
             // Arrange
@@ -47,11 +46,11 @@ namespace Servus.Core.Tests.Reflection
             var result = item.TryConvert<string>(out var value);
 
             // Assert
-            Assert.IsFalse(result);
-            Assert.IsNull(value);
+            Assert.False(result);
+            Assert.Null(value);
         }
 
-        [TestMethod]
+        [Fact]
         public void TryConvert_WithValueType_WhenItemIsOfTargetType_ReturnsTrue()
         {
             // Arrange
@@ -61,11 +60,11 @@ namespace Servus.Core.Tests.Reflection
             var result = item.TryConvert<int>(out var value);
 
             // Assert
-            Assert.IsTrue(result);
-            Assert.AreEqual(42, value);
+            Assert.True(result);
+            Assert.Equal(42, value);
         }
 
-        [TestMethod]
+        [Fact]
         public void TryConvert_WithValueType_WhenItemIsNotOfTargetType_ReturnsFalse()
         {
             // Arrange
@@ -75,12 +74,12 @@ namespace Servus.Core.Tests.Reflection
             var result = item.TryConvert<int>(out var value);
 
             // Assert
-            Assert.IsFalse(result);
-            Assert.AreEqual(0, value); // default(int)
+            Assert.False(result);
+            Assert.Equal(0, value); // default(int)
         }
 
-        [TestMethod]
-        public void TryConvert_WithNullableValueType_WhenItemIsNull_ReturnsFalse()
+        [Fact]
+        public void TryConvert_WithNullableValueType_WhenItemNull_ReturnsFalse()
         {
             // Arrange
             object? item = null;
@@ -89,11 +88,11 @@ namespace Servus.Core.Tests.Reflection
             var result = item.TryConvert<int?>(out var value);
 
             // Assert
-            Assert.IsFalse(result);
-            Assert.IsNull(value);
+            Assert.False(result);
+            Assert.Null(value);
         }
 
-        [TestMethod]
+        [Fact]
         public void TryConvert_WithInheritance_WhenItemIsDerivedType_ReturnsTrue()
         {
             // Arrange
@@ -103,16 +102,16 @@ namespace Servus.Core.Tests.Reflection
             var result = item.TryConvert<Exception>(out var value);
 
             // Assert
-            Assert.IsTrue(result);
-            Assert.IsInstanceOfType(value, typeof(ArgumentException));
-            Assert.AreEqual("test", value?.Message);
+            Assert.True(result);
+            Assert.IsType<ArgumentException>(value);
+            Assert.Equal("test", value?.Message);
         }
 
         #endregion
 
         #region Convert<TTarget> Tests
 
-        [TestMethod]
+        [Fact]
         public void Convert_WhenItemIsOfTargetType_ReturnsConvertedValue()
         {
             // Arrange
@@ -122,30 +121,30 @@ namespace Servus.Core.Tests.Reflection
             var result = item.Convert<string>();
 
             // Assert
-            Assert.AreEqual("Hello World", result);
+            Assert.Equal("Hello World", result);
         }
 
-        [TestMethod]
-        public void Convert_WhenItemIsNull_ThrowsArgumentNullException()
+        [Fact]
+        public void Convert_WhenItemNull_ThrowsArgumentNullException()
         {
             // Arrange
             object? item = null;
 
             // Act & Assert
-            Assert.ThrowsExactly<ArgumentNullException>(() => item.Convert<string>());
+            Assert.Throws<ArgumentNullException>(() => item.Convert<string>());
         }
 
-        [TestMethod]
+        [Fact]
         public void Convert_WhenItemIsNotOfTargetType_ThrowsInvalidCastException()
         {
             // Arrange
             object item = 123;
 
             // Act & Assert
-            Assert.ThrowsExactly<InvalidCastException>(() => item.Convert<string>());
+            Assert.Throws<InvalidCastException>(() => item.Convert<string>());
         }
 
-        [TestMethod]
+        [Fact]
         public void Convert_WithValueType_WhenItemIsOfTargetType_ReturnsConvertedValue()
         {
             // Arrange
@@ -155,10 +154,10 @@ namespace Servus.Core.Tests.Reflection
             var result = item.Convert<int>();
 
             // Assert
-            Assert.AreEqual(42, result);
+            Assert.Equal(42, result);
         }
 
-        [TestMethod]
+        [Fact]
         public void Convert_WithInheritance_WhenItemIsDerivedType_ReturnsConvertedValue()
         {
             // Arrange
@@ -168,15 +167,15 @@ namespace Servus.Core.Tests.Reflection
             var result = item.Convert<Exception>();
 
             // Assert
-            Assert.IsInstanceOfType(result, typeof(ArgumentException));
-            Assert.AreEqual("test", result.Message);
+            Assert.IsType<ArgumentException>(result);
+            Assert.Equal("test", result.Message);
         }
 
         #endregion
 
         #region Convert<TTarget> with Func<object, TTarget> Tests
 
-        [TestMethod]
+        [Fact]
         public void Convert_WithConverter_WhenItemIsNotNull_ReturnsConvertedValue()
         {
             // Arrange
@@ -187,32 +186,32 @@ namespace Servus.Core.Tests.Reflection
             var result = item.Convert(converter);
 
             // Assert
-            Assert.AreEqual("123", result);
+            Assert.Equal("123", result);
         }
 
-        [TestMethod]
-        public void Convert_WithConverter_WhenItemIsNull_ThrowsArgumentNullException()
+        [Fact]
+        public void Convert_WithConverter_WhenItemNull_ThrowsArgumentNullException()
         {
             // Arrange
             object? item = null;
             Func<object, string> converter = obj => obj.ToString()!;
 
             // Act & Assert
-            Assert.ThrowsExactly<ArgumentNullException>(() => item.Convert(converter));
+            Assert.Throws<ArgumentNullException>(() => item.Convert(converter));
         }
 
-        [TestMethod]
-        public void Convert_WithConverter_WhenConverterIsNull_ThrowsArgumentNullException()
+        [Fact]
+        public void Convert_WithConverter_WhenConverterNull_ThrowsArgumentNullException()
         {
             // Arrange
             object item = 123;
             Func<object, string>? converter = null;
 
             // Act & Assert
-            Assert.ThrowsExactly<ArgumentNullException>(() => item.Convert(converter!));
+            Assert.Throws<ArgumentNullException>(() => item.Convert(converter!));
         }
 
-        [TestMethod]
+        [Fact]
         public void Convert_WithConverter_ComplexConversion_ReturnsConvertedValue()
         {
             // Arrange
@@ -223,14 +222,14 @@ namespace Servus.Core.Tests.Reflection
             var result = item.Convert(converter);
 
             // Assert
-            Assert.AreEqual("2023-12-25", result);
+            Assert.Equal("2023-12-25", result);
         }
 
         #endregion
 
         #region Convert<TInput, TTarget> with Func<TInput, TTarget> Tests
 
-        [TestMethod]
+        [Fact]
         public void Convert_WithTypedConverter_WhenItemIsNotNull_ReturnsConvertedValue()
         {
             // Arrange
@@ -241,32 +240,32 @@ namespace Servus.Core.Tests.Reflection
             var result = item.Convert<int, string>(converter);
 
             // Assert
-            Assert.AreEqual("Number: 123", result);
+            Assert.Equal("Number: 123", result);
         }
 
-        [TestMethod]
-        public void Convert_WithTypedConverter_WhenItemIsNull_ThrowsArgumentNullException()
+        [Fact]
+        public void Convert_WithTypedConverter_WhenItemNull_ThrowsArgumentNullException()
         {
             // Arrange
             object? item = null;
             Func<int, string> converter = num => $"Number: {num}";
 
             // Act & Assert
-            Assert.ThrowsExactly<ArgumentNullException>(() => item.Convert<int, string>(converter));
+            Assert.Throws<ArgumentNullException>(() => item.Convert<int, string>(converter));
         }
 
-        [TestMethod]
-        public void Convert_WithTypedConverter_WhenConverterIsNull_ThrowsArgumentNullException()
+        [Fact]
+        public void Convert_WithTypedConverter_WhenConverterNull_ThrowsArgumentNullException()
         {
             // Arrange
             object item = 123;
             Func<int, string>? converter = null;
 
             // Act & Assert
-            Assert.ThrowsExactly<ArgumentNullException>(() => item.Convert<int, string>(converter!));
+            Assert.Throws<ArgumentNullException>(() => item.Convert<int, string>(converter!));
         }
 
-        [TestMethod]
+        [Fact]
         public void Convert_WithTypedConverter_ComplexTypes_ReturnsConvertedValue()
         {
             // Arrange
@@ -277,10 +276,10 @@ namespace Servus.Core.Tests.Reflection
             var result = item.Convert<Person, string>(converter);
 
             // Assert
-            Assert.AreEqual("John (30)", result);
+            Assert.Equal("John (30)", result);
         }
 
-        [TestMethod]
+        [Fact]
         public void Convert_WithTypedConverter_WhenItemIsWrongType_ThrowsBehaviorDependsOnInvokeIf()
         {
             // Arrange
@@ -299,7 +298,7 @@ namespace Servus.Core.Tests.Reflection
             catch (Exception ex)
             {
                 // If InvokeIf throws on type mismatch, document the expected exception type
-                Assert.IsInstanceOfType(ex, typeof(InvalidCastException));
+                Assert.IsType<InvalidCastException>(ex);
             }
         }
 

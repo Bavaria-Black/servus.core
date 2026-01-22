@@ -1,17 +1,22 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using Servus.Core.Collections;
 
 namespace Servus.Core.Tests.Collections;
 
-[TestClass]
+[CollectionDefinition("SerialTests", DisableParallelization = true)]
+public class SerialTestCollection;
+
+[Collection("SerialTests")]
 public class TypeRegistryTests
 {
     #region Add<TKey> Tests
 
-    [TestMethod]
+    [Fact]
     public void Add_Generic_WithValidTypeAndValue_AddsSuccessfully()
     {
         // Arrange
@@ -23,10 +28,10 @@ public class TypeRegistryTests
 
         // Assert
         var retrievedValue = registry.Get<int>();
-        Assert.AreEqual(testValue, retrievedValue);
+        Assert.Equal(testValue, retrievedValue);
     }
 
-    [TestMethod]
+    [Fact]
     public void Add_Generic_WithSameTypeTwice_UpdatesValue()
     {
         // Arrange
@@ -40,10 +45,10 @@ public class TypeRegistryTests
 
         // Assert
         var retrievedValue = registry.Get<int>();
-        Assert.AreEqual(secondValue, retrievedValue);
+        Assert.Equal(secondValue, retrievedValue);
     }
 
-    [TestMethod]
+    [Fact]
     public void Add_Generic_WithDifferentTypes_StoresSeparately()
     {
         // Arrange
@@ -56,11 +61,11 @@ public class TypeRegistryTests
         registry.Add<int>(intValue);
 
         // Assert
-        Assert.AreEqual(stringValue, registry.Get<string>());
-        Assert.AreEqual(intValue, registry.Get<int>());
+        Assert.Equal(stringValue, registry.Get<string>());
+        Assert.Equal(intValue, registry.Get<int>());
     }
 
-    [TestMethod]
+    [Fact]
     public void Add_Generic_WithNullValue_StoresNull()
     {
         // Arrange
@@ -71,10 +76,10 @@ public class TypeRegistryTests
 
         // Assert
         var retrievedValue = registry.Get<int>();
-        Assert.IsNull(retrievedValue);
+        Assert.Null(retrievedValue);
     }
 
-    [TestMethod]
+    [Fact]
     public void Add_Generic_WithValueTypes_WorksCorrectly()
     {
         // Arrange
@@ -85,15 +90,15 @@ public class TypeRegistryTests
         registry.Add<double>(100);
 
         // Assert
-        Assert.AreEqual(42, registry.Get<string>());
-        Assert.AreEqual(100, registry.Get<double>());
+        Assert.Equal(42, registry.Get<string>());
+        Assert.Equal(100, registry.Get<double>());
     }
 
     #endregion
 
     #region Add(Type, TValue) Tests
 
-    [TestMethod]
+    [Fact]
     public void Add_WithType_WithValidTypeAndValue_AddsSuccessfully()
     {
         // Arrange
@@ -106,10 +111,10 @@ public class TypeRegistryTests
 
         // Assert
         var retrievedValue = registry.Get(keyType);
-        Assert.AreEqual(testValue, retrievedValue);
+        Assert.Equal(testValue, retrievedValue);
     }
 
-    [TestMethod]
+    [Fact]
     public void Add_WithType_WithSameTypeTwice_UpdatesValue()
     {
         // Arrange
@@ -124,20 +129,20 @@ public class TypeRegistryTests
 
         // Assert
         var retrievedValue = registry.Get(keyType);
-        Assert.AreEqual(secondValue, retrievedValue);
+        Assert.Equal(secondValue, retrievedValue);
     }
 
-    [TestMethod]
+    [Fact]
     public void Add_WithType_WithNullType_ThrowsArgumentNullException()
     {
         // Arrange
         var registry = new TypeRegistry<string>();
 
         // Act & Assert
-        Assert.ThrowsExactly<ArgumentNullException>(() => registry.Add(null!, "value"));
+        Assert.Throws<ArgumentNullException>(() => registry.Add(null!, "value"));
     }
 
-    [TestMethod]
+    [Fact]
     public void Add_WithType_WithComplexTypes_WorksCorrectly()
     {
         // Arrange
@@ -152,15 +157,15 @@ public class TypeRegistryTests
         registry.Add(dictType, dictValue);
 
         // Assert
-        Assert.AreSame(listValue, registry.Get(listType));
-        Assert.AreSame(dictValue, registry.Get(dictType));
+        Assert.Same(listValue, registry.Get(listType));
+        Assert.Same(dictValue, registry.Get(dictType));
     }
 
     #endregion
 
     #region Get<TKey> Tests
 
-    [TestMethod]
+    [Fact]
     public void Get_Generic_WithExistingType_ReturnsValue()
     {
         // Arrange
@@ -172,20 +177,20 @@ public class TypeRegistryTests
         var result = registry.Get<int>();
 
         // Assert
-        Assert.AreEqual(testValue, result);
+        Assert.Equal(testValue, result);
     }
 
-    [TestMethod]
+    [Fact]
     public void Get_Generic_WithNonExistingType_ThrowsKeyNotFoundException()
     {
         // Arrange
         var registry = new TypeRegistry<string>();
 
         // Act & Assert
-        Assert.ThrowsExactly<KeyNotFoundException>(() => registry.Get<int>());
+        Assert.Throws<KeyNotFoundException>(() => registry.Get<int>());
     }
 
-    [TestMethod]
+    [Fact]
     public void Get_Generic_WithDifferentGenericParameters_TreatedAsDifferentTypes()
     {
         // Arrange
@@ -194,15 +199,15 @@ public class TypeRegistryTests
         registry.Add<List<string>>("string list");
 
         // Act & Assert
-        Assert.AreEqual("int list", registry.Get<List<int>>());
-        Assert.AreEqual("string list", registry.Get<List<string>>());
+        Assert.Equal("int list", registry.Get<List<int>>());
+        Assert.Equal("string list", registry.Get<List<string>>());
     }
 
     #endregion
 
     #region Get(Type) Tests
 
-    [TestMethod]
+    [Fact]
     public void Get_WithType_WithExistingType_ReturnsValue()
     {
         // Arrange
@@ -215,10 +220,10 @@ public class TypeRegistryTests
         var result = registry.Get(keyType);
 
         // Assert
-        Assert.AreEqual(testValue, result);
+        Assert.Equal(testValue, result);
     }
 
-    [TestMethod]
+    [Fact]
     public void Get_WithType_WithNonExistingType_ThrowsKeyNotFoundException()
     {
         // Arrange
@@ -226,24 +231,24 @@ public class TypeRegistryTests
         var keyType = typeof(int);
 
         // Act & Assert
-        Assert.ThrowsExactly<KeyNotFoundException>(() => registry.Get(keyType));
+        Assert.Throws<KeyNotFoundException>(() => registry.Get(keyType));
     }
 
-    [TestMethod]
+    [Fact]
     public void Get_WithType_WithNullType_ThrowsArgumentNullException()
     {
         // Arrange
         var registry = new TypeRegistry<string>();
 
         // Act & Assert
-        Assert.ThrowsExactly<ArgumentNullException>(() => registry.Get(null!));
+        Assert.Throws<ArgumentNullException>(() => registry.Get(null!));
     }
 
     #endregion
 
     #region GetOrAdd<TKey> Tests
 
-    [TestMethod]
+    [Fact]
     public void GetOrAdd_Generic_WithExistingType_ReturnsExistingValue()
     {
         // Arrange
@@ -256,10 +261,10 @@ public class TypeRegistryTests
         var result = registry.GetOrAdd<int>(() => factoryValue);
 
         // Assert
-        Assert.AreEqual(existingValue, result);
+        Assert.Equal(existingValue, result);
     }
 
-    [TestMethod]
+    [Fact]
     public void GetOrAdd_Generic_WithNonExistingType_CallsFactoryAndReturnsValue()
     {
         // Arrange
@@ -275,22 +280,22 @@ public class TypeRegistryTests
         });
 
         // Assert
-        Assert.AreEqual(factoryValue, result);
-        Assert.IsTrue(factoryCalled);
-        Assert.AreEqual(factoryValue, registry.Get<int>()); // Verify it was stored
+        Assert.Equal(factoryValue, result);
+        Assert.True(factoryCalled);
+        Assert.Equal(factoryValue, registry.Get<int>()); // Verify it was stored
     }
 
-    [TestMethod]
+    [Fact]
     public void GetOrAdd_Generic_WithNullFactory_ThrowsArgumentNullException()
     {
         // Arrange
         var registry = new TypeRegistry<string>();
 
         // Act & Assert
-        Assert.ThrowsExactly<ArgumentNullException>(() => registry.GetOrAdd<int>(null!));
+        Assert.Throws<ArgumentNullException>(() => registry.GetOrAdd<int>(null!));
     }
 
-    [TestMethod]
+    [Fact]
     public void GetOrAdd_Generic_FactoryReturnsNull_StoresAndReturnsNull()
     {
         // Arrange
@@ -300,15 +305,15 @@ public class TypeRegistryTests
         var result = registry.GetOrAdd<int>(() => null!);
 
         // Assert
-        Assert.IsNull(result);
-        Assert.IsNull(registry.Get<int>());
+        Assert.Null(result);
+        Assert.Null(registry.Get<int>());
     }
 
     #endregion
 
     #region GetOrAdd(Type, Func<TValue>) Tests
 
-    [TestMethod]
+    [Fact]
     public void GetOrAdd_WithType_WithExistingType_ReturnsExistingValue()
     {
         // Arrange
@@ -322,10 +327,10 @@ public class TypeRegistryTests
         var result = registry.GetOrAdd(keyType, () => factoryValue);
 
         // Assert
-        Assert.AreEqual(existingValue, result);
+        Assert.Equal(existingValue, result);
     }
 
-    [TestMethod]
+    [Fact]
     public void GetOrAdd_WithType_WithNonExistingType_CallsFactoryAndReturnsValue()
     {
         // Arrange
@@ -342,23 +347,23 @@ public class TypeRegistryTests
         });
 
         // Assert
-        Assert.AreEqual(factoryValue, result);
-        Assert.IsTrue(factoryCalled);
-        Assert.AreEqual(factoryValue, registry.Get(keyType)); // Verify it was stored
+        Assert.Equal(factoryValue, result);
+        Assert.True(factoryCalled);
+        Assert.Equal(factoryValue, registry.Get(keyType)); // Verify it was stored
     }
 
-    [TestMethod]
+    [Fact]
     public void GetOrAdd_WithType_WithNullType_ThrowsArgumentNullException()
     {
         // Arrange
         var registry = new TypeRegistry<string>();
 
         // Act & Assert
-        Assert.ThrowsExactly<ArgumentNullException>(() =>
+        Assert.Throws<ArgumentNullException>(() =>
             registry.GetOrAdd(null!, () => "value"));
     }
 
-    [TestMethod]
+    [Fact]
     public void GetOrAdd_WithType_WithNullFactory_ThrowsArgumentNullException()
     {
         // Arrange
@@ -366,7 +371,7 @@ public class TypeRegistryTests
         var keyType = typeof(int);
 
         // Act & Assert
-        Assert.ThrowsExactly<ArgumentNullException>(() =>
+        Assert.Throws<ArgumentNullException>(() =>
             registry.GetOrAdd(keyType, null!));
     }
 
@@ -374,41 +379,74 @@ public class TypeRegistryTests
 
     #region Thread Safety Tests
 
-    [TestMethod]
-    public void TypeRegistry_ConcurrentAccess_IsThreadSafe()
+    [Fact]
+    public async Task TypeRegistry_ConcurrentSameType_LastWriteWins()
     {
         // Arrange
         var registry = new TypeRegistry<int>();
-        var tasks = new Task[10];
-        var results = new int[10];
+        var taskCount = 100;
+        var sameType = typeof(DummyType<string>);
+
+        // Act - All tasks write to the SAME type key
+        var tasks = Enumerable.Range(0, taskCount).Select(i => Task.Run(() => { registry.Add(sameType, i); }))
+            .ToArray();
+
+        await Task.WhenAll(tasks);
+
+        // Assert - Should have exactly one value (last write wins)
+        var result = registry.Get(sameType);
+        Assert.InRange(result, 0, taskCount - 1);
+    }
+
+    [Theory]
+    [InlineData(10)]
+    [InlineData(50)]
+    [InlineData(100)]
+    public async Task TypeRegistry_ConcurrentAccess_IsThreadSafe(int concurrentTasks)
+    {
+        // Arrange
+        var registry = new TypeRegistry<int>();
+        var results = new ConcurrentDictionary<int, int>();
+
+        // Create unique types dynamically
+        var uniqueTypes = Enumerable.Range(0, concurrentTasks)
+            .Select(CreateUniqueTypeMarker)
+            .ToArray();
 
         // Act
-        for (int i = 0; i < 10; i++)
+        var tasks = Enumerable.Range(0, concurrentTasks).Select(i => Task.Run(() =>
         {
-            int taskIndex = i;
-            tasks[i] = Task.Run(() =>
-            {
-                // Each task adds a value for a different type and then retrieves it
-                var typeKey = Type.GetType($"System.Int{taskIndex + 16}") ?? typeof(int); // Use different types
-                registry.Add(typeKey, taskIndex);
-                results[taskIndex] = registry.Get(typeKey);
-            });
-        }
+            registry.Add(uniqueTypes[i], i);
+            results.TryAdd(i, registry.Get(uniqueTypes[i]));
+        })).ToArray();
 
-        Task.WaitAll(tasks);
+        await Task.WhenAll(tasks);
 
         // Assert
-        for (int i = 0; i < 10; i++)
+        Assert.Equal(concurrentTasks, results.Count);
+        for (var i = 0; i < concurrentTasks; i++)
         {
-            Assert.AreEqual(i, results[i]);
+            Assert.Equal(i, results[i]);
         }
+    }
+
+    private static Type CreateUniqueTypeMarker(int index)
+    {
+        var currentType = typeof(int);
+
+        for (var i = 0; i < index; i++)
+        {
+            currentType = typeof(DummyType<>).MakeGenericType(currentType);
+        }
+
+        return currentType;
     }
 
     #endregion
 
     #region Integration Tests
 
-    [TestMethod]
+    [Fact]
     public void TypeRegistry_CompleteWorkflow_WorksCorrectly()
     {
         // Arrange
@@ -420,25 +458,25 @@ public class TypeRegistryTests
         registry.Add<List<string>>(new List<string> { "item1", "item2" });
 
         // Verify all values can be retrieved
-        Assert.AreEqual("string value", registry.Get<string>());
-        Assert.AreEqual(42, registry.Get<int>());
-        Assert.IsInstanceOfType(registry.Get<List<string>>(), typeof(List<string>));
+        Assert.Equal("string value", registry.Get<string>());
+        Assert.Equal(42, registry.Get<int>());
+        Assert.IsType<List<string>>(registry.Get<List<string>>());
 
         // Test GetOrAdd with existing
         var existingString = registry.GetOrAdd<string>(() => "should not be called");
-        Assert.AreEqual("string value", existingString);
+        Assert.Equal("string value", existingString);
 
         // Test GetOrAdd with new type
         var newValue = registry.GetOrAdd<double>(() => 3.14);
-        Assert.AreEqual(3.14, newValue);
-        Assert.AreEqual(3.14, registry.Get<double>());
+        Assert.Equal(3.14, newValue);
+        Assert.Equal(3.14, registry.Get<double>());
 
         // Test overwriting existing value
         registry.Add<string>("new string value");
-        Assert.AreEqual("new string value", registry.Get<string>());
+        Assert.Equal("new string value", registry.Get<string>());
     }
 
-    [TestMethod]
+    [Fact]
     public void TypeRegistry_WithCustomObjects_WorksCorrectly()
     {
         // Arrange
@@ -454,13 +492,13 @@ public class TypeRegistryTests
         var retrievedEmployee = registry.Get<Employee>();
         var retrievedCustomer = registry.Get<Customer>();
 
-        Assert.AreSame(person1, retrievedEmployee);
-        Assert.AreSame(person2, retrievedCustomer);
-        Assert.AreEqual("John", retrievedEmployee.Name);
-        Assert.AreEqual("Jane", retrievedCustomer.Name);
+        Assert.Same(person1, retrievedEmployee);
+        Assert.Same(person2, retrievedCustomer);
+        Assert.Equal("John", retrievedEmployee.Name);
+        Assert.Equal("Jane", retrievedCustomer.Name);
     }
 
-    [TestMethod]
+    [Fact]
     public void TypeRegistry_WithGenericTypes_DistinguishesCorrectly()
     {
         // Arrange
@@ -473,10 +511,10 @@ public class TypeRegistryTests
         registry.Add<Dictionary<int, string>>("int-string dict");
 
         // Assert
-        Assert.AreEqual("int list", registry.Get<List<int>>());
-        Assert.AreEqual("string list", registry.Get<List<string>>());
-        Assert.AreEqual("string-int dict", registry.Get<Dictionary<string, int>>());
-        Assert.AreEqual("int-string dict", registry.Get<Dictionary<int, string>>());
+        Assert.Equal("int list", registry.Get<List<int>>());
+        Assert.Equal("string list", registry.Get<List<string>>());
+        Assert.Equal("string-int dict", registry.Get<Dictionary<string, int>>());
+        Assert.Equal("int-string dict", registry.Get<Dictionary<int, string>>());
     }
 
     #endregion
@@ -497,6 +535,17 @@ public class TypeRegistryTests
     private class Customer : Person
     {
         public int CustomerId { get; init; } = 0;
+    }
+
+    public sealed class DummyType<T>
+    {
+        public static implicit operator Type(DummyType<T> _) => typeof(T);
+
+        public override string ToString() => $"DummyType<{typeof(T).Name}>";
+
+        public override bool Equals(object? obj) => obj is DummyType<T> or Type _ and T;
+
+        public override int GetHashCode() => typeof(T).GetHashCode();
     }
 
     #endregion

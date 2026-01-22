@@ -2,13 +2,12 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Servus.Core.Collections;
 using Servus.Core.Threading.Tasks;
+using Xunit;
 
 namespace Servus.Core.Tests.Threading.Tasks;
 
-[TestClass]
 public class ActionRegistryTests
 {
     public class TestInjectable
@@ -37,7 +36,7 @@ public class ActionRegistryTests
         async ValueTask<bool> IAsyncTask<bool>.RunAsync(CancellationToken token) => await TestInjectable.RunAsync(true, token);
     }
     
-    [TestMethod]
+    [Fact]
     public async Task RegisterTaskTest()
     {
         var builder = WebApplication.CreateBuilder();
@@ -52,7 +51,7 @@ public class ActionRegistryTests
         await registry.RunAllAsync(app.Services, (f, t) => f.RunAsync(t), cts.Token);
     }
     
-    [TestMethod]
+    [Fact]
     public async Task RegisterAsyncTaskTest()
     {
         var builder = WebApplication.CreateBuilder();
@@ -66,7 +65,7 @@ public class ActionRegistryTests
         var any = await registry.RunAllAsync(app.Services, cts.Token).AnyAsync();
         var all = await registry.RunAllAsync(app.Services, cts.Token).AllAsync();
         
-        Assert.IsTrue(any);
-        Assert.IsTrue(all);
+        Assert.True(any);
+        Assert.True(all);
     }
 }
