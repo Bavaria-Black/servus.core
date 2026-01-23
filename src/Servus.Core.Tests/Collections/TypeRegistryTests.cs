@@ -8,10 +8,6 @@ using Servus.Core.Collections;
 
 namespace Servus.Core.Tests.Collections;
 
-[CollectionDefinition("SerialTests", DisableParallelization = true)]
-public class SerialTestCollection;
-
-[Collection("SerialTests")]
 public class TypeRegistryTests
 {
     #region Add<TKey> Tests

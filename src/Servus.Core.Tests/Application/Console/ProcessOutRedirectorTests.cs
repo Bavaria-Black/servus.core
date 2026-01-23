@@ -6,6 +6,7 @@ using Xunit;
 
 namespace Servus.Core.Tests.Application.Console;
 
+[Collection("ConsoleTests")]
 public class ProcessOutRedirectorTests
 {
     private static Process CreateTestProcess(string arguments = "")

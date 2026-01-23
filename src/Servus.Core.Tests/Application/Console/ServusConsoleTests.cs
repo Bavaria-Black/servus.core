@@ -5,6 +5,7 @@ using Xunit;
 
 namespace Servus.Core.Tests.Application.Console;
 
+[Collection("ConsoleTests")]
 public class ServusConsoleTests
 {
     [Fact]

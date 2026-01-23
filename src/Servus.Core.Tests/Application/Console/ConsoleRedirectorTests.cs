@@ -3,6 +3,10 @@ using Xunit;
 
 namespace Servus.Core.Tests.Application.Console;
 
+[CollectionDefinition("ConsoleTests", DisableParallelization = true)]
+public class SerialTestCollection;
+
+[Collection("ConsoleTests")]
 public class ConsoleRedirectorTests
 {
     [Fact]
