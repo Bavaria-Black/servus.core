@@ -114,7 +114,7 @@ public class ActivitySourceRegistryTests
         // Act
         var result1 = ActivitySourceRegistry.StartActivity<RootSourceClass>(activityName, trace);
         var result2 = ActivitySourceRegistry.StartActivity<TestClassWithAttribute>(activityName, trace);
-        
+
         // Assert
         Assert.IsNotNull(result1);
         Assert.IsNotNull(result2);
@@ -245,7 +245,7 @@ public class ActivitySourceRegistryTests
     {
         // Arrange & Act
         ActivitySourceRegistry.Add<CustomNameTestClass>("custom_name");
-        
+
         TestMessage trace = new("test trace");
         ((IWithTracing)trace).AddTracing();
         var result = ActivitySourceRegistry.StartActivity<CustomNameTestClass>("test-activity", trace);
@@ -259,19 +259,22 @@ public class ActivitySourceRegistryTests
 
     // Test classes for type parameter testing
     private class TestClass;
-    
+
     [ActivitySourceName("root-source")]
     private class RootSourceClass;
-    
+
     private class AnotherTestClass;
-    
+
     [ActivitySourceKey(typeof(RootSourceClass))]
     private class TestClassWithAttribute;
-    
+
     [ActivitySourceKey(typeof(TestClass))]
     private class AnotherTestClassWithAttribute;
+
     private class MyComplexTestClass;
+
     private class GenericTestClass<T>;
+
     private class CustomNameTestClass;
 }
 
@@ -280,6 +283,8 @@ public record TestMessage(string Message) : IWithTracing
 {
     public string? TraceId { get; set; }
     public string? SpanId { get; set; }
+    public string? TraceParent { get; set; }
+    public string? TraceState { get; set; }
 }
 
 // Test record that returns null for testing null scenarios
@@ -287,6 +292,9 @@ public record NullReturningTestMessage(string Message) : IWithTracing
 {
     public string? TraceId { get; set; }
     public string? SpanId { get; set; }
+    public string? TraceParent { get; set; }
+    public string? TraceState { get; set; }
 
-    public Activity? StartActivity(string name, ActivitySource source, ActivityKind kind = ActivityKind.Consumer) => null;
+    public Activity? StartActivity(string name, ActivitySource source, ActivityKind kind = ActivityKind.Consumer) =>
+        null;
 }
