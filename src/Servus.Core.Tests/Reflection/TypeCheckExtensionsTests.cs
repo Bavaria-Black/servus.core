@@ -23,7 +23,7 @@ namespace Servus.Core.Tests.Reflection
         }
 
         [Fact]
-        public void TryConvert_WhenItemNull_ReturnsFalse()
+        public void TryConvert_WhenItemIsNull_ReturnsFalse()
         {
             // Arrange
             object? item = null;
@@ -79,7 +79,7 @@ namespace Servus.Core.Tests.Reflection
         }
 
         [Fact]
-        public void TryConvert_WithNullableValueType_WhenItemNull_ReturnsFalse()
+        public void TryConvert_WithNullableValueType_WhenItemIsNull_ReturnsFalse()
         {
             // Arrange
             object? item = null;
@@ -125,7 +125,7 @@ namespace Servus.Core.Tests.Reflection
         }
 
         [Fact]
-        public void Convert_WhenItemNull_ThrowsArgumentNullException()
+        public void Convert_WhenItemIsNull_ThrowsArgumentNullException()
         {
             // Arrange
             object? item = null;
@@ -190,7 +190,7 @@ namespace Servus.Core.Tests.Reflection
         }
 
         [Fact]
-        public void Convert_WithConverter_WhenItemNull_ThrowsArgumentNullException()
+        public void Convert_WithConverter_WhenItemIsNull_ThrowsArgumentNullException()
         {
             // Arrange
             object? item = null;
@@ -201,7 +201,7 @@ namespace Servus.Core.Tests.Reflection
         }
 
         [Fact]
-        public void Convert_WithConverter_WhenConverterNull_ThrowsArgumentNullException()
+        public void Convert_WithConverter_WhenConverterIsNull_ThrowsArgumentNullException()
         {
             // Arrange
             object item = 123;
@@ -244,7 +244,7 @@ namespace Servus.Core.Tests.Reflection
         }
 
         [Fact]
-        public void Convert_WithTypedConverter_WhenItemNull_ThrowsArgumentNullException()
+        public void Convert_WithTypedConverter_WhenItemIsNull_ThrowsArgumentNullException()
         {
             // Arrange
             object? item = null;
@@ -255,7 +255,7 @@ namespace Servus.Core.Tests.Reflection
         }
 
         [Fact]
-        public void Convert_WithTypedConverter_WhenConverterNull_ThrowsArgumentNullException()
+        public void Convert_WithTypedConverter_WhenConverterIsNull_ThrowsArgumentNullException()
         {
             // Arrange
             object item = 123;

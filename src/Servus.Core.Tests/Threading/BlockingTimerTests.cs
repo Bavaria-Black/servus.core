@@ -8,6 +8,10 @@ using Servus.Core.Threading;
 
 namespace Servus.Core.Tests.Threading;
 
+[CollectionDefinition("AAA_Critical", DisableParallelization = true)]
+
+// xUnit sorts collections alphabetically
+[Collection("AAA_Critical")]
 public class BlockingTimerTests
 {
     #region Constructor Tests

@@ -27,7 +27,7 @@ public class SemaphoreSlimExtensionsTests
     }
 
 
-    [Fact]
+    [Fact(Timeout = 30000)]
     public async Task SemaphoreSlimScopeWaitParallelFor()
     {
         const int upperBound = 10000;
@@ -67,8 +67,8 @@ public class SemaphoreSlimExtensionsTests
         }
     }
 
-    [Fact]
-    public void SemaphoreSlimScopeWait()
+    [Fact(Timeout = 30000)]
+    public async Task SemaphoreSlimScopeWait()
     {
         const int upperBound = 10000;
         var counter = new CountContainer();
@@ -94,7 +94,7 @@ public class SemaphoreSlimExtensionsTests
                 tasks.Add(task);
             }
 
-            Task.WaitAll(tasks.ToArray());
+            await Task.WhenAll(tasks);
 
 
 
