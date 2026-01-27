@@ -12,48 +12,43 @@
     <Copyright>Copyright (c) Bavaria-Black 2025-$([System.DateTime]::Now.Year)</Copyright>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <LangVersion>12</LangVersion>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <LangVersion>12</LangVersion>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
 
-  <PropertyGroup>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    
-    <DebugType>embedded</DebugType>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <PropertyGroup>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <DebugType>embedded</DebugType>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    </PropertyGroup>
 
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-  </PropertyGroup>
-
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="[9.0.0,)"/>
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="[9.0.0,)"/>
-  </ItemGroup>
-  <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App"/>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="../../README.md" Pack="true" Visible="false" PackagePath="\"/>
-    <None Include="../../docs/src/_static/logo.png" Pack="true" Visible="false" PackagePath="\"/>
-    <None Include="../../LICENSE" Pack="true" Visible="false" PackagePath="\"/>
-    <None Include="../../.github/workflows/build-and-release.yml"/>
-  </ItemGroup>
-  <Target Name="ServusLogo" BeforeTargets="Build">
-    <Message Text=" " Importance="high"/>
-    <Message Text=" " Importance="high"/>
-    <Message Text="                                   /\" Importance="high"/>
-    <Message Text="                                  /  \" Importance="high"/>
-    <Message Text="                                 /    \__" Importance="high"/>
-    <Message Text="                           /\   /        \    /\" Importance="high"/>
-    <Message Text="                          /  \_/          \__/  \" Importance="high"/>
-    <Message Text="                         /                       \" Importance="high"/>
-    <Message Text="                        /_________________________\" Importance="high"/>
-    <Message Text="                                  servus!" Importance="high"/>
-    <Message Text=" " Importance="high"/>
-    <Message Text=" " Importance="high"/>
-  </Target>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.*"/>
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.*"/>
+    </ItemGroup>
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="../../README.md" Pack="true" PackagePath="\"/>
+        <None Include="../../docs/src/_static/logo.png" Pack="true" PackagePath="\"/>
+        <None Include="../../LICENSE" Pack="true" PackagePath="\"/>
+        <None Include="../../.github/workflows/build-and-release.yml"/>
+    </ItemGroup>
+    <Target Name="ServusLogo" BeforeTargets="Build">
+        <Message Text=" " Importance="high"/>
+        <Message Text=" " Importance="high"/>
+        <Message Text="                                   /\" Importance="high"/>
+        <Message Text="                                  /  \" Importance="high"/>
+        <Message Text="                                 /    \__" Importance="high"/>
+        <Message Text="                           /\   /        \    /\" Importance="high"/>
+        <Message Text="                          /  \_/          \__/  \" Importance="high"/>
+        <Message Text="                         /                       \" Importance="high"/>
+        <Message Text="                        /_________________________\" Importance="high"/>
+        <Message Text="                                  servus!" Importance="high"/>
+        <Message Text=" " Importance="high"/>
+        <Message Text=" " Importance="high"/>
+    </Target>
 </Project>
