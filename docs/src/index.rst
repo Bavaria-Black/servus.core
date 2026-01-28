@@ -42,3 +42,10 @@ operations that just work the way you expect them to -
    :caption: Extensions:
 
    Modules/Reflection/ConditionalInvoke
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Code Analyzer
+
+   Modules/CodeAnalyzer/Servus.Analyzer
+   Modules/CodeAnalyzer/Rules/index
