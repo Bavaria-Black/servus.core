@@ -1,0 +1,69 @@
+SUS1001
+=======
+
+**Avoid using `SpanId` properties.
+Use W3C Trace Context (`traceparent`/`tracestate`) instead.**
+
+Cause
+^^^^^
+
+A property named ``SpanId`` was detected,
+which represents a legacy tracing approach.
+Direct ``SpanId`` properties violate the
+`W3C Trace Context standard <https://www.w3.org/TR/trace-context/>`_ and break interoperability
+with modern distributed tracing systems.
+
+An example:
+
+.. code-block:: csharp
+
+    public class MyService
+    {
+        private string _spanId;
+
+        public string SpanId { get; set; }      // SUS1001 Trigger
+
+        public void ProcessRequest()
+        {
+            SpanId = Activity.Current?.SpanId.ToString() ?? Guid.NewGuid().ToString();
+            // ...
+        }
+    }
+
+Resolution
+^^^^^^^^^^
+
+**Use W3C Trace Context headers** (`traceparent`/`tracestate`)
+instead of custom ``SpanId`` properties.
+
+An example:
+
+.. code-block:: csharp
+
+    public class MyService
+    {
+        public void ProcessRequest(HttpContext context)
+        {
+            // Extract from Activity or Headers (W3C compliant)
+            var traceParent = Activity.Current?.Id ?? context.Request.Headers["traceparent"].FirstOrDefault();
+
+            if (!string.IsNullOrEmpty(traceParent))
+            {
+                var parts = traceParent.Split('-');
+                var spanId = parts.Length > 2 ? parts[2] : null;  // 3rd part = span-id
+
+                Log.Information("Processing span {SpanId}", spanId);
+            }
+        }
+    }
+
+Details
+-------
+
+**Diagnostic ID:** ``SUS1001``
+
+**Category:** Trace Usage
+
+**Severity:** Warning
+
+**Enabled by default:** Yes

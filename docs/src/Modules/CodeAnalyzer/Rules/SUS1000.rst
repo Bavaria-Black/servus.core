@@ -1,0 +1,69 @@
+SUS1000
+=======
+
+**Avoid using `TraceId` properties.
+Use W3C Trace Context (`traceparent`/`tracestate`) instead.**
+
+Cause
+^^^^^
+
+A property named ``TraceId`` was detected,
+which represents a legacy tracing approach.
+Direct ``TraceId`` properties violate the
+`W3C Trace Context standard <https://www.w3.org/TR/trace-context/>`_ and break interoperability
+with modern distributed tracing systems.
+
+An example:
+
+.. code-block:: csharp
+
+    public class MyService
+    {
+        private string _traceId;
+
+        public string TraceId { get; set; }     // SUS1000 Trigger
+
+        public void ProcessRequest()
+        {
+            TraceId = Activity.Current?.Id ?? Guid.NewGuid().ToString();
+            // ...
+        }
+    }
+
+Resolution
+^^^^^^^^^^
+
+**Use W3C Trace Context headers** (`traceparent`/`tracestate`)
+instead of custom ``TraceId`` properties.
+
+An example:
+
+.. code-block:: csharp
+
+    public class MyService
+    {
+        public void ProcessRequest(HttpContext context)
+        {
+            // Extract from Activity or Headers (W3C compliant)
+            var traceParent = Activity.Current?.Id ?? context.Request.Headers["traceparent"].FirstOrDefault();
+
+            if (!string.IsNullOrEmpty(traceParent))
+            {
+                var parts = traceParent.Split('-');
+                var traceId = parts.Length > 1 ? parts[1] : null;
+
+                Log.Information("Processing trace {TraceId}", traceId);
+            }
+        }
+    }
+
+Details
+-------
+
+**Diagnostic ID:** ``SUS1000``
+
+**Category:** Trace Usage
+
+**Severity:** Warning
+
+**Enabled by default:** Yes
