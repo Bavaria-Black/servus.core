@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace Servus.Core.Tests;
 
 #nullable disable
 
-[TestClass]
 public partial class EnumerableExtensionTests
 {
     class DummyClass
@@ -22,7 +21,7 @@ public partial class EnumerableExtensionTests
         }
     }
     
-    [TestMethod]
+    [Fact]
     public void DistinctByIsWorking()
     {
         // Arrange
@@ -41,74 +40,77 @@ public partial class EnumerableExtensionTests
         var distinctListAb = list.DistinctBy(c => new { c.A, c.B }).ToList();
 
         // Assert
-        Assert.AreEqual(2, distinctListA.Count);
-        Assert.AreEqual(2, distinctListB.Count);
-        Assert.AreEqual(list.Count - 1, distinctListAb.Count);
+        Assert.Equal(2, distinctListA.Count);
+        Assert.Equal(2, distinctListB.Count);
+        Assert.Equal(list.Count - 1, distinctListAb.Count);
     }
     
     
         #region GetIndex Tests
 
-        [TestMethod]
-        [DataRow(new[] { 1, 2, 3, 4, 5 }, 3, 2)]
-        [DataRow(new[] { 1, 2, 3, 4, 5 }, 1, 0)]
-        [DataRow(new[] { 1, 2, 3, 4, 5 }, 5, 4)]
-        [DataRow(new[] { 42 }, 42, 0)]
-        [DataRow(new[] { 1, 2, 2, 3 }, 2, 1)] // First match
+        [Theory]
+        [InlineData(new[] { 1, 2, 3, 4, 5 }, 3, 2)]
+        [InlineData(new[] { 1, 2, 3, 4, 5 }, 1, 0)]
+        [InlineData(new[] { 1, 2, 3, 4, 5 }, 5, 4)]
+        [InlineData(new[] { 42 }, 42, 0)]
+        [InlineData(new[] { 1, 2, 2, 3 }, 2, 1)] // First match
         public void GetIndex_ItemExists_ReturnsCorrectIndex(int[] source, int target, int expectedIndex)
         {
             // Act
             var result = source.GetIndex(x => x == target);
 
             // Assert
-            Assert.AreEqual(expectedIndex, result);
+            Assert.Equal(expectedIndex, result);
         }
 
-        [TestMethod]
-        [DataRow(new[] { 1, 2, 3 }, 99)]
-        [DataRow(new[] { 1, 2, 3 }, 0)]
-        [DataRow(new int[0], 1)]
+        [Theory]
+        [InlineData(new[] { 1, 2, 3 }, 99)]
+        [InlineData(new[] { 1, 2, 3 }, 0)]
+        [InlineData(new int[0], 1)]
         public void GetIndex_ItemNotFound_ReturnsMinusOne(int[] source, int target)
         {
             // Act
             var result = source.GetIndex(x => x == target);
 
             // Assert
-            Assert.AreEqual(-1, result);
+            Assert.Equal(-1, result);
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void GetIndex_NullSource_ThrowsArgumentNullException()
         {
             // Arrange
             IEnumerable<int> source = null;
 
             // Act
-            // ReSharper disable once AssignNullToNotNullAttribute
-            source.GetIndex(x => x == 1);
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                source.GetIndex(x => x == 1);
+            });
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void GetIndex_NullPredicate_ThrowsArgumentNullException()
         {
             // Arrange
             var source = new[] { 1, 2, 3 };
 
             // Act
-            // ReSharper disable once AssignNullToNotNullAttribute
-            source.GetIndex(null);
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                source.GetIndex(null!);
+            });
         }
 
         #endregion
 
         #region ForEach Tests
 
-        [TestMethod]
-        [DataRow(new[] { 1, 2, 3 }, new[] { 2, 4, 6 })]
-        [DataRow(new[] { 5 }, new[] { 10 })]
-        [DataRow(new[] { 0, -1, 2 }, new[] { 0, -2, 4 })]
+        [Theory]
+        [InlineData(new[] { 1, 2, 3 }, new[] { 2, 4, 6 })]
+        [InlineData(new[] { 5 }, new[] { 10 })]
+        [InlineData(new[] { 0, -1, 2 }, new[] { 0, -2, 4 })]
         public void ForEach_ExecutesActionForEachItem(int[] source, int[] expected)
         {
             // Arrange
@@ -118,11 +120,11 @@ public partial class EnumerableExtensionTests
             source.ForEach(x => results.Add(x * 2));
 
             // Assert
-            CollectionAssert.AreEqual(expected, results);
+            Assert.Equal(expected, results);
         }
 
-        [TestMethod]
-        [DataRow(new int[0])]
+        [Theory]
+        [InlineData(new int[0])]
         public void ForEach_EmptyCollection_DoesNotExecuteAction(int[] source)
         {
             // Arrange
@@ -132,41 +134,45 @@ public partial class EnumerableExtensionTests
             source.ForEach(_ => actionExecuted = true);
 
             // Assert
-            Assert.IsFalse(actionExecuted);
+            Assert.False(actionExecuted);
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void ForEach_NullSource_ThrowsArgumentNullException()
         {
             // Arrange
             IEnumerable<int> source = null;
 
             // Act
-            // ReSharper disable once AssignNullToNotNullAttribute
-            source.ForEach(_ => { });
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                source.ForEach(_ => { });
+            });
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void ForEach_NullAction_ThrowsArgumentNullException()
         {
             // Arrange
             var source = new[] { 1, 2, 3 };
 
             // Act
-            // ReSharper disable once AssignNullToNotNullAttribute
-            source.ForEach(null);
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                source.ForEach(null);
+            });
         }
 
         #endregion
 
         #region ForEachIndexed Tests
 
-        [TestMethod]
-        [DataRow(new[] { "a", "b", "c" }, new[] { "(a,0)", "(b,1)", "(c,2)" })]
-        [DataRow(new[] { "single" }, new[] { "(single,0)" })]
-        [DataRow(new[] { "x", "y" }, new[] { "(x,0)", "(y,1)" })]
+        [Theory]
+        [InlineData(new[] { "a", "b", "c" }, new[] { "(a,0)", "(b,1)", "(c,2)" })]
+        [InlineData(new[] { "single" }, new[] { "(single,0)" })]
+        [InlineData(new[] { "x", "y" }, new[] { "(x,0)", "(y,1)" })]
         public void ForEachIndexed_ExecutesActionWithCorrectIndexes(string[] source, string[] expected)
         {
             // Arrange
@@ -176,12 +182,12 @@ public partial class EnumerableExtensionTests
             source.ForEachIndexed((item, index) => results.Add($"({item},{index})"));
 
             // Assert
-            Assert.IsFalse(source.IsEmpty());
-            CollectionAssert.AreEqual(expected, results);
+            Assert.False(source.IsEmpty());
+            Assert.Equal(expected, results);
         }
 
-        [TestMethod]
-        [DataRow([])]
+        [Theory]
+        [InlineData([new string[0]])]
         public void ForEachIndexed_EmptyCollection_DoesNotExecuteAction(string[] source)
         {
             // Arrange
@@ -191,10 +197,10 @@ public partial class EnumerableExtensionTests
             source.ForEachIndexed((_, _) => actionExecuted = true);
 
             // Assert
-            Assert.IsFalse(actionExecuted);
+            Assert.False(actionExecuted);
         }
 
-        [TestMethod]
+        [Fact]
         public void ForEachIndexed_LargeCollection_IndexesAreSequential()
         {
             // Arrange
@@ -206,31 +212,35 @@ public partial class EnumerableExtensionTests
 
             // Assert
             var expectedIndexes = Enumerable.Range(0, 1000).ToArray();
-            CollectionAssert.AreEqual(expectedIndexes, indexes);
+            Assert.Equal(expectedIndexes, indexes);
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void ForEachIndexed_NullSource_ThrowsArgumentNullException()
         {
             // Arrange
             IEnumerable<int> source = null;
 
             // Act
-            // ReSharper disable once AssignNullToNotNullAttribute
-            source.ForEachIndexed((_, _) => { });
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                source.ForEachIndexed((_, _) => { });
+            });
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Fact]
         public void ForEachIndexed_NullAction_ThrowsArgumentNullException()
         {
             // Arrange
             var source = new[] { 1, 2, 3 };
 
             // Act
-            // ReSharper disable once AssignNullToNotNullAttribute
-            source.ForEachIndexed(null);
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                source.ForEachIndexed(null);
+            });
         }
 
         #endregion

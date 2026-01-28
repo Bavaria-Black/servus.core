@@ -1,13 +1,12 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace Servus.Core.Tests;
 
-[TestClass]
 public class AwaitableConditionTests
 {
-    [TestMethod]
+    [Fact]
     public async Task AwaitableCondition_can_be_fulfilled()
     {
         var condition = new MockAwaitableCondition(1000);
@@ -16,39 +15,39 @@ public class AwaitableConditionTests
         condition.Count += 2;
         var success = await waitTask;
             
-        Assert.IsTrue(success);
+        Assert.True(success);
     }
 
-    [TestMethod]
+    [Fact]
     public async Task AwaitableCondition_timeouts()
     {
         var condition = new MockAwaitableCondition(10);
-        await Assert.ThrowsExactlyAsync<TaskCanceledException>(async () =>
+        await Assert.ThrowsAsync<TaskCanceledException>(async () =>
         {
             await condition.WaitAsync();
         });
     }
 
-    [TestMethod]
+    [Fact]
     public async Task AwaitableCondition_can_be_canceled()
     {
         var cts = new CancellationTokenSource();
         var condition = new MockAwaitableCondition(cts.Token);
         cts.Cancel();
-        await Assert.ThrowsExactlyAsync<TaskCanceledException>(async () =>
+        await Assert.ThrowsAsync<TaskCanceledException>(async () =>
         {
             await condition.WaitAsync();
         });
     }
 
-    [TestMethod]
+    [Fact]
     public async Task AwaitableCondition_returns_false_when_cancelled_and_told_to()
     {
         var cts = new CancellationTokenSource();
         var condition = new MockAwaitableCondition(cts.Token, false);
         cts.Cancel();
         var returnValue = await condition.WaitAsync();
-        Assert.IsFalse(returnValue);
+        Assert.False(returnValue);
     }
 }
 

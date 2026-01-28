@@ -1,61 +1,59 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using Servus.Core.Collections;
 
 namespace Servus.Core.Tests.Collections;
 
-[TestClass]
 public class HandlerRegistryTests
 {
     private HandlerRegistry _registry = new();
     private List<string> _handledItems = [];
 
-    [TestInitialize]
-    public void Setup()
+    public HandlerRegistryTests()
     {
         _registry = new HandlerRegistry();
         _handledItems = [];
     }
 
-    [TestMethod]
+    [Fact]
     public void Register_WithoutCondition_ShouldNotThrow()
     {
         // Arrange & Act & Assert
         _registry.Register<string>(s => _handledItems.Add(s));
         
-        Assert.AreEqual(1, _registry.Count);
-        Assert.IsTrue(_registry.Handle("test"));
-        Assert.ContainsSingle(_handledItems);
+        Assert.Equal(1, _registry.Count);
+        Assert.True(_registry.Handle("test"));
+        Assert.Single(_handledItems);
     }
 
-    [TestMethod]
+    [Fact]
     public void Register_WithValidParameters_ShouldNotThrow()
     {
         // Arrange & Act & Assert
         _registry.Register<string>(s => s.StartsWith("test"), s => _handledItems.Add(s));
         
-        Assert.AreEqual(1, _registry.Count);
+        Assert.Equal(1, _registry.Count);
     }
 
-    [TestMethod]
+    [Fact]
     public void Register_WithNullCanHandle_ShouldThrowArgumentNullException()
     {
         // Arrange, Act & Assert
-        Assert.ThrowsExactly<ArgumentNullException>(() =>
+        Assert.Throws<ArgumentNullException>(() =>
             _registry.Register<string>(null!, s => _handledItems.Add(s)));
     }
 
-    [TestMethod]
+    [Fact]
     public void Register_WithNullHandler_ShouldThrowArgumentNullException()
     {
         // Arrange, Act & Assert
-        Assert.ThrowsExactly<ArgumentNullException>(() =>
+        Assert.Throws<ArgumentNullException>(() =>
             _registry.Register<string>(_ => true, null!));
     }
 
-    [TestMethod]
+    [Fact]
     public void Handle_WithMatchingHandler_ShouldExecuteHandlerAndReturnTrue()
     {
         // Arrange
@@ -65,12 +63,12 @@ public class HandlerRegistryTests
         var result = _registry.Handle("test item");
         
         // Assert
-        Assert.IsTrue(result);
-        Assert.AreEqual(1, _handledItems.Count);
-        Assert.AreEqual("handled: test item", _handledItems[0]);
+        Assert.True(result);
+        Assert.Equal(1, _handledItems.Count);
+        Assert.Equal("handled: test item", _handledItems[0]);
     }
 
-    [TestMethod]
+    [Fact]
     public void Handle_WithNoMatchingHandler_ShouldReturnFalse()
     {
         // Arrange
@@ -80,11 +78,11 @@ public class HandlerRegistryTests
         var result = _registry.Handle("other item");
         
         // Assert
-        Assert.IsFalse(result);
-        Assert.AreEqual(0, _handledItems.Count);
+        Assert.False(result);
+        Assert.Equal(0, _handledItems.Count);
     }
 
-    [TestMethod]
+    [Fact]
     public void Handle_WithMultipleMatchingHandlers_ShouldExecuteOnlyFirst()
     {
         // Arrange
@@ -95,12 +93,12 @@ public class HandlerRegistryTests
         var result = _registry.Handle("test item");
         
         // Assert
-        Assert.IsTrue(result);
-        Assert.AreEqual(1, _handledItems.Count);
-        Assert.AreEqual("first", _handledItems[0]);
+        Assert.True(result);
+        Assert.Equal(1, _handledItems.Count);
+        Assert.Equal("first", _handledItems[0]);
     }
 
-    [TestMethod]
+    [Fact]
     public void Handle_AnyHandler_WithTypeObject()
     {
         // Arrange
@@ -113,15 +111,15 @@ public class HandlerRegistryTests
         var resultAny = _registry.Handle("leberkas");
         
         // Assert
-        Assert.IsTrue(result);
-        Assert.AreEqual(2, _handledItems.Count);
-        Assert.AreEqual("first", _handledItems[0]);
+        Assert.True(result);
+        Assert.Equal(2, _handledItems.Count);
+        Assert.Equal("first", _handledItems[0]);
         
-        Assert.IsTrue(resultAny);
-        Assert.AreEqual("any", _handledItems[1]);
+        Assert.True(resultAny);
+        Assert.Equal("any", _handledItems[1]);
     }
 
-    [TestMethod]
+    [Fact]
     public void HandleAll_WithMultipleMatchingHandlers_ShouldExecuteAllAndReturnCount()
     {
         // Arrange
@@ -134,12 +132,12 @@ public class HandlerRegistryTests
         var result = _registry.HandleAll("test item");
         
         // Assert
-        Assert.AreEqual(2, result);
-        Assert.AreEqual(2, _handledItems.Count);
-        CollectionAssert.AreEqual(expected, _handledItems);
+        Assert.Equal(2, result);
+        Assert.Equal(2, _handledItems.Count);
+        Assert.Equal(expected, _handledItems);
     }
 
-    [TestMethod]
+    [Fact]
     public void HandleAll_WithNoMatchingHandlers_ShouldReturnZero()
     {
         // Arrange
@@ -149,11 +147,11 @@ public class HandlerRegistryTests
         var result = _registry.HandleAll("other item");
         
         // Assert
-        Assert.AreEqual(0, result);
-        Assert.AreEqual(0, _handledItems.Count);
+        Assert.Equal(0, result);
+        Assert.Equal(0, _handledItems.Count);
     }
 
-    [TestMethod]
+    [Fact]
     public void CanHandle_WithMatchingHandler_ShouldReturnTrue()
     {
         // Arrange
@@ -163,11 +161,11 @@ public class HandlerRegistryTests
         var result = _registry.CanHandle("test item");
         
         // Assert
-        Assert.IsTrue(result);
-        Assert.AreEqual(0, _handledItems.Count);
+        Assert.True(result);
+        Assert.Equal(0, _handledItems.Count);
     }
 
-    [TestMethod]
+    [Fact]
     public void CanHandle_WithNoMatchingHandler_ShouldReturnFalse()
     {
         // Arrange
@@ -177,23 +175,23 @@ public class HandlerRegistryTests
         var result = _registry.CanHandle("other item");
         
         // Assert
-        Assert.IsFalse(result);
+        Assert.False(result);
     }
 
-    [TestMethod]
+    [Fact]
     public void Count_ShouldReturnNumberOfRegisteredHandlers()
     {
         // Arrange & Act
-        Assert.AreEqual(0, _registry.Count);
+        Assert.Equal(0, _registry.Count);
         
         _registry.Register<string>(s => s.StartsWith("test"), s => _handledItems.Add(s));
-        Assert.AreEqual(1, _registry.Count);
+        Assert.Equal(1, _registry.Count);
         
         _registry.Register<string>(s => s.StartsWith("other"), s => _handledItems.Add(s));
-        Assert.AreEqual(2, _registry.Count);
+        Assert.Equal(2, _registry.Count);
     }
 
-    [TestMethod]
+    [Fact]
     public void Clear_ShouldRemoveAllHandlersAndClearStash()
     {
         // Arrange
@@ -205,11 +203,11 @@ public class HandlerRegistryTests
         _registry.Clear();
         
         // Assert
-        Assert.AreEqual(0, _registry.Count);
-        Assert.IsFalse(_registry.Pop()); // Stash should be empty
+        Assert.Equal(0, _registry.Count);
+        Assert.False(_registry.Pop()); // Stash should be empty
     }
 
-    [TestMethod]
+    [Fact]
     public void GetMatchingHandlers_ShouldReturnAllMatchingHandlers()
     {
         // Arrange
@@ -222,17 +220,17 @@ public class HandlerRegistryTests
         var handlers = _registry.GetMatchingHandlers("test item").ToList();
         
         // Assert
-        Assert.AreEqual(2, handlers.Count);
+        Assert.Equal(2, handlers.Count);
         
         // Execute handlers to verify they're correct
         foreach (var handler in handlers)
         {
             handler("test item");
         }
-        CollectionAssert.AreEqual(expected, _handledItems);
+        Assert.Equal(expected, _handledItems);
     }
 
-    [TestMethod]
+    [Fact]
     public void Stash_ShouldSaveCurrentHandlersAndClearRegistry()
     {
         // Arrange
@@ -242,11 +240,11 @@ public class HandlerRegistryTests
         _registry.Stash();
         
         // Assert
-        Assert.AreEqual(0, _registry.Count);
-        Assert.IsFalse(_registry.CanHandle("test item"));
+        Assert.Equal(0, _registry.Count);
+        Assert.False(_registry.CanHandle("test item"));
     }
 
-    [TestMethod]
+    [Fact]
     public void Pop_WithStashedHandlers_ShouldRestoreHandlersAndReturnTrue()
     {
         // Arrange
@@ -258,13 +256,13 @@ public class HandlerRegistryTests
         var result = _registry.Pop();
         
         // Assert
-        Assert.IsTrue(result);
-        Assert.AreEqual(1, _registry.Count);
-        Assert.IsTrue(_registry.CanHandle("test item"));
-        Assert.IsFalse(_registry.CanHandle("new item"));
+        Assert.True(result);
+        Assert.Equal(1, _registry.Count);
+        Assert.True(_registry.CanHandle("test item"));
+        Assert.False(_registry.CanHandle("new item"));
     }
 
-    [TestMethod]
+    [Fact]
     public void Pop_WithEmptyStash_ShouldReturnFalse()
     {
         // Arrange
@@ -274,11 +272,11 @@ public class HandlerRegistryTests
         var result = _registry.Pop();
         
         // Assert
-        Assert.IsFalse(result);
-        Assert.AreEqual(1, _registry.Count); // Original handlers should remain
+        Assert.False(result);
+        Assert.Equal(1, _registry.Count); // Original handlers should remain
     }
 
-    [TestMethod]
+    [Fact]
     public void StashAndPop_ShouldWorkWithMultipleLevels()
     {
         // Arrange
@@ -291,29 +289,29 @@ public class HandlerRegistryTests
         _registry.Register<string>(s => s == "level3", _ => _handledItems.Add("level3"));
         
         // Act & Assert
-        Assert.IsTrue(_registry.CanHandle("level3"));
-        Assert.IsFalse(_registry.CanHandle("level2"));
-        Assert.IsFalse(_registry.CanHandle("level1"));
+        Assert.True(_registry.CanHandle("level3"));
+        Assert.False(_registry.CanHandle("level2"));
+        Assert.False(_registry.CanHandle("level1"));
         
         _registry.Pop();
-        Assert.IsTrue(_registry.CanHandle("level2"));
-        Assert.IsFalse(_registry.CanHandle("level1"));
-        Assert.IsFalse(_registry.CanHandle("level3"));
+        Assert.True(_registry.CanHandle("level2"));
+        Assert.False(_registry.CanHandle("level1"));
+        Assert.False(_registry.CanHandle("level3"));
         
         _registry.Pop();
-        Assert.IsTrue(_registry.CanHandle("level1"));
-        Assert.IsFalse(_registry.CanHandle("level2"));
-        Assert.IsFalse(_registry.CanHandle("level3"));
+        Assert.True(_registry.CanHandle("level1"));
+        Assert.False(_registry.CanHandle("level2"));
+        Assert.False(_registry.CanHandle("level3"));
         
-        Assert.IsFalse(_registry.Pop()); // No more stashed handlers
+        Assert.False(_registry.Pop()); // No more stashed handlers
     }
 
-    [TestMethod]
+    [Fact]
     public void StashAndPop_ShouldReplaceCurrentHandlers()
     {
         // Arrange
         _registry.Register<string>(s => s == "original", _ => _handledItems.Add("original"));
-        _registry.Register<int>(s => true, s => Assert.AreEqual(555, s));
+        _registry.Register<int>(s => true, s => Assert.Equal(555, s));
         _registry.Stash();
         _registry.Register<string>(s => s == "temp1", _ => _handledItems.Add("temp1"));
         _registry.Register<string>(s => s == "temp2", _ => _handledItems.Add("temp2"));
@@ -322,10 +320,10 @@ public class HandlerRegistryTests
         _registry.Pop();
         
         // Assert
-        Assert.AreEqual(2, _registry.Count);
-        Assert.IsTrue(_registry.CanHandle("original"));
-        Assert.IsFalse(_registry.CanHandle("temp1"));
-        Assert.IsFalse(_registry.CanHandle("temp2"));
-        Assert.IsTrue(_registry.CanHandle(555));
+        Assert.Equal(2, _registry.Count);
+        Assert.True(_registry.CanHandle("original"));
+        Assert.False(_registry.CanHandle("temp1"));
+        Assert.False(_registry.CanHandle("temp2"));
+        Assert.True(_registry.CanHandle(555));
     }
 }

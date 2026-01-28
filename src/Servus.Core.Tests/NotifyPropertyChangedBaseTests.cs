@@ -1,11 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿
+using Xunit;
 
 namespace Servus.Core.Tests;
 
-[TestClass]
 public class NotifyPropertyChangedBaseTests
 {
-    [TestMethod]
+    [Fact]
     public void ChangePropertyTriggersPropertyChangedEvent()
     {
         bool changed = false;
@@ -19,10 +19,10 @@ public class NotifyPropertyChangedBaseTests
         };
 
         testClass.Property = true;
-        Assert.IsTrue(changed);
+        Assert.True(changed);
     }
         
-    [TestMethod]
+    [Fact]
     public void ChangePropertyDoesNotTriggerPropertyChangedEventForSameValue()
     {
         bool changed = false;
@@ -36,13 +36,13 @@ public class NotifyPropertyChangedBaseTests
         };
 
         testClass.Property = false;
-        Assert.IsFalse(changed);
+        Assert.False(changed);
 
         testClass.Property = true;
-        Assert.IsTrue(changed);
+        Assert.True(changed);
     }
       
-    [TestMethod]
+    [Fact]
     public void OnPropertyChangedUtilizesCallerMemberName()
     {
         bool changed = false;
@@ -56,10 +56,10 @@ public class NotifyPropertyChangedBaseTests
         };
 
         testClass.OtherProperty = true;
-        Assert.IsTrue(changed);
+        Assert.True(changed);
     }
 
-    [TestMethod]
+    [Fact]
     public void ChangePropertyReturnsFalseIfValueNotChanged()
     {
         // Arrange
@@ -69,10 +69,10 @@ public class NotifyPropertyChangedBaseTests
         testClass.PropertyWithAction = false;
 
         // Assert
-        Assert.IsFalse(testClass.PropertyWithActionCalled);
+        Assert.False(testClass.PropertyWithActionCalled);
     }
 
-    [TestMethod]
+    [Fact]
     public void ChangePropertyReturnsTrueIfValueChanged()
     {
         // Arrange
@@ -82,10 +82,10 @@ public class NotifyPropertyChangedBaseTests
         testClass.PropertyWithAction = true;
 
         // Assert
-        Assert.IsTrue(testClass.PropertyWithActionCalled);
+        Assert.True(testClass.PropertyWithActionCalled);
     }
 
-    [TestMethod]
+    [Fact]
     public void ChangedCallbackIsNotCalledIfValueHasntChanged()
     {
         // Arrange
@@ -95,10 +95,10 @@ public class NotifyPropertyChangedBaseTests
         testClass.PropertyWithCallback = false;
 
         // Assert
-        Assert.IsFalse(testClass.PropertyWithCallbackCalled);
+        Assert.False(testClass.PropertyWithCallbackCalled);
     }
 
-    [TestMethod]
+    [Fact]
     public void ChangedCallbackIsCalledIfValueChanged()
     {
         // Arrange
@@ -108,7 +108,7 @@ public class NotifyPropertyChangedBaseTests
         testClass.PropertyWithCallback = true;
 
         // Assert
-        Assert.IsTrue(testClass.PropertyWithCallbackCalled);
+        Assert.True(testClass.PropertyWithCallbackCalled);
     }
 
     private class TestClass : NotifyPropertyChangedBase

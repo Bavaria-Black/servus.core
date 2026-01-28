@@ -1,18 +1,17 @@
-﻿using System.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using System.Diagnostics;
+using Xunit;
 using Servus.Core.Diagnostics;
 
 namespace Servus.Core.Tests.Diagnostics;
 
-[TestClass]
-public class WithTracingTests
+public class WithTracingTests : IDisposable
 {
     private TestTracingClass _testObject = null!;
     private ActivitySource _activitySource = null!;
     private ActivityListener _activityListener = null!;
 
-    [TestInitialize]
-    public void Setup()
+    public WithTracingTests()
     {
         _testObject = new TestTracingClass();
         _activitySource = new ActivitySource("TestSource");
@@ -27,17 +26,16 @@ public class WithTracingTests
         ActivitySource.AddActivityListener(_activityListener);
     }
 
-    [TestCleanup]
-    public void Cleanup()
+    public void Dispose()
     {
-        _activitySource?.Dispose();
+        _activityListener.Dispose();
     }
 
     #region GetContext Tests
 
-    [TestMethod]
-    [DataRow("12345678901234567890123456789012", "1234567890123456", ActivityTraceFlags.Recorded)]
-    [DataRow("abcdef1234567890abcdef1234567890", "abcdef1234567890", ActivityTraceFlags.Recorded)]
+    [Theory]
+    [InlineData("12345678901234567890123456789012", "1234567890123456", ActivityTraceFlags.Recorded)]
+    [InlineData("abcdef1234567890abcdef1234567890", "abcdef1234567890", ActivityTraceFlags.Recorded)]
     public void GetContext_WithValidIds_ReturnsCorrectContext(string traceId, string spanId,
         ActivityTraceFlags expectedFlags)
     {
@@ -49,16 +47,16 @@ public class WithTracingTests
         var context = ((IWithTracing) _testObject).GetContext();
 
         // Assert
-        Assert.AreEqual(traceId, context.TraceId.ToHexString());
-        Assert.AreEqual(spanId, context.SpanId.ToHexString());
-        Assert.AreEqual(expectedFlags, context.TraceFlags);
+        Assert.Equal(traceId, context.TraceId.ToHexString());
+        Assert.Equal(spanId, context.SpanId.ToHexString());
+        Assert.Equal(expectedFlags, context.TraceFlags);
     }
 
-    [TestMethod]
-    [DataRow(null, null)]
-    [DataRow("", "")]
-    [DataRow(null, "1234567890123456")]
-    [DataRow("12345678901234567890123456789012", null)]
+    [Theory]
+    [InlineData(null, null)]
+    [InlineData("", "")]
+    [InlineData(null, "1234567890123456")]
+    [InlineData("12345678901234567890123456789012", null)]
     public void GetContext_WithNullOrEmptyIds_GeneratesRandomIds(string traceId, string spanId)
     {
         // Arrange
@@ -69,46 +67,46 @@ public class WithTracingTests
         var context = ((IWithTracing) _testObject).GetContext();
 
         // Assert
-        Assert.IsTrue(context.TraceId.ToHexString().Length == 32);
-        Assert.IsTrue(context.SpanId.ToHexString().Length == 16);
-        Assert.AreEqual(ActivityTraceFlags.Recorded, context.TraceFlags);
+        Assert.True(context.TraceId.ToHexString().Length == 32);
+        Assert.True(context.SpanId.ToHexString().Length == 16);
+        Assert.Equal(ActivityTraceFlags.Recorded, context.TraceFlags);
     }
 
     #endregion
 
     #region AddTracing Tests
 
-    [TestMethod]
-    [DataRow("12345678901234567890123456789012", "1234567890123456")]
-    [DataRow("abcdef1234567890abcdef1234567890ab", "fedcba0987654321")]
+    [Theory]
+    [InlineData("12345678901234567890123456789012", "1234567890123456")]
+    [InlineData("abcdef1234567890abcdef1234567890ab", "fedcba0987654321")]
     public void AddTracing_WithValidIds_SetsProperties(string traceId, string spanId)
     {
         // Act
         ((IWithTracing) _testObject).AddTracing(traceId, spanId);
 
         // Assert
-        Assert.AreEqual(traceId, _testObject.TraceId);
-        Assert.AreEqual(spanId, _testObject.SpanId);
+        Assert.Equal(traceId, _testObject.TraceId);
+        Assert.Equal(spanId, _testObject.SpanId);
     }
 
-    [TestMethod]
-    [DataRow(null, null)]
-    [DataRow("", "")]
-    [DataRow(null, "1234567890123456")]
-    [DataRow("12345678901234567890123456789012", null)]
+    [Theory]
+    [InlineData(null, null)]
+    [InlineData("", "")]
+    [InlineData(null, "1234567890123456")]
+    [InlineData("12345678901234567890123456789012", null)]
     public void AddTracing_WithNullOrEmptyIds_GeneratesRandomIds(string traceId, string spanId)
     {
         // Act
         ((IWithTracing) _testObject).AddTracing(traceId, spanId);
 
         // Assert
-        Assert.IsNotNull(_testObject.TraceId);
-        Assert.IsNotNull(_testObject.SpanId);
-        Assert.IsTrue(_testObject.TraceId.Length == 32);
-        Assert.IsTrue(_testObject.SpanId.Length == 16);
+        Assert.NotNull(_testObject.TraceId);
+        Assert.NotNull(_testObject.SpanId);
+        Assert.True(_testObject.TraceId.Length == 32);
+        Assert.True(_testObject.SpanId.Length == 16);
     }
 
-    [TestMethod]
+    [Fact]
     public void AddTracing_FromIWithTracing_CopiesIds()
     {
         // Arrange
@@ -122,11 +120,11 @@ public class WithTracingTests
         ((IWithTracing) _testObject).AddTracing(sourceTracing);
 
         // Assert
-        Assert.AreEqual(sourceTracing.TraceId, _testObject.TraceId);
-        Assert.AreEqual(sourceTracing.SpanId, _testObject.SpanId);
+        Assert.Equal(sourceTracing.TraceId, _testObject.TraceId);
+        Assert.Equal(sourceTracing.SpanId, _testObject.SpanId);
     }
 
-    [TestMethod]
+    [Fact]
     public void AddTracing_FromIWithTracingWithNullIds_GeneratesRandomIds()
     {
         // Arrange
@@ -140,13 +138,13 @@ public class WithTracingTests
         ((IWithTracing) _testObject).AddTracing(sourceTracing);
 
         // Assert
-        Assert.IsNotNull(_testObject.TraceId);
-        Assert.IsNotNull(_testObject.SpanId);
-        Assert.IsTrue(_testObject.TraceId.Length == 32);
-        Assert.IsTrue(_testObject.SpanId.Length == 16);
+        Assert.NotNull(_testObject.TraceId);
+        Assert.NotNull(_testObject.SpanId);
+        Assert.True(_testObject.TraceId.Length == 32);
+        Assert.True(_testObject.SpanId.Length == 16);
     }
 
-    [TestMethod]
+    [Fact]
     public void AddTracing_FromCurrentActivity_UsesActivityIds()
     {
         // Arrange
@@ -156,12 +154,12 @@ public class WithTracingTests
         ((IWithTracing) _testObject).AddTracing();
 
         // Assert
-        Assert.IsNotNull(activity);
-        Assert.AreEqual(activity.TraceId.ToHexString(), _testObject.TraceId);
-        Assert.AreEqual(activity.SpanId.ToHexString(), _testObject.SpanId);
+        Assert.NotNull(activity);
+        Assert.Equal(activity.TraceId.ToHexString(), _testObject.TraceId);
+        Assert.Equal(activity.SpanId.ToHexString(), _testObject.SpanId);
     }
 
-    [TestMethod]
+    [Fact]
     public void AddTracing_NoCurrentActivity_GeneratesRandomIds()
     {
         // Ensure no current activity
@@ -171,21 +169,21 @@ public class WithTracingTests
         ((IWithTracing) _testObject).AddTracing();
 
         // Assert
-        Assert.IsNotNull(_testObject.TraceId);
-        Assert.IsNotNull(_testObject.SpanId);
-        Assert.IsTrue(_testObject.TraceId.Length == 32);
-        Assert.IsTrue(_testObject.SpanId.Length == 16);
+        Assert.NotNull(_testObject.TraceId);
+        Assert.NotNull(_testObject.SpanId);
+        Assert.True(_testObject.TraceId.Length == 32);
+        Assert.True(_testObject.SpanId.Length == 16);
     }
 
     #endregion
 
     #region StartActivity Tests
 
-    [TestMethod]
-    [DataRow("TestOperation", ActivityKind.Consumer)]
-    [DataRow("ProcessData", ActivityKind.Internal)]
-    [DataRow("HttpRequest", ActivityKind.Client)]
-    [DataRow("MessageReceive", ActivityKind.Server)]
+    [Theory]
+    [InlineData("TestOperation", ActivityKind.Consumer)]
+    [InlineData("ProcessData", ActivityKind.Internal)]
+    [InlineData("HttpRequest", ActivityKind.Client)]
+    [InlineData("MessageReceive", ActivityKind.Server)]
     public void StartActivity_WithValidParameters_ReturnsActivity(string activityName, ActivityKind kind)
     {
         // Arrange
@@ -198,12 +196,12 @@ public class WithTracingTests
         // Assert - Activity might be null if no listener is configured
         if (activity != null)
         {
-            Assert.AreEqual(activityName, activity.DisplayName);
-            Assert.AreEqual(kind, activity.Kind);
+            Assert.Equal(activityName, activity.DisplayName);
+            Assert.Equal(kind, activity.Kind);
         }
     }
 
-    [TestMethod]
+    [Fact]
     public void StartActivity_DefaultKind_UsesConsumer()
     {
         // Arrange
@@ -216,7 +214,7 @@ public class WithTracingTests
         // Assert - Activity might be null if no listener is configured
         if (activity != null)
         {
-            Assert.AreEqual(ActivityKind.Consumer, activity.Kind);
+            Assert.Equal(ActivityKind.Consumer, activity.Kind);
         }
     }
 

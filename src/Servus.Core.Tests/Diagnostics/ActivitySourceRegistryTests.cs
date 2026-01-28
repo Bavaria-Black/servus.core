@@ -1,16 +1,15 @@
-﻿using System.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using System.Diagnostics;
 using Servus.Core.Diagnostics;
+using Xunit;
 
 namespace Servus.Core.Tests.Diagnostics;
 
-[TestClass]
-public class ActivitySourceRegistryTests
+public class ActivitySourceRegistryTests : IDisposable
 {
     private ActivityListener _activityListener = null!;
 
-    [TestInitialize]
-    public void TestInitialize()
+    public ActivitySourceRegistryTests()
     {
         // Set up ActivityListener to enable activity creation
         _activityListener = new ActivityListener
@@ -21,13 +20,12 @@ public class ActivitySourceRegistryTests
         ActivitySource.AddActivityListener(_activityListener);
     }
 
-    [TestCleanup]
-    public void TestCleanup()
+    public void Dispose()
     {
-        _activityListener?.Dispose();
+        _activityListener.Dispose();
     }
 
-    [TestMethod]
+    [Fact]
     public void StartActivity_WithValidParameters_ReturnsActivity()
     {
         // Arrange
@@ -39,11 +37,11 @@ public class ActivitySourceRegistryTests
         var result = ActivitySourceRegistry.StartActivity<TestClass>(activityName, trace);
 
         // Assert
-        Assert.IsNotNull(result);
-        Assert.AreEqual(activityName, result.DisplayName);
+        Assert.NotNull(result);
+        Assert.Equal(activityName, result.DisplayName);
     }
 
-    [TestMethod]
+    [Fact]
     public void StartActivity_CallsTraceStartActivityWithCorrectParameters()
     {
         // Arrange
@@ -56,13 +54,13 @@ public class ActivitySourceRegistryTests
         var result = ActivitySourceRegistry.StartActivity<TestClass>(activityName, trace, kind);
 
         // Assert
-        Assert.IsNotNull(result);
-        Assert.AreEqual(activityName, result.DisplayName);
-        Assert.AreEqual("test_class", result.Source?.Name);
-        Assert.AreEqual(kind, result.Kind);
+        Assert.NotNull(result);
+        Assert.Equal(activityName, result.DisplayName);
+        Assert.Equal("test_class", result.Source?.Name);
+        Assert.Equal(kind, result.Kind);
     }
 
-    [TestMethod]
+    [Fact]
     public void StartActivity_WithSameTypeMultipleTimes_ReusesActivitySource()
     {
         // Arrange
@@ -76,14 +74,14 @@ public class ActivitySourceRegistryTests
         var result2 = ActivitySourceRegistry.StartActivity<TestClass>(activityName2, trace);
 
         // Assert
-        Assert.IsNotNull(result1);
-        Assert.IsNotNull(result2);
-        Assert.AreSame(result1.Source, result2.Source);
-        Assert.AreEqual("test_class", result1.Source?.Name);
-        Assert.AreEqual("test_class", result2.Source?.Name);
+        Assert.NotNull(result1);
+        Assert.NotNull(result2);
+        Assert.Same(result1.Source, result2.Source);
+        Assert.Equal("test_class", result1.Source?.Name);
+        Assert.Equal("test_class", result2.Source?.Name);
     }
 
-    [TestMethod]
+    [Fact]
     public void StartActivity_WithDifferentTypes_CreatesSeparateActivitySources()
     {
         // Arrange
@@ -96,14 +94,14 @@ public class ActivitySourceRegistryTests
         var result2 = ActivitySourceRegistry.StartActivity<AnotherTestClass>(activityName, trace);
 
         // Assert
-        Assert.IsNotNull(result1);
-        Assert.IsNotNull(result2);
-        Assert.AreNotSame(result1.Source, result2.Source);
-        Assert.AreEqual("test_class", result1.Source?.Name);
-        Assert.AreEqual("another_test_class", result2.Source?.Name);
+        Assert.NotNull(result1);
+        Assert.NotNull(result2);
+        Assert.NotSame(result1.Source, result2.Source);
+        Assert.Equal("test_class", result1.Source?.Name);
+        Assert.Equal("another_test_class", result2.Source?.Name);
     }
 
-    [TestMethod]
+    [Fact]
     public void StartActivity_WithDifferentTypes_ButSameRootSource()
     {
         // Arrange
@@ -116,14 +114,14 @@ public class ActivitySourceRegistryTests
         var result2 = ActivitySourceRegistry.StartActivity<TestClassWithAttribute>(activityName, trace);
         
         // Assert
-        Assert.IsNotNull(result1);
-        Assert.IsNotNull(result2);
-        Assert.AreNotSame(result1.Source, result2.Source);
-        Assert.AreEqual("root-source", result1.Source?.Name);
-        Assert.AreEqual("root-source", result2.Source?.Name);
+        Assert.NotNull(result1);
+        Assert.NotNull(result2);
+        Assert.NotSame(result1.Source, result2.Source);
+        Assert.Equal("root-source", result1.Source?.Name);
+        Assert.Equal("root-source", result2.Source?.Name);
     }
 
-    [TestMethod]
+    [Fact]
     public void StartActivity_WithDifferentTypes_ButSameSource()
     {
         // Arrange
@@ -136,14 +134,14 @@ public class ActivitySourceRegistryTests
         var result2 = ActivitySourceRegistry.StartActivity<AnotherTestClassWithAttribute>(activityName, trace);
 
         // Assert
-        Assert.IsNotNull(result1);
-        Assert.IsNotNull(result2);
-        Assert.AreNotSame(result1.Source, result2.Source);
-        Assert.AreEqual("test_class", result1.Source?.Name);
-        Assert.AreEqual("test_class", result2.Source?.Name);
+        Assert.NotNull(result1);
+        Assert.NotNull(result2);
+        Assert.NotSame(result1.Source, result2.Source);
+        Assert.Equal("test_class", result1.Source?.Name);
+        Assert.Equal("test_class", result2.Source?.Name);
     }
 
-    [TestMethod]
+    [Fact]
     public void StartActivity_WithDefaultActivityKind_UsesConsumerKind()
     {
         // Arrange
@@ -155,16 +153,16 @@ public class ActivitySourceRegistryTests
         var result = ActivitySourceRegistry.StartActivity<TestClass>(activityName, trace);
 
         // Assert
-        Assert.IsNotNull(result);
-        Assert.AreEqual(ActivityKind.Consumer, result.Kind);
+        Assert.NotNull(result);
+        Assert.Equal(ActivityKind.Consumer, result.Kind);
     }
 
-    [TestMethod]
-    [DataRow(ActivityKind.Internal)]
-    [DataRow(ActivityKind.Server)]
-    [DataRow(ActivityKind.Client)]
-    [DataRow(ActivityKind.Producer)]
-    [DataRow(ActivityKind.Consumer)]
+    [Theory]
+    [InlineData(ActivityKind.Internal)]
+    [InlineData(ActivityKind.Server)]
+    [InlineData(ActivityKind.Client)]
+    [InlineData(ActivityKind.Producer)]
+    [InlineData(ActivityKind.Consumer)]
     public void StartActivity_WithSpecificActivityKind_PassesCorrectKind(ActivityKind kind)
     {
         // Arrange
@@ -176,11 +174,11 @@ public class ActivitySourceRegistryTests
         var result = ActivitySourceRegistry.StartActivity<TestClass>(activityName, trace, kind);
 
         // Assert
-        Assert.IsNotNull(result);
-        Assert.AreEqual(kind, result.Kind);
+        Assert.NotNull(result);
+        Assert.Equal(kind, result.Kind);
     }
 
-    [TestMethod]
+    [Fact]
     public void StartActivity_WhenTraceReturnsNull_ReturnsNull()
     {
         // Arrange
@@ -192,10 +190,10 @@ public class ActivitySourceRegistryTests
         var result = ActivitySourceRegistry.StartActivity<TestClass>(activityName, trace);
 
         // Assert
-        Assert.IsNull(result);
+        Assert.Null(result);
     }
 
-    [TestMethod]
+    [Fact]
     public void StartActivity_WithComplexTypeName_ConvertsToSnakeCase()
     {
         // Arrange
@@ -207,11 +205,11 @@ public class ActivitySourceRegistryTests
         var result = ActivitySourceRegistry.StartActivity<MyComplexTestClass>(activityName, trace);
 
         // Assert
-        Assert.IsNotNull(result);
-        Assert.AreEqual("my_complex_test_class", result.Source?.Name);
+        Assert.NotNull(result);
+        Assert.Equal("my_complex_test_class", result.Source?.Name);
     }
 
-    [TestMethod]
+    [Fact]
     public void StartActivity_WithGenericType_ConvertsToSnakeCase()
     {
         // Arrange
@@ -223,11 +221,11 @@ public class ActivitySourceRegistryTests
         var result = ActivitySourceRegistry.StartActivity<GenericTestClass<string>>(activityName, trace);
 
         // Assert
-        Assert.IsNotNull(result);
-        Assert.IsTrue(result.Source?.Name.StartsWith("generic_test_class"));
+        Assert.NotNull(result);
+        Assert.True(result.Source?.Name.StartsWith("generic_test_class"));
     }
 
-    [TestMethod]
+    [Fact]
     public void CreatesActivitySourceWithSnakeCaseName_WithoutAdding()
     {
         // Arrange & Act
@@ -236,11 +234,11 @@ public class ActivitySourceRegistryTests
         var result = ActivitySourceRegistry.StartActivity<TestClass>("test-activity", trace);
 
         // Assert
-        Assert.IsNotNull(result);
-        Assert.AreEqual("test_class", result.Source?.Name);
+        Assert.NotNull(result);
+        Assert.Equal("test_class", result.Source?.Name);
     }
 
-    [TestMethod]
+    [Fact]
     public void Add_WithExplicitName_CreatesActivitySourceWithGivenName()
     {
         // Arrange & Act
@@ -251,10 +249,10 @@ public class ActivitySourceRegistryTests
         var result = ActivitySourceRegistry.StartActivity<CustomNameTestClass>("test-activity", trace);
 
         // Assert
-        Assert.IsNotNull(result);
+        Assert.NotNull(result);
         // Note: The current implementation ignores the custom name parameter
         // This test documents the current behavior
-        Assert.AreEqual("custom_name_test_class", result.Source?.Name);
+        Assert.Equal("custom_name_test_class", result.Source?.Name);
     }
 
     // Test classes for type parameter testing

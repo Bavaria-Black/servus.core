@@ -1,42 +1,40 @@
 ﻿using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using Servus.Core.Reflection;
-using static Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 namespace Servus.Core.Tests.Reflection;
 
-[TestClass]
 public class ConditionalInvokeTests
 {
     internal interface ITestInterface
     {
-        public bool TestMethod();
-        public Task<bool> TestMethodAsync();
+        public bool Fact();
+        public Task<bool> FactAsync();
     }
 
     private class TestImplementation : ITestInterface
     {
-        public bool TestMethod() => true;
-        public Task<bool> TestMethodAsync()=> Task.FromResult(true);
+        public bool Fact() => true;
+        public Task<bool> FactAsync()=> Task.FromResult(true);
     }
 
     private static TestImplementation GetBasisClass() => new();
     
-    [TestMethod]
+    [Fact]
     public void ConditionalInvokeTest()
     {
         var service = GetBasisClass();
         
-        service.InvokeIf<ITestInterface>(t => IsTrue(t.TestMethod()));
-        IsTrue(service.InvokeIf<ITestInterface, bool>(t => t.TestMethod()));
+        service.InvokeIf<ITestInterface>(t =>  Assert.True(t.Fact()));
+        Assert.True(service.InvokeIf<ITestInterface, bool>(t => t.Fact()));
     }
     
-    [TestMethod]
+    [Fact]
     public async Task ConditionalInvokeAsyncTest()
     {
         var service = GetBasisClass();
         
-        await service.InvokeIfAsync<ITestInterface>(async t => IsTrue(await t.TestMethodAsync()));
-        IsTrue(await service.InvokeIfAsync<ITestInterface, bool>(async t => await t.TestMethodAsync()));
+        await service.InvokeIfAsync<ITestInterface>(async t => Assert.True(await t.FactAsync()));
+        Assert.True(await service.InvokeIfAsync<ITestInterface, bool>(async t => await t.FactAsync()));
     }
 }

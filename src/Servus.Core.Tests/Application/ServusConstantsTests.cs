@@ -1,24 +1,24 @@
-﻿
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Xunit;
 
 namespace Servus.Core.Tests.Application;
 
-[TestClass]
 public class ServusConstantsTests
 {
-    [TestMethod]
+    [Fact]
     public void LogoTests()
     {
-        Assert.IsTrue(Core.Application.Servus.Logo.Contains("servus!"));
+        Assert.Contains("servus!", Core.Application.Servus.Logo);
     }
-    [TestMethod]
+
+    [Fact]
     public void LogoSmallTests()
     {
-        Assert.IsTrue(Core.Application.Servus.LogoSmall.Contains("servus!"));
+        Assert.Contains("servus!", Core.Application.Servus.LogoSmall);
     }
-    [TestMethod]
+
+    [Fact]
     public void LogoTinyTests()
     {
-        Assert.IsTrue(Core.Application.Servus.LogoTiny.Contains("servus!"));
+        Assert.Contains("servus!", Core.Application.Servus.LogoTiny);
     }
 }

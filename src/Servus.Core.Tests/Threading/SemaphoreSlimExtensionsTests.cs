@@ -2,34 +2,32 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Servus.Core.Threading;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace Servus.Core.Tests.Threading;
 
-[TestClass]
 public class SemaphoreSlimExtensionsTests
 {
-    [TestMethod]
+    [Fact]
     public async Task SemaphoreSlimScopeWaitReleaseUsingBlock()
     {
         int count = 0;
 
         var semaphore = new SemaphoreSlim(1, 1);
 
-        Assert.AreEqual(1, semaphore.CurrentCount);
+        Assert.Equal(1, semaphore.CurrentCount);
         using (await semaphore.WaitScopedAsync())
         {
             count++;
-            Assert.AreEqual(0, semaphore.CurrentCount);
+            Assert.Equal(0, semaphore.CurrentCount);
         }
 
-        Assert.AreEqual(1, count);
-        Assert.AreEqual(1, semaphore.CurrentCount);
+        Assert.Equal(1, count);
+        Assert.Equal(1, semaphore.CurrentCount);
     }
 
 
-    [TestMethod]
-    [Timeout(30000)]
+    [Fact(Timeout = 30000)]
     public async Task SemaphoreSlimScopeWaitParallelFor()
     {
         const int upperBound = 10000;
@@ -48,12 +46,12 @@ public class SemaphoreSlimExtensionsTests
             await Task.WhenAll(tasks);
 
 
-            Assert.AreEqual(upperBound, items.Count);
+            Assert.Equal(upperBound, items.Count);
 
             //Ensure list is ordered from 0 to 9999
             for (int i = 0; i < upperBound - 1; i++)
             {
-                Assert.AreEqual(i, items[i]);
+                Assert.Equal(i, items[i]);
             }
         }
     }
@@ -69,9 +67,8 @@ public class SemaphoreSlimExtensionsTests
         }
     }
 
-    [TestMethod]
-    [Timeout(30000)]
-    public void SemaphoreSlimScopeWait()
+    [Fact(Timeout = 30000)]
+    public async Task SemaphoreSlimScopeWait()
     {
         const int upperBound = 10000;
         var counter = new CountContainer();
@@ -97,16 +94,16 @@ public class SemaphoreSlimExtensionsTests
                 tasks.Add(task);
             }
 
-            Task.WaitAll(tasks.ToArray());
+            await Task.WhenAll(tasks);
 
 
 
-            Assert.AreEqual(upperBound, items.Count);
+            Assert.Equal(upperBound, items.Count);
 
             //Ensure list is ordered from 0 to 9999
             for (int i = 0; i < upperBound - 1; i++)
             {
-                Assert.AreEqual(i, items[i]);
+                Assert.Equal(i, items[i]);
             }
         }
     }
