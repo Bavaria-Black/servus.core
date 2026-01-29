@@ -16,8 +16,8 @@ Basic usage
 
     public class ProcessOrderMessage : IWithTracing
     {
-        public string? TraceId { get; set; }
-        public string? SpanId { get; set; }
+        public string? TraceParent { get; set; }
+        public string? TraceState { get; set; }
         public int OrderId { get; set; }
         public decimal Amount { get; set; }
     }

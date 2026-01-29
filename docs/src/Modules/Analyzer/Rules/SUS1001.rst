@@ -10,7 +10,8 @@ Cause
 A property named ``SpanId`` was detected,
 which represents a legacy tracing approach.
 Direct ``SpanId`` properties violate the
-`W3C Trace Context standard <https://www.w3.org/TR/trace-context/>`_ and break interoperability
+`W3C Trace Context standard <https://www.w3.org/TR/trace-context/>`_
+and break interoperability
 with modern distributed tracing systems.
 
 An example:

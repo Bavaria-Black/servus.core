@@ -25,7 +25,7 @@ An example:
 
         public void ProcessRequest()
         {
-            TraceId = Activity.Current?.Id ?? Guid.NewGuid().ToString();
+            TraceId = Activity.Current?.TraceId.ToString() ?? Guid.NewGuid().ToString();
             // ...
         }
     }
