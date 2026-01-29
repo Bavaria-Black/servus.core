@@ -45,7 +45,7 @@ operations that just work the way you expect them to -
 
 .. toctree::
    :maxdepth: 2
-   :caption: Code Analyzer
+   :caption: Analyzer
 
-   Modules/CodeAnalyzer/Servus.Analyzer
-   Modules/CodeAnalyzer/Rules/index
+   Modules/Analyzer/Servus.Analyzer
+   Modules/Analyzer/Rules/index
