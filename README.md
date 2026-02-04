@@ -2,10 +2,10 @@
 
 > A general-purpose .NET utility library. Filled with features that you didn't know you actually missed ;)
 
-[![NuGet](https://img.shields.io/nuget/v/Servus.Core.svg)](https://www.nuget.org/packages/Servus.Core/)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/Bavaria-Black/servus.core/build-and-release.yml?branch=develop)](https://github.com/Bavaria-Black/servus.core/actions)
-[![License](https://img.shields.io/github/license/Bavaria-Black/servus.core)](LICENSE)
-[![Downloads](https://img.shields.io/nuget/dt/Servus.Core.svg)](https://www.nuget.org/packages/Servus.Core/)
+[![NuGet](https://img.shields.io/nuget/v/Servus.Core.svg?style=flat-square)](https://www.nuget.org/packages/Servus.Core/)
+[![Docs](https://app.readthedocs.org/projects/servuscore/badge/?version=latest&style=flat-square)](https://servuscore.readthedocs.io/en/latest/)
+[![License](https://img.shields.io/github/license/Bavaria-Black/servus.core?style=flat-square)](LICENSE)
+[![Downloads](https://img.shields.io/nuget/dt/Servus.Core.svg?style=flat-square)](https://www.nuget.org/packages/Servus.Core/)
 
 <p align="center">
      <img width="128" height="128" src="docs/src/_static/logo.png" alt="servus.akka logo">
