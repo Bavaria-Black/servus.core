@@ -5,7 +5,7 @@ SUS1000
 Use W3C Trace Context (`traceparent`/`tracestate`) instead.**
 
 Cause
-^^^^^
+"""""
 
 A property named ``TraceId`` was detected,
 which represents a legacy tracing approach.
@@ -31,7 +31,7 @@ An example:
     }
 
 Resolution
-^^^^^^^^^^
+""""""""""
 
 **Use W3C Trace Context headers** (`traceparent`/`tracestate`)
 instead of custom ``TraceId`` properties.
@@ -58,7 +58,7 @@ An example:
     }
 
 Details
--------
+"""""""
 
 **Diagnostic ID:** ``SUS1000``
 

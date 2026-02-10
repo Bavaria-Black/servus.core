@@ -1,0 +1,78 @@
+SUS1002
+=======
+**Avoid obsolete AddTracing(traceId, spanId) overload.
+Use W3C Trace Context AddTracing(traceParent, traceState) instead.**
+
+Cause
+"""""
+
+The obsolete ``AddTracing(traceId, spanId)`` method overload was detected,
+which represents a legacy tracing approach.
+This method signature violates the
+`W3C Trace Context standard <https://www.w3.org/TR/trace-context/>`_
+and breaks interoperability
+with modern distributed tracing systems.
+
+An example:
+
+.. code-block:: csharp
+
+    public class MyService
+    {
+        public record CreateOrder(Guid Id) : IWithTracing
+        {
+            public string? TraceId { get; set; }
+            public string? SpanId { get; set; }
+        }
+
+        public void ProcessRequest(CreateOrder msg)
+        {
+            var traceId = Guid.NewGuid().ToString();
+            var spanId = Guid.NewGuid().ToString();
+
+            msg.AddTracing(traceId, spanId);      // SUS1002 Trigger
+            // ...
+        }
+    }
+
+Resolution
+""""""""""
+
+**Use the W3C Trace Context compliant**
+``AddTracing(traceParent, traceState)`` overload
+instead of the obsolete ``AddTracing(traceId, spanId)`` signature.
+
+An example:
+
+.. code-block:: csharp
+
+    public class MyService
+    {
+        public record CreateOrder(Guid Id) : IWithTracing
+        {
+            public string? TraceId { get; set; }
+            public string? SpanId { get; set; }
+        }
+
+        public void ProcessRequest(CreateOrder msg)
+        {
+            // Use W3C compliant traceparent format
+            var traceParent = Activity.Current?.Id ??
+                $"00-{ActivityTraceId.CreateRandom()}-{ActivitySpanId.CreateRandom()}-01";
+            var traceState = Activity.Current?.TraceStateString;
+
+            msg.AddTracing(traceParent, traceState);  // W3C compliant
+            // ...
+        }
+    }
+
+Details
+"""""""
+
+**Diagnostic ID:** ``SUS1002``
+
+**Category:** Trace Usage
+
+**Severity:** Warning
+
+**Enabled by default:** Yes

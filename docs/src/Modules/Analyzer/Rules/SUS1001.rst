@@ -5,7 +5,7 @@ SUS1001
 Use W3C Trace Context (`traceparent`/`tracestate`) instead.**
 
 Cause
-^^^^^
+"""""
 
 A property named ``SpanId`` was detected,
 which represents a legacy tracing approach.
@@ -32,7 +32,7 @@ An example:
     }
 
 Resolution
-^^^^^^^^^^
+""""""""""
 
 **Use W3C Trace Context headers** (`traceparent`/`tracestate`)
 instead of custom ``SpanId`` properties.
@@ -59,7 +59,7 @@ An example:
     }
 
 Details
--------
+"""""""
 
 **Diagnostic ID:** ``SUS1001``
 

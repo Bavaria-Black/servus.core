@@ -32,5 +32,5 @@ Supported Rules
      - Trace Usage
    * - `SUS1002 <Modules/Analyzer/Rules/SUS1002>`_
      - Avoid obsolete ``AddTracing(traceId, spanId)`` overload
-     - Error
+     - Warning
      - Trace Usage
