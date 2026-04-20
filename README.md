@@ -3,12 +3,12 @@
 > A general-purpose .NET utility library. Filled with features that you didn't know you actually missed ;)
 
 [![NuGet](https://img.shields.io/nuget/v/Servus.Core.svg?style=flat-square)](https://www.nuget.org/packages/Servus.Core/)
-[![Docs](https://app.readthedocs.org/projects/servuscore/badge/?version=latest&style=flat-square)](https://servuscore.readthedocs.io/en/latest/)
+[![Docs](https://img.shields.io/badge/docs-leberkas.org-123C73?style=flat-square)](https://docs.leberkas.org/servuscore)
 [![License](https://img.shields.io/github/license/Bavaria-Black/servus.core?style=flat-square)](LICENSE)
 [![Downloads](https://img.shields.io/nuget/dt/Servus.Core.svg?style=flat-square)](https://www.nuget.org/packages/Servus.Core/)
 
 <p align="center">
-     <img width="128" height="128" src="docs/src/_static/logo.png" alt="servus.akka logo">
+     <img width="128" height="128" src="docs/public/logo.png" alt="servus.akka logo">
 </p>
 
 ## Overview
@@ -27,7 +27,7 @@ Whether it's string manipulation that actually makes sense, date handling that d
 
 Here are a few new features and changes that were done in this library. This is not specifically pinned to Versions.
 
- - Started to add documentation over at [Read the docs](https://servuscore.readthedocs.io/en/latest/)
+ - Started to add documentation over at [docs.leberkas.org/servuscore](https://docs.leberkas.org/servuscore)
  - Added Healcheck SetupContainer
  - AppBuilder for clean application startup
  - More casing functions
@@ -82,4 +82,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 *Feel free to use it and feel free to contribute other useful stuff.*
 
-For questions or support, please [open an issue](https://github.com/Bavaria-Black/servus.core/issues) and/or [read the docs](https://servuscore.readthedocs.io/en/latest/).
+For questions or support, please [open an issue](https://github.com/Bavaria-Black/servus.core/issues) and/or [read the docs](https://docs.leberkas.org/servuscore).
