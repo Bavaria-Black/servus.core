@@ -47,20 +47,23 @@ jobs:
           echo "Full Version: ${{ steps.gitversion.outputs.fullSemVer }}"
 
       - name: Restore dependencies
+        working-directory: './src'
         run: dotnet restore ${{ env.PROJECT_PATH }}
 
       - name: Install sonar scanner
         run: dotnet tool install --global dotnet-sonarscanner
-        
+
       - name: start sonar scanner
         if: ${{ env.SONAR_TOKEN && env.SONAR_TOKEN != '' }}
         run: dotnet sonarscanner begin /o:"bavaria-black" /k:"servus-core" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.token="$SONAR_TOKEN" /d:sonar.cs.opencover.reportsPaths=**/*.opencover.xml
 
       - name: Build
+        working-directory: './src'
         run: dotnet build --configuration Release --no-restore ${{ env.PROJECT_PATH }} /p:Version=${{ steps.gitversion.outputs.fullSemVer }}
 
       - name: Run tests
-        run: dotnet test --configuration Release --no-build --collect:"XPlat Code Coverage;Format=opencover" --verbosity normal ${{ env.PROJECT_PATH }}
+        working-directory: './src'
+        run: dotnet test --configuration Release --no-ansi --no-build --coverage --coverage-output-format cobertura --solution *.slnx
 
       - name: stop sonar scanner
         if: ${{ env.SONAR_TOKEN && env.SONAR_TOKEN != '' }}
