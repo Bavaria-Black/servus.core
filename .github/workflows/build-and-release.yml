@@ -7,7 +7,7 @@ on:
 
 env:
   GLOBAL_JSON_PATH: './src/global.json'
-  PROJECT_PATH: './src/Servus.sln'
+  PROJECT_PATH: './Servus.sln'
   PACKAGE_OUTPUT_DIRECTORY: './packages'
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
