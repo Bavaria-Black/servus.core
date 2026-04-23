@@ -7,7 +7,7 @@ namespace Servus.Core.Diagnostics;
 public readonly struct ServusTraceCategory : IEquatable<ServusTraceCategory>
 {
     /// <summary>The unique name that identifies this category.</summary>
-    public string Name { get; }
+    public string Name { get; } = string.Empty;
 
     /// <summary>Creates a custom trace category with the given name.</summary>
     public ServusTraceCategory(string name)

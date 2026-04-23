@@ -6,7 +6,7 @@ namespace Servus.Core.Diagnostics;
 /// <summary>
 /// OpenTelemetry metrics for the Servus.Akka transport layer.
 /// Tracks connection lifecycle, DNS lookups, and connection pool wait times.
-/// Consumers subscribe via <c>AddMeter("Servus.Akka")</c> in the OTel SDK.
+/// Consumers subscribe via <c>AddMeter("Servus")</c> in the OTel SDK.
 /// </summary>
 public static class ServusMetrics
 {
