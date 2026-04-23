@@ -39,21 +39,21 @@ public class RPlotExporterExtended : IExporter
             WorkingDirectory = summary.ResultsDirectoryPath,
             Arguments = $"\"{scriptFullPath}\" \"{csvFullPath}\""
         };
-        
+
         using var redirector = new ProcessOutRedirector(process);
         process.Start();
         redirector.StartRedirection();
-        
+
         process.StartInfo.RedirectStandardInput = true;
         process.StandardInput.WriteLine(10);
         process.StandardInput.Flush();
         process.StandardInput.WriteLine(5);
         process.StandardInput.Flush();
-        
+
         process.WaitForExit();
         redirector.StopRedirection();
-        
-        
+
+
         yield return Path.Combine(summary.ResultsDirectoryPath, $"*.png");
     }
 
@@ -94,7 +94,7 @@ public class RPlotExporterExtended : IExporter
                 {
                     var rscriptPathCandidate = Path.Combine(rRootDirectory, "bin", rscriptExecutable);
                     if (!File.Exists(rscriptPathCandidate)) continue;
-                    
+
                     rscriptPath = rscriptPathCandidate;
                     return true;
                 }
@@ -130,4 +130,4 @@ public class RPlotExporterExtended : IExporter
 
         return null;
     }
-}   
+}

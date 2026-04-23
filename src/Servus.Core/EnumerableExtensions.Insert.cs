@@ -49,7 +49,7 @@ public static partial class EnumerableExtensions
 
         return result;
     }
-    
+
     /// <summary>
     /// High-performance insert at specified position. Optimized for collections with known count.
     /// </summary>

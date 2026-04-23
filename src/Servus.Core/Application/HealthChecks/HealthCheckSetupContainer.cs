@@ -8,10 +8,10 @@ namespace Servus.Core.Application.HealthChecks;
 public abstract class HealthCheckSetupContainer : ApplicationSetupContainer<WebApplication>, IServiceSetupContainer
 {
     protected virtual string UrlPattern { get; } = "healthz";
-    
+
     protected sealed override void SetupApplication(WebApplication app)
-    { 
-        var builder =app.MapHealthChecks(UrlPattern);
+    {
+        var builder = app.MapHealthChecks(UrlPattern);
         SetupEndpointConventions(builder);
     }
 

@@ -31,7 +31,7 @@ public static partial class EnumerableExtensions
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(predicate);
-        
+
         var index = 0;
         var enumerator = source.GetEnumerator();
         using var disposable = enumerator as IDisposable;
@@ -48,7 +48,7 @@ public static partial class EnumerableExtensions
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(action);
-        
+
         var index = 0;
         source.ForEach(a => action(a, index++));
     }
@@ -63,7 +63,7 @@ public static partial class EnumerableExtensions
             action(item);
         }
     }
-    
+
     public static bool Contains<T>(this IEnumerable<T> enumerable, Predicate<T> predicate) => enumerable.Any(a => predicate(a));
 
     public static bool TryGet<T>(this IEnumerable<T> enumerable, Predicate<T> predicate, out T? entry)

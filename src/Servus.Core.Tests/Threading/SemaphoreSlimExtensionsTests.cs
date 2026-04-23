@@ -34,7 +34,7 @@ public class SemaphoreSlimExtensionsTests
         var counter = new CountContainer();
         var items = new List<int>();
 
-        using(var semaphore = new SemaphoreSlim(1, 1))
+        using (var semaphore = new SemaphoreSlim(1, 1))
         {
             //Count to 10000 in paralell and sync the count with a semaphore slim
             var tasks = new List<Task>();

@@ -21,7 +21,7 @@ public class ActionRegistry<T> : IActionRegistry<T>, IActionRegistryRunner<T>
     {
         _taskTypes.Add(typeof(TImplementation));
     }
-    
+
     /// <summary>
     /// Registers a pre-resolved action instance.
     /// </summary>
@@ -30,7 +30,7 @@ public class ActionRegistry<T> : IActionRegistry<T>, IActionRegistryRunner<T>
     {
         _resolvedTasks.Add(instance);
     }
-    
+
     /// <summary>
     /// Gets all registered actions by resolving types through the service provider and combining with pre-resolved instances.
     /// </summary>
@@ -61,7 +61,7 @@ public class ActionRegistry<T> : IActionRegistry<T>, IActionRegistryRunner<T>
             executor(action, cancellationToken);
         }
     }
-    
+
     // ReSharper disable once MemberCanBeProtected.Global
     /// <summary>
     /// Executes all registered actions asynchronously in parallel using the provided executor function.
@@ -75,10 +75,10 @@ public class ActionRegistry<T> : IActionRegistry<T>, IActionRegistryRunner<T>
     public async ValueTask RunAsyncParallel(IServiceProvider sp, Func<T, CancellationToken, ValueTask> executor, CancellationToken cancellationToken)
     {
         var actions = GetActions(sp);
-        await Parallel.ForEachAsync(actions, cancellationToken, 
+        await Parallel.ForEachAsync(actions, cancellationToken,
             async (action, token) => await executor(action, token));
     }
-    
+
     // ReSharper disable once MemberCanBeProtected.Global
     /// <summary>
     /// Executes all registered actions asynchronously in sequence using the provided executor function.

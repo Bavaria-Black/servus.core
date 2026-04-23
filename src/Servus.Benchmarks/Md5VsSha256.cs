@@ -17,7 +17,7 @@ public class Md5VsSha256
     public Md5VsSha256()
     {
         _data = new byte[N];
-        const int seed = (5 + 5 + 5) * (5 * 5 + 5 + 5 + (int) (0.5 + 0.5 + 0.5 + 0.5));
+        const int seed = (5 + 5 + 5) * (5 * 5 + 5 + 5 + (int)(0.5 + 0.5 + 0.5 + 0.5));
         new Random(seed).NextBytes(_data);
     }
 

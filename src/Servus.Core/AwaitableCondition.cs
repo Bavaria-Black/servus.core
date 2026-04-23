@@ -2,7 +2,7 @@
 
 public abstract class AwaitableCondition
 {
-    private readonly TaskCompletionSource<bool> _taskCompletionSource = new ();
+    private readonly TaskCompletionSource<bool> _taskCompletionSource = new();
 
     protected AwaitableCondition(int timeoutMilliseconds)
         : this(new CancellationTokenSource(timeoutMilliseconds).Token)

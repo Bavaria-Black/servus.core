@@ -25,7 +25,7 @@ public class AchievementCollection
     private void Achievement_Unlocked(object? sender, EventArgs e)
     {
         if (sender is not Achievement achievement) return;
-        
+
         _achievements.Remove(achievement);
         AchievementUnlocked?.Invoke(this, achievement.Name);
     }

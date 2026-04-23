@@ -44,7 +44,7 @@ public class WithTracingTests : IDisposable
         _testObject.SpanId = spanId;
 
         // Act
-        var context = ((IWithTracing) _testObject).GetContext();
+        var context = ((IWithTracing)_testObject).GetContext();
 
         // Assert
         Assert.Equal(traceId, context.TraceId.ToHexString());
@@ -64,7 +64,7 @@ public class WithTracingTests : IDisposable
         _testObject.SpanId = spanId;
 
         // Act
-        var context = ((IWithTracing) _testObject).GetContext();
+        var context = ((IWithTracing)_testObject).GetContext();
 
         // Assert
         Assert.True(context.TraceId.ToHexString().Length == 32);
@@ -82,7 +82,7 @@ public class WithTracingTests : IDisposable
     public void AddTracing_WithValidIds_SetsProperties(string traceId, string spanId)
     {
         // Act
-        ((IWithTracing) _testObject).AddTracing(traceId, spanId);
+        ((IWithTracing)_testObject).AddTracing(traceId, spanId);
 
         // Assert
         Assert.Equal(traceId, _testObject.TraceId);
@@ -97,7 +97,7 @@ public class WithTracingTests : IDisposable
     public void AddTracing_WithNullOrEmptyIds_GeneratesRandomIds(string traceId, string spanId)
     {
         // Act
-        ((IWithTracing) _testObject).AddTracing(traceId, spanId);
+        ((IWithTracing)_testObject).AddTracing(traceId, spanId);
 
         // Assert
         Assert.NotNull(_testObject.TraceId);
@@ -117,7 +117,7 @@ public class WithTracingTests : IDisposable
         };
 
         // Act
-        ((IWithTracing) _testObject).AddTracing(sourceTracing);
+        ((IWithTracing)_testObject).AddTracing(sourceTracing);
 
         // Assert
         Assert.Equal(sourceTracing.TraceId, _testObject.TraceId);
@@ -135,7 +135,7 @@ public class WithTracingTests : IDisposable
         };
 
         // Act
-        ((IWithTracing) _testObject).AddTracing(sourceTracing);
+        ((IWithTracing)_testObject).AddTracing(sourceTracing);
 
         // Assert
         Assert.NotNull(_testObject.TraceId);
@@ -149,9 +149,9 @@ public class WithTracingTests : IDisposable
     {
         // Arrange
         using var activity = _activitySource.StartActivity("TestActivity");
-        
+
         // Act
-        ((IWithTracing) _testObject).AddTracing();
+        ((IWithTracing)_testObject).AddTracing();
 
         // Assert
         Assert.NotNull(activity);
@@ -166,7 +166,7 @@ public class WithTracingTests : IDisposable
         Activity.Current = null;
 
         // Act
-        ((IWithTracing) _testObject).AddTracing();
+        ((IWithTracing)_testObject).AddTracing();
 
         // Assert
         Assert.NotNull(_testObject.TraceId);
@@ -191,7 +191,7 @@ public class WithTracingTests : IDisposable
         _testObject.SpanId = "1234567890123456";
 
         // Act
-        using var activity = ((IWithTracing) _testObject).StartActivity(activityName, _activitySource, kind);
+        using var activity = ((IWithTracing)_testObject).StartActivity(activityName, _activitySource, kind);
 
         // Assert - Activity might be null if no listener is configured
         if (activity != null)
@@ -209,7 +209,7 @@ public class WithTracingTests : IDisposable
         _testObject.SpanId = "1234567890123456";
 
         // Act
-        using var activity = ((IWithTracing) _testObject).StartActivity("TestOperation", _activitySource);
+        using var activity = ((IWithTracing)_testObject).StartActivity("TestOperation", _activitySource);
 
         // Assert - Activity might be null if no listener is configured
         if (activity != null)

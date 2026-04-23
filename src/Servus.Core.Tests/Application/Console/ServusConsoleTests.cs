@@ -55,7 +55,7 @@ public class ServusConsoleTests
     {
         using var redirector = new ConsoleRedirector();
         Assert.Empty(redirector.ToString());
-        
+
         ServusConsole.PrintLine(10, '_');
         Assert.Equal("__________" + Environment.NewLine, redirector.ToString());
     }

@@ -162,7 +162,7 @@ public sealed class ProcessOutRedirector : IDisposable
             _cancellationTokenSource?.Dispose();
 
             // Wait a bit for tasks to complete
-            Task.WaitAll(new[] {_stdOutTask, _stdErrTask}.Where(t => t != null).ToArray()!, 1000);
+            Task.WaitAll(new[] { _stdOutTask, _stdErrTask }.Where(t => t != null).ToArray()!, 1000);
         }
         catch
         {

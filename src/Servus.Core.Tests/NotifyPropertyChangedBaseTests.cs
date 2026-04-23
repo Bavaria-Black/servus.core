@@ -21,7 +21,7 @@ public class NotifyPropertyChangedBaseTests
         testClass.Property = true;
         Assert.True(changed);
     }
-        
+
     [Fact]
     public void ChangePropertyDoesNotTriggerPropertyChangedEventForSameValue()
     {
@@ -41,7 +41,7 @@ public class NotifyPropertyChangedBaseTests
         testClass.Property = true;
         Assert.True(changed);
     }
-      
+
     [Fact]
     public void OnPropertyChangedUtilizesCallerMemberName()
     {

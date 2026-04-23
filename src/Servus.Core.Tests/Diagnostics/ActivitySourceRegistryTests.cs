@@ -112,7 +112,7 @@ public class ActivitySourceRegistryTests : IDisposable
         // Act
         var result1 = ActivitySourceRegistry.StartActivity<RootSourceClass>(activityName, trace);
         var result2 = ActivitySourceRegistry.StartActivity<TestClassWithAttribute>(activityName, trace);
-        
+
         // Assert
         Assert.NotNull(result1);
         Assert.NotNull(result2);
@@ -243,7 +243,7 @@ public class ActivitySourceRegistryTests : IDisposable
     {
         // Arrange & Act
         ActivitySourceRegistry.Add<CustomNameTestClass>("custom_name");
-        
+
         TestMessage trace = new("test trace");
         ((IWithTracing)trace).AddTracing();
         var result = ActivitySourceRegistry.StartActivity<CustomNameTestClass>("test-activity", trace);
@@ -257,15 +257,15 @@ public class ActivitySourceRegistryTests : IDisposable
 
     // Test classes for type parameter testing
     private class TestClass;
-    
+
     [ActivitySourceName("root-source")]
     private class RootSourceClass;
-    
+
     private class AnotherTestClass;
-    
+
     [ActivitySourceKey(typeof(RootSourceClass))]
     private class TestClassWithAttribute;
-    
+
     [ActivitySourceKey(typeof(TestClass))]
     private class AnotherTestClassWithAttribute;
     private class MyComplexTestClass;

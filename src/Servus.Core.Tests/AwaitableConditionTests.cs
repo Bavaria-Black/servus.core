@@ -14,7 +14,7 @@ public class AwaitableConditionTests
 
         condition.Count += 2;
         var success = await waitTask;
-            
+
         Assert.True(success);
     }
 
@@ -63,13 +63,13 @@ internal class MockAwaitableCondition : AwaitableCondition
             OnConditionChanged();
         }
     }
-        
-    public MockAwaitableCondition(int timeoutMilliseconds) 
+
+    public MockAwaitableCondition(int timeoutMilliseconds)
         : base(timeoutMilliseconds)
     {
     }
 
-    public MockAwaitableCondition(CancellationToken token, bool throwExceptionIfCanceled = true) 
+    public MockAwaitableCondition(CancellationToken token, bool throwExceptionIfCanceled = true)
         : base(token, throwExceptionIfCanceled)
     {
     }

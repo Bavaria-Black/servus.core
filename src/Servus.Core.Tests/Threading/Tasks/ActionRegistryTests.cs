@@ -16,13 +16,13 @@ public class ActionRegistryTests
         {
             return Task.CompletedTask;
         }
-        
+
         public static Task<T> RunAsync<T>(T value, CancellationToken token)
         {
             return Task.FromResult(value);
         }
     }
-    
+
     public class TestTask : IAsyncTask, IAsyncTask<bool>
     {
         private readonly TestInjectable _injectable;
@@ -31,11 +31,11 @@ public class ActionRegistryTests
         {
             _injectable = injectable;
         }
-        
+
         public async ValueTask RunAsync(CancellationToken token) => await TestInjectable.RunAsync(token);
         async ValueTask<bool> IAsyncTask<bool>.RunAsync(CancellationToken token) => await TestInjectable.RunAsync(true, token);
     }
-    
+
     [Fact]
     public async Task RegisterTaskTest()
     {
@@ -45,12 +45,12 @@ public class ActionRegistryTests
         registry.Register<TestTask>();
 
         var app = builder.Build();
-        
+
         var cts = new CancellationTokenSource();
-        await registry.RunAsyncParallel(app.Services, (f,c) => f.RunAsync(c), cts.Token);
+        await registry.RunAsyncParallel(app.Services, (f, c) => f.RunAsync(c), cts.Token);
         await registry.RunAllAsync(app.Services, (f, t) => f.RunAsync(t), cts.Token);
     }
-    
+
     [Fact]
     public async Task RegisterAsyncTaskTest()
     {
@@ -61,10 +61,10 @@ public class ActionRegistryTests
 
         var app = builder.Build();
         var cts = new CancellationTokenSource();
-        
+
         var any = await registry.RunAllAsync(app.Services, cts.Token).AnyAsync();
         var all = await registry.RunAllAsync(app.Services, cts.Token).AllAsync();
-        
+
         Assert.True(any);
         Assert.True(all);
     }

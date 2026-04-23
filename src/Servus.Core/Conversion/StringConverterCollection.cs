@@ -4,9 +4,9 @@ namespace Servus.Core.Conversion;
 
 public class StringConverterCollection
 {
-    private readonly Dictionary<Type, IStringValueConverter> _converters = new ();
+    private readonly Dictionary<Type, IStringValueConverter> _converters = new();
     private Func<Exception, object?> _exceptionHandler = (e) => null;
-    
+
     public void RegisterExceptionHandler(Func<Exception, object?> handler) => _exceptionHandler = handler;
 
     public void Register(IStringValueConverter converter, InsertionBehavior behavior = InsertionBehavior.None)

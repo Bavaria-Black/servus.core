@@ -19,7 +19,7 @@ public sealed class BlockingTimer : IDisposable
     {
         ArgumentNullException.ThrowIfNull(timerAction);
         ArgumentNullException.ThrowIfNull(intervalInMilliseconds);
-        
+
         _timerAction = timerAction;
         _intervalMilliseconds = intervalInMilliseconds;
         _cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
@@ -92,7 +92,7 @@ public sealed class BlockingTimer : IDisposable
     public void Dispose()
     {
         Stop();
-        
+
         _cancellationTokenSource?.Dispose();
         _cancellationTokenSource = null;
 

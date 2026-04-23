@@ -56,7 +56,7 @@ public class ServusConsole
     {
         var key = keyValuePair.Key as string ?? (keyValuePair.Key?.ToString() ?? string.Empty);
         var value = keyValuePair.Value as string ?? (keyValuePair.Value?.ToString() ?? string.Empty);
-        
+
         PrintKeyValue(key, value, width, keyColor, indent);
     }
 

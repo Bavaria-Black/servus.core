@@ -25,7 +25,7 @@ public static class ActivitySourceRegistry
                         ?? targetType.GetCustomAttribute<ActivitySourceNameAttribute>()
                             ?.ActivitySourceName
                         ?? targetType.Name.ToSnakeCase();
-        
+
         return new ExtendedEntry(entryName, new ActivitySource(entryName));
     }
 
@@ -35,7 +35,7 @@ public static class ActivitySourceRegistry
     public static Activity? StartActivity(Type key, string activityName, IWithTracing trace,
         ActivityKind kind = ActivityKind.Consumer)
     {
-        var entry = Registry.GetOrAdd(key,() => Create(key));
+        var entry = Registry.GetOrAdd(key, () => Create(key));
         return trace.StartActivity(activityName, entry.Source, kind);
     }
 }

@@ -17,7 +17,7 @@ public static class InterfaceInvokeExtensions
         if (entity is not TTarget ntt) return;
         action(ntt);
     }
-    
+
     /// <summary>
     /// Conditionally executes an asynchronous action if the object implements the specified interface or type.
     /// </summary>
@@ -34,7 +34,7 @@ public static class InterfaceInvokeExtensions
         if (entity is not TTarget ntt) return;
         await action(ntt);
     }
-    
+
     /// <summary>
     /// Conditionally executes a function and returns its result if the object implements the specified interface or type.
     /// </summary>
@@ -51,7 +51,7 @@ public static class InterfaceInvokeExtensions
     {
         return entity is not TTarget ntt ? default : action(ntt);
     }
-    
+
     /// <summary>
     /// Conditionally executes an asynchronous function and returns its result if the object implements the specified interface or type.
     /// </summary>

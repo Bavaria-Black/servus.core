@@ -32,7 +32,7 @@ public class HandlerRegistry
     {
         ArgumentNullException.ThrowIfNull(canHandle);
         ArgumentNullException.ThrowIfNull(handler);
-        
+
         _handlers.Add(new HandlerEntry(type, canHandle, handler));
     }
 
@@ -41,7 +41,7 @@ public class HandlerRegistry
     {
         ArgumentNullException.ThrowIfNull(canHandle);
         ArgumentNullException.ThrowIfNull(handler);
-        return (o => canHandle((T) o), o => handler((T) o));
+        return (o => canHandle((T)o), o => handler((T)o));
     }
 
     /// <summary>
@@ -117,7 +117,7 @@ public class HandlerRegistry
     /// </summary>
     public void Stash()
     {
-        _stash.Push([.._handlers]);
+        _stash.Push([.. _handlers]);
         _handlers.Clear();
     }
 

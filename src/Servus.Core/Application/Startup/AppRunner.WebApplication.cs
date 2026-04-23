@@ -9,12 +9,12 @@ public partial class AppRunner
     {
         var webContainer = _appContainer.OfType<ApplicationSetupContainer<WebApplication>>().ToArray();
         var normalContainer = _appContainer.Except(webContainer);
-        
+
         app.InvokeIf<WebApplication>(a => SetupWebApplication(a, webContainer));
         normalContainer.ForEach(c => InvokeApplicationSetupContainer(app, c));
     }
 
-    private void InvokeApplicationSetupContainer(IApplicationBuilder app,  ApplicationSetupContainer container)
+    private void InvokeApplicationSetupContainer(IApplicationBuilder app, ApplicationSetupContainer container)
     {
         container.InjectApp(app);
     }
@@ -22,7 +22,7 @@ public partial class AppRunner
     private void SetupWebApplication(WebApplication app, IEnumerable<ApplicationSetupContainer<WebApplication>> webContainer)
     {
         webContainer.ForEach(c => c.InjectApp(app));
-        
+
         SetupApplicationLifetime(app);
     }
 

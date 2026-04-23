@@ -12,7 +12,7 @@ public class AppBuilder
     private readonly List<IStartupGate> _gates = [];
     private readonly IHostApplicationBuilder _hostBuilder;
     private readonly Func<IHostApplicationBuilder, IHost> _hostFactory;
-    
+
     internal Action<IServiceProvider> StartedAction = (_) => { };
     internal Action StoppedAction = () => { };
     internal Action StoppingAction = () => { };
@@ -30,14 +30,14 @@ public class AppBuilder
 
     public static AppBuilder Create() => Create(WebApplication.CreateBuilder(), b => b.Build());
 
-    public AppBuilder WithSetup<TContainer>() where TContainer : class, ISetupContainer, new() 
+    public AppBuilder WithSetup<TContainer>() where TContainer : class, ISetupContainer, new()
         => WithSetup(new TContainer());
-    
+
     public AppBuilder WithSetup(ISetupContainer container)
     {
         _hostBuilder.WhenType<WebApplicationBuilder>(b => SetupWebApplicationBuilder(container, b));
         container.WhenType<IHostApplicationBuilderSetupContainer>(b => b.ConfigureHostApplicationBuilder(_hostBuilder));
-        
+
         _appSetupContainer.Add(container);
         return this;
     }
@@ -48,8 +48,8 @@ public class AppBuilder
     }
 
     public AppBuilder WithStartupGate(Func<Task<bool>> gate) => WithStartupGate(new ActionStartupGate(gate));
-    
-    public AppBuilder WithStartupGate<TGate>() where  TGate : class, IStartupGate, new() => WithStartupGate(new TGate());
+
+    public AppBuilder WithStartupGate<TGate>() where TGate : class, IStartupGate, new() => WithStartupGate(new TGate());
 
     public AppBuilder WithStartupGate(IStartupGate gate)
     {
@@ -70,18 +70,18 @@ public class AppBuilder
         return this;
     }
 
-    public AppBuilder OnApplicationStopped(Action stopped) 
+    public AppBuilder OnApplicationStopped(Action stopped)
     {
-        
+
         StoppedAction = stopped;
         return this;
     }
 
     public AppRunner Build() => new AppRunner(this);
-    
+
     internal IReadOnlyCollection<TContainerType> GetContainer<TContainerType>() => _appSetupContainer.OfType<TContainerType>().ToList();
     internal IReadOnlyCollection<IStartupGate> GetGates() => _gates;
-    
+
     internal IHostApplicationBuilder GetHostBuilder() => _hostBuilder;
     internal IHost BuildHost(IHostApplicationBuilder builder) => _hostFactory(builder);
 }
@@ -89,6 +89,6 @@ public class AppBuilder
 public abstract class ApplicationSetupContainer : ISetupContainer
 {
     internal void InjectApp(IApplicationBuilder app) => SetupApplication(app);
-    
+
     protected abstract void SetupApplication(IApplicationBuilder app);
 }

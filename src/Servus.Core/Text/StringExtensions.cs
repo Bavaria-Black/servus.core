@@ -13,7 +13,7 @@ public static partial class StringExtensions
     public static string ToSnakeCase(this string value) => ToAnyCase(value, "_");
     public static string ToDotCase(this string value) => ToAnyCase(value, ".");
     public static string ToKebabCase(this string value) => ToAnyCase(value, "-");
-    
+
     private static string ToAnyCase(string value, string delimiter)
     {
         if (string.IsNullOrWhiteSpace(value))
@@ -24,7 +24,7 @@ public static partial class StringExtensions
             .Select(part => SnakeCaseRegex().Replace(part, delimiter).ToLower());
 
         var result = string.Join(delimiter, parts);
-        
+
         return char.IsDigit(result[0]) ? delimiter + result : result;
     }
 }

@@ -13,7 +13,7 @@ public static class ServiceProviderExtensions
     /// <exception cref="InvalidOperationException">Thrown when the service of type T is not registered in the service provider.</exception>
     /// <exception cref="InvalidCastException">Thrown when the resolved service cannot be cast to type T.</exception>
     public static T ResolveExternal<T>(this IServiceProvider serviceProvider) => (T)serviceProvider.GetRequiredService(typeof(T));
-    
+
     /// <summary>
     /// Resolves and creates an instance of the specified type by automatically injecting its constructor dependencies from the service provider.
     /// </summary>
@@ -33,7 +33,7 @@ public static class ServiceProviderExtensions
             .GetParameters()
             .Select(p => serviceProvider.GetRequiredService(p.ParameterType))
             .ToArray();
-            
+
         return Activator.CreateInstance(type, arguments)!;
     }
 }
