@@ -13,10 +13,10 @@ public class ConsoleRedirectorTests
     public void RedirectTests()
     {
         using var redirector = new ConsoleRedirector();
-        
+
         Assert.Empty(redirector.ToString());
         // ReSharper disable once Xunit.XunitTestWithConsoleOutput
         System.Console.Write("Leberkas");
         Assert.Equal("Leberkas", redirector.ToString());
-    }    
+    }
 }

@@ -35,7 +35,7 @@ public class StringExtensionsTests
         // Assert
         Assert.Equal(expected, result);
     }
-    
+
     [Theory]
     [InlineData(null, "")]
     [InlineData("", "")]
@@ -65,7 +65,7 @@ public class StringExtensionsTests
         // Assert
         Assert.Equal(expected, result);
     }
-    
+
     [Theory]
     [InlineData(null, "")]
     [InlineData("", "")]

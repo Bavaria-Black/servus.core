@@ -14,7 +14,7 @@ public static class TypeCheckExtensions
     public static TTarget Convert<TTarget>(this object? item)
     {
         ArgumentNullException.ThrowIfNull(item);
-        return (TTarget) item;
+        return (TTarget)item;
     }
 
     public static TTarget? Convert<TTarget>(this object? item, Func<object, TTarget> converter)

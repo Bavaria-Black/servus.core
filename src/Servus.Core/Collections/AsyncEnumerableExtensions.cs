@@ -30,7 +30,7 @@ public static class AsyncEnumerableExtensions
 
         return result;
     }
-    
+
     /// <summary>
     /// Determines whether all elements in the async enumerable sequence are true.
     /// </summary>

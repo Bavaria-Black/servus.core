@@ -28,7 +28,7 @@ public static class NamedSemaphoreSlimStore
     {
         if (sender is NamedSemaphoreSlim semaphore)
         {
-            Store.Remove(semaphore.Name);    
+            Store.Remove(semaphore.Name);
         }
     }
 }

@@ -8,8 +8,8 @@ public abstract class ApplicationSetupContainer<THost> : ApplicationSetupContain
 {
     protected sealed override void SetupApplication(IApplicationBuilder app)
     {
-        SetupApplication((THost)app);        
+        SetupApplication((THost)app);
     }
-    
+
     protected abstract void SetupApplication(THost app);
 }

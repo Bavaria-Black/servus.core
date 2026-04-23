@@ -8,7 +8,7 @@ public class TypeRegistry<TValue>
 
     public void Add<TKey>(TValue value) => Add(typeof(TKey), value);
 
-    public void Add(Type key, TValue value) 
+    public void Add(Type key, TValue value)
         => Dictionary.AddOrUpdate(key, value, (_, _) => value);
 
     public TValue Get<TKey>() => Get(typeof(TKey));
@@ -25,7 +25,7 @@ public class TypeRegistry<TValue>
     {
         ArgumentNullException.ThrowIfNull(key);
         ArgumentNullException.ThrowIfNull(factory);
-        
-        return Dictionary.GetOrAdd(key, (_) => factory());   
+
+        return Dictionary.GetOrAdd(key, (_) => factory());
     }
 }

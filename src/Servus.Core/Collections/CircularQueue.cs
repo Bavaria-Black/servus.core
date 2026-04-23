@@ -8,7 +8,7 @@ public class CircularQueue<T>(int capacity)
     {
         if (_queue.Count >= capacity)
             _queue.Dequeue(); // Remove oldest
-        
+
         _queue.Enqueue(item);
     }
 

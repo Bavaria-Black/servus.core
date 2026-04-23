@@ -13,7 +13,7 @@ public class Achievement
     {
         Name = name;
         _properties = properties.ToList();
-        foreach(var prop in _properties)
+        foreach (var prop in _properties)
         {
             prop.Activated += Prop_Activated;
         }
@@ -22,7 +22,7 @@ public class Achievement
     private void Prop_Activated(object? sender, EventArgs e)
     {
         if (!_properties.All(p => p.IsActive)) return;
-        
+
         IsUnlocked = true;
         Unlocked?.Invoke(this, EventArgs.Empty);
     }

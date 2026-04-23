@@ -10,7 +10,7 @@ public interface IWithTracing
     ActivityContext GetContext()
     {
         return new ActivityContext(
-            ActivityTraceId.CreateFromString(string.IsNullOrEmpty(TraceId)? ActivityTraceId.CreateRandom().ToHexString() : TraceId),
+            ActivityTraceId.CreateFromString(string.IsNullOrEmpty(TraceId) ? ActivityTraceId.CreateRandom().ToHexString() : TraceId),
             ActivitySpanId.CreateFromString(string.IsNullOrEmpty(SpanId) ? ActivitySpanId.CreateRandom().ToHexString() : SpanId),
             ActivityTraceFlags.Recorded);
     }

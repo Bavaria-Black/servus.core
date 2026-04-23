@@ -7,7 +7,7 @@ namespace Servus.Core.Tests.Conversion
 {
     public class StringConverterCollectionTests
     {
-        private StringConverterCollection _collection = new ();
+        private StringConverterCollection _collection = new();
 
         public StringConverterCollectionTests()
         {
@@ -155,13 +155,13 @@ namespace Servus.Core.Tests.Conversion
         }
 
         #endregion
-        
+
         #region Convert KeyValue Tests
 
         [Fact]
         public void Convert_ByGenericType_ReturnsCorrectValue()
         {
-            
+
             // Arrange
             var expected = new KeyValue("42", "45");
             RegisterAllBasicConverters();
@@ -172,7 +172,7 @@ namespace Servus.Core.Tests.Conversion
             // Assert
             Assert.Equal(expected, result);
         }
-        
+
         #endregion
 
         #region Convert Type Tests
@@ -402,15 +402,15 @@ namespace Servus.Core.Tests.Conversion
             public Type OutputType => typeof(string);
             public object? Convert(string value) => _result;
         }
-        
+
         private record KeyValue(string Key, string Value);
-        
+
         private class KeyValueConverter : IStringValueConverter
         {
             public Type OutputType => typeof(KeyValue);
             public object? Convert(string value)
             {
-                var split =value.Split(";");
+                var split = value.Split(";");
                 return new KeyValue(split[0], split[1]);
             }
         }

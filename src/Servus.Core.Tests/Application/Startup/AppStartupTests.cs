@@ -26,7 +26,7 @@ public class AppConfigurationTestBase : ApplicationSetupContainer<WebApplication
 public class HostBuilderSetupContainer : IHostBuilderSetupContainer
 {
     public bool WasCalled { get; set; }
-    
+
     public void ConfigureHostBuilder(IHostBuilder builder)
     {
         WasCalled = true;
@@ -50,9 +50,9 @@ public class AppStartupTests
             .Build();
 
         Assert.False(gateIsOpen);
-        
+
         await app.StartAsync(cts.Token);
-        
+
         Assert.True(gateIsOpen);
         await cts.CancelAsync();
     }
@@ -61,13 +61,13 @@ public class AppStartupTests
     public async Task FailedStartup()
     {
         var cts = new CancellationTokenSource();
-        
+
         var app = AppBuilder.Create()
             .WithSetup<AppConfigurationTestBase>()
             .WithSetup<FailureAppConfigurationTestBase>()
             .WithStartupGate(() => Task.FromResult(true))
             .Build();
-        
+
         await Assert.ThrowsAsync<NotImplementedException>(async () =>
             await app.StartAsync(cts.Token));
     }
@@ -79,7 +79,7 @@ public class AppStartupTests
         _ = AppBuilder.Create()
             .WithSetup(container)
             .Build();
-        
+
         Assert.True(container.WasCalled);
     }
 }

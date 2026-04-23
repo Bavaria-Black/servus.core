@@ -27,10 +27,10 @@ public static class Servus
         .AppendLine(@"   /  \  /      \_/  \")
         .AppendLine(@"  /    \/             \")
         .AppendLine(@" /_____________________\")
-        .AppendLine( "         servus!")
+        .AppendLine("         servus!")
         .AppendLine()
         .AppendLine().ToString();
-    
+
     public static readonly string LogoTiny = new StringBuilder()
         .AppendLine()
         .AppendLine()

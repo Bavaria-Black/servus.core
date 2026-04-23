@@ -33,7 +33,7 @@ public class ProcessOutRedirectorTests
     private static Process CreateLongRunningProcess()
     {
         var isWindows = Environment.OSVersion.Platform == PlatformID.Win32NT;
-            
+
         if (isWindows)
         {
             return new Process
@@ -100,27 +100,27 @@ public class ProcessOutRedirectorTests
         // Arrange
         using var process = CreateLongRunningProcess();
         using var redirector = new ProcessOutRedirector(process);
-            
+
         process.Start();
-            
+
         // Start redirection in background
         redirector.StartRedirection();
 
         // Act & Assert
         Assert.Throws<InvalidOperationException>(() => redirector.StartRedirection());
-            
+
         // Cleanup
         redirector.StopRedirection();
         process.Kill();
     }
-    
+
     [Fact]
     public void StartRedirection_WhenProcessHasExited_ThrowsInvalidOperationException()
     {
         // Arrange
         using var process = CreateTestProcess("test");
         using var redirector = new ProcessOutRedirector(process);
-            
+
         process.Start();
         process.WaitForExit(5000); // Wait for process to exit
 
@@ -138,16 +138,16 @@ public class ProcessOutRedirectorTests
         // Arrange
         using var process = CreateTestProcess("Hello Async");
         using var redirector = new ProcessOutRedirector(process);
-            
+
         process.Start();
 
         // Act
         await redirector.StartRedirectionAsync();
-        
+
         process.Kill();
 
         await Task.Delay(100);
-        
+
         // Assert
         Assert.True(process.HasExited);
     }
@@ -158,7 +158,7 @@ public class ProcessOutRedirectorTests
         // Arrange
         using var process = CreateTestProcess("test");
         using var redirector = new ProcessOutRedirector(process);
-            
+
         redirector.StopRedirection(); // Cancel before starting
 
         // Act & Assert
@@ -176,14 +176,14 @@ public class ProcessOutRedirectorTests
         // Arrange
         using var process = CreateTestProcess("Quick test");
         using var redirector = new ProcessOutRedirector(process);
-            
+
         process.Start();
 
         // Act
         redirector.RedirectAndWait(5000);
 
         // Assert
-        Assert.Equal(0, process.ExitCode); 
+        Assert.Equal(0, process.ExitCode);
         Assert.True(process.HasExited);
     }
 
@@ -193,7 +193,7 @@ public class ProcessOutRedirectorTests
         // Arrange
         using var process = CreateTestProcess("Timeout test");
         using var redirector = new ProcessOutRedirector(process);
-            
+
         process.Start();
         var stopwatch = Stopwatch.StartNew();
 
@@ -216,14 +216,14 @@ public class ProcessOutRedirectorTests
         // Arrange
         using var process = CreateTestProcess("Async test");
         using var redirector = new ProcessOutRedirector(process);
-            
+
         process.Start();
 
         // Act
         await redirector.RedirectAndWaitAsync(5000);
 
         // Assert
-        Assert.Equal(0, process.ExitCode); 
+        Assert.Equal(0, process.ExitCode);
         Assert.True(process.HasExited);
     }
 
@@ -233,14 +233,14 @@ public class ProcessOutRedirectorTests
         // Arrange
         using var process = CreateTestProcess("Infinite timeout test");
         using var redirector = new ProcessOutRedirector(process);
-            
+
         process.Start();
 
         // Act
         await redirector.RedirectAndWaitAsync(-1);
 
         // Assert
-        Assert.Equal(0, process.ExitCode); 
+        Assert.Equal(0, process.ExitCode);
         Assert.True(process.HasExited);
     }
 
@@ -250,7 +250,7 @@ public class ProcessOutRedirectorTests
         // Arrange
         using var process = CreateLongRunningProcess();
         using var redirector = new ProcessOutRedirector(process);
-            
+
         process.Start();
         var stopwatch = Stopwatch.StartNew();
 
@@ -259,14 +259,14 @@ public class ProcessOutRedirectorTests
 
         // Assert
         stopwatch.Stop();
-        
+
         // The process should be killed due to timeout
         Assert.True(stopwatch.ElapsedMilliseconds >= 1000);
         Assert.False(process.HasExited);
-        
+
         process.Kill();
     }
 
     #endregion
-    
+
 }

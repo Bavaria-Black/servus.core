@@ -15,7 +15,7 @@ internal class ConsoleRedirector : IDisposable
 {
     private readonly StringWriter _consoleOutput = new();
     private readonly TextWriter _originalConsoleOutput;
-    
+
     /// <summary>
     /// Initializes a new instance of the ConsoleRedirector class and begins capturing console output.
     /// </summary>
@@ -27,7 +27,7 @@ internal class ConsoleRedirector : IDisposable
         _originalConsoleOutput = System.Console.Out;
         System.Console.SetOut(_consoleOutput);
     }
-    
+
     /// <summary>
     /// Restores the original console output, writes the captured content to the console, and releases resources.
     /// </summary>
@@ -41,7 +41,7 @@ internal class ConsoleRedirector : IDisposable
         System.Console.Write(this.ToString());
         _consoleOutput.Dispose();
     }
-    
+
     /// <summary>
     /// Returns the captured console output as a string.
     /// </summary>

@@ -22,7 +22,7 @@ public class HandlerRegistryTests
     {
         // Arrange & Act & Assert
         _registry.Register<string>(s => _handledItems.Add(s));
-        
+
         Assert.Equal(1, _registry.Count);
         Assert.True(_registry.Handle("test"));
         Assert.Single(_handledItems);
@@ -33,7 +33,7 @@ public class HandlerRegistryTests
     {
         // Arrange & Act & Assert
         _registry.Register<string>(s => s.StartsWith("test"), s => _handledItems.Add(s));
-        
+
         Assert.Equal(1, _registry.Count);
     }
 
@@ -58,10 +58,10 @@ public class HandlerRegistryTests
     {
         // Arrange
         _registry.Register<string>(s => s.StartsWith("test"), s => _handledItems.Add($"handled: {s}"));
-        
+
         // Act
         var result = _registry.Handle("test item");
-        
+
         // Assert
         Assert.True(result);
         Assert.Equal(1, _handledItems.Count);
@@ -73,10 +73,10 @@ public class HandlerRegistryTests
     {
         // Arrange
         _registry.Register<string>(s => s.StartsWith("test"), s => _handledItems.Add(s));
-        
+
         // Act
         var result = _registry.Handle("other item");
-        
+
         // Assert
         Assert.False(result);
         Assert.Equal(0, _handledItems.Count);
@@ -88,10 +88,10 @@ public class HandlerRegistryTests
         // Arrange
         _registry.Register<string>(s => s.Contains("test"), _ => _handledItems.Add("first"));
         _registry.Register<string>(s => s.Contains("test"), _ => _handledItems.Add("second"));
-        
+
         // Act
         var result = _registry.Handle("test item");
-        
+
         // Assert
         Assert.True(result);
         Assert.Equal(1, _handledItems.Count);
@@ -103,18 +103,18 @@ public class HandlerRegistryTests
     {
         // Arrange
         _registry.Register<string>(s => s.Contains("test"), _ => _handledItems.Add("first"));
-        _registry.Register<object>(_ => true, o =>_handledItems.Add("any"));
+        _registry.Register<object>(_ => true, o => _handledItems.Add("any"));
         _registry.Register<string>(s => s.Contains("leberkas"), _ => _handledItems.Add("second"));
-        
+
         // Act
         var result = _registry.Handle("test item");
         var resultAny = _registry.Handle("leberkas");
-        
+
         // Assert
         Assert.True(result);
         Assert.Equal(2, _handledItems.Count);
         Assert.Equal("first", _handledItems[0]);
-        
+
         Assert.True(resultAny);
         Assert.Equal("any", _handledItems[1]);
     }
@@ -126,11 +126,11 @@ public class HandlerRegistryTests
         _registry.Register<string>(s => s.Contains("test"), _ => _handledItems.Add("first"));
         _registry.Register<string>(s => s.Contains("test"), _ => _handledItems.Add("second"));
         _registry.Register<string>(s => s.StartsWith("other"), _ => _handledItems.Add("third"));
-        var expected = new[] {"first", "second"};
-        
+        var expected = new[] { "first", "second" };
+
         // Act
         var result = _registry.HandleAll("test item");
-        
+
         // Assert
         Assert.Equal(2, result);
         Assert.Equal(2, _handledItems.Count);
@@ -142,10 +142,10 @@ public class HandlerRegistryTests
     {
         // Arrange
         _registry.Register<string>(s => s.StartsWith("test"), s => _handledItems.Add(s));
-        
+
         // Act
         var result = _registry.HandleAll("other item");
-        
+
         // Assert
         Assert.Equal(0, result);
         Assert.Equal(0, _handledItems.Count);
@@ -156,10 +156,10 @@ public class HandlerRegistryTests
     {
         // Arrange
         _registry.Register<string>(s => s.StartsWith("test"), s => _handledItems.Add(s));
-        
+
         // Act
         var result = _registry.CanHandle("test item");
-        
+
         // Assert
         Assert.True(result);
         Assert.Equal(0, _handledItems.Count);
@@ -170,10 +170,10 @@ public class HandlerRegistryTests
     {
         // Arrange
         _registry.Register<string>(s => s.StartsWith("test"), s => _handledItems.Add(s));
-        
+
         // Act
         var result = _registry.CanHandle("other item");
-        
+
         // Assert
         Assert.False(result);
     }
@@ -183,10 +183,10 @@ public class HandlerRegistryTests
     {
         // Arrange & Act
         Assert.Equal(0, _registry.Count);
-        
+
         _registry.Register<string>(s => s.StartsWith("test"), s => _handledItems.Add(s));
         Assert.Equal(1, _registry.Count);
-        
+
         _registry.Register<string>(s => s.StartsWith("other"), s => _handledItems.Add(s));
         Assert.Equal(2, _registry.Count);
     }
@@ -198,10 +198,10 @@ public class HandlerRegistryTests
         _registry.Register<string>(s => s.StartsWith("test"), s => _handledItems.Add(s));
         _registry.Stash();
         _registry.Register<string>(s => s.StartsWith("other"), s => _handledItems.Add(s));
-        
+
         // Act
         _registry.Clear();
-        
+
         // Assert
         Assert.Equal(0, _registry.Count);
         Assert.False(_registry.Pop()); // Stash should be empty
@@ -214,14 +214,14 @@ public class HandlerRegistryTests
         _registry.Register<string>(s => s.Contains("test"), _ => _handledItems.Add("first"));
         _registry.Register<string>(s => s.Contains("test"), _ => _handledItems.Add("second"));
         _registry.Register<string>(s => s.StartsWith("other"), _ => _handledItems.Add("third"));
-        var expected = new[] {"first", "second"};
-        
+        var expected = new[] { "first", "second" };
+
         // Act
         var handlers = _registry.GetMatchingHandlers("test item").ToList();
-        
+
         // Assert
         Assert.Equal(2, handlers.Count);
-        
+
         // Execute handlers to verify they're correct
         foreach (var handler in handlers)
         {
@@ -235,10 +235,10 @@ public class HandlerRegistryTests
     {
         // Arrange
         _registry.Register<string>(s => s.StartsWith("test"), _ => _handledItems.Add("original"));
-        
+
         // Act
         _registry.Stash();
-        
+
         // Assert
         Assert.Equal(0, _registry.Count);
         Assert.False(_registry.CanHandle("test item"));
@@ -251,10 +251,10 @@ public class HandlerRegistryTests
         _registry.Register<string>(s => s.StartsWith("test"), _ => _handledItems.Add("original"));
         _registry.Stash();
         _registry.Register<string>(s => s.StartsWith("new"), _ => _handledItems.Add("new"));
-        
+
         // Act
         var result = _registry.Pop();
-        
+
         // Assert
         Assert.True(result);
         Assert.Equal(1, _registry.Count);
@@ -267,10 +267,10 @@ public class HandlerRegistryTests
     {
         // Arrange
         _registry.Register<string>(s => s.StartsWith("test"), s => _handledItems.Add(s));
-        
+
         // Act
         var result = _registry.Pop();
-        
+
         // Assert
         Assert.False(result);
         Assert.Equal(1, _registry.Count); // Original handlers should remain
@@ -282,27 +282,27 @@ public class HandlerRegistryTests
         // Arrange
         _registry.Register<string>(s => s == "level1", _ => _handledItems.Add("level1"));
         _registry.Stash();
-        
+
         _registry.Register<string>(s => s == "level2", _ => _handledItems.Add("level2"));
         _registry.Stash();
-        
+
         _registry.Register<string>(s => s == "level3", _ => _handledItems.Add("level3"));
-        
+
         // Act & Assert
         Assert.True(_registry.CanHandle("level3"));
         Assert.False(_registry.CanHandle("level2"));
         Assert.False(_registry.CanHandle("level1"));
-        
+
         _registry.Pop();
         Assert.True(_registry.CanHandle("level2"));
         Assert.False(_registry.CanHandle("level1"));
         Assert.False(_registry.CanHandle("level3"));
-        
+
         _registry.Pop();
         Assert.True(_registry.CanHandle("level1"));
         Assert.False(_registry.CanHandle("level2"));
         Assert.False(_registry.CanHandle("level3"));
-        
+
         Assert.False(_registry.Pop()); // No more stashed handlers
     }
 
@@ -315,10 +315,10 @@ public class HandlerRegistryTests
         _registry.Stash();
         _registry.Register<string>(s => s == "temp1", _ => _handledItems.Add("temp1"));
         _registry.Register<string>(s => s == "temp2", _ => _handledItems.Add("temp2"));
-        
+
         // Act
         _registry.Pop();
-        
+
         // Assert
         Assert.Equal(2, _registry.Count);
         Assert.True(_registry.CanHandle("original"));

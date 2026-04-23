@@ -38,8 +38,8 @@ public class CircularQueueTests
     [Fact]
     public void Enqueue_MultipleItemsWithinCapacity_AddsAllItems()
     {
-        var expected = new[] {"A", "B", "C"};
-        
+        var expected = new[] { "A", "B", "C" };
+
         // Act
         _queue.Enqueue("A");
         _queue.Enqueue("B");
@@ -57,7 +57,7 @@ public class CircularQueueTests
         _queue.Enqueue("A");
         _queue.Enqueue("B");
         _queue.Enqueue("C");
-        var expected = new[] {"B", "C", "D"};
+        var expected = new[] { "B", "C", "D" };
 
         // Act
         _queue.Enqueue("D");
@@ -70,7 +70,7 @@ public class CircularQueueTests
     [Fact]
     public void Enqueue_MultipleItemsExceedingCapacity_MaintainsCapacityAndOrder()
     {
-        var expected = new[] {"C", "D", "E"};
+        var expected = new[] { "C", "D", "E" };
         // Act
         _queue.Enqueue("A");
         _queue.Enqueue("B");
@@ -226,7 +226,7 @@ public class CircularQueueTests
     [Fact]
     public void Items_AfterCapacityExceeded_ReturnsRemainingItems()
     {
-        var expected = new[] {"B", "C", "D"};
+        var expected = new[] { "B", "C", "D" };
         // Arrange
         _queue.Enqueue("A");
         _queue.Enqueue("B");
@@ -257,7 +257,7 @@ public class CircularQueueTests
         Assert.Equal("B", item2);
         Assert.Equal(2, _queue.Count);
 
-        var expected = new[] {"C", "D"};
+        var expected = new[] { "C", "D" };
         Assert.Equal(expected, _queue.Items.ToArray());
     }
 
@@ -266,7 +266,7 @@ public class CircularQueueTests
     {
         // Arrange
         var intQueue = new CircularQueue<int>(2);
-        var expected = new[] {2, 3};
+        var expected = new[] { 2, 3 };
 
         // Act
         intQueue.Enqueue(1);
