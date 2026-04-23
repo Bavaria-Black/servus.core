@@ -53,6 +53,18 @@ public readonly struct ServusTraceEvent
     /// </summary>
     public string FormatMessage()
     {
-        return string.Format(Template, args: _args);
+        if (_args.Length == 0)
+        {
+            return Template;
+        }
+
+        try
+        {
+            return string.Format(Template, args: _args);
+        }
+        catch (FormatException)
+        {
+            return Template;
+        }
     }
 }

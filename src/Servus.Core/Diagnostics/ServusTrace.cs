@@ -13,11 +13,19 @@ public static class ServusTrace
     private static TraceConfig? _config;
 
     /// <summary>
-    /// Enables tracing with the specified listener and optional category filter.
-    /// Pass one or more categories to restrict tracing; omit to enable all categories.
+    /// Enables tracing with the specified listener, minimum level, and optional category filter.
+    /// Pass a predicate to restrict tracing to categories for which the predicate returns <see langword="true"/>;
+    /// omit the filter to enable all categories. If you have a list or set of categories, build a predicate
+    /// from it (for example, <c>category => allowedCategories.Contains(category)</c>).
     /// Must be called before the Akka actor system starts — thread creation provides
     /// happens-before visibility to all worker threads.
     /// </summary>
+    /// <param name="listener">The trace listener that receives enabled trace events.</param>
+    /// <param name="minimumLevel">The minimum trace level to emit.</param>
+    /// <param name="categoryFilter">
+    /// An optional predicate that determines whether tracing is enabled for a category.
+    /// If <see langword="null"/>, tracing is enabled for all categories.
+    /// </param>
     public static void Configure(
         IServusTraceListener listener,
         ServusTraceLevel minimumLevel = ServusTraceLevel.Trace,
@@ -29,7 +37,7 @@ public static class ServusTrace
     /// <summary>
     /// Creates a <see cref="ServusTraceChannel"/> for a custom category.
     /// Store the result in a static field for zero-allocation reuse:
-    /// <code>private static readonly ServusTraceChannel _http = ServusTrace.For(new TraceCategory("Http"));</code>
+    /// <code>private static readonly ServusTraceChannel _http = ServusTrace.For(new ServusTraceCategory("Http"));</code>
     /// </summary>
     public static ServusTraceChannel For(ServusTraceCategory category) => new(category);
 
