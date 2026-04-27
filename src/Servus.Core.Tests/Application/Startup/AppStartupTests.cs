@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
 using Servus.Core.Application.Startup;
@@ -88,9 +87,7 @@ public class AppStartupTests
     public void CalculateNetExponentialBackoffDelay_DoublesDuration()
     {
         var app = AppBuilder.Create().Build();
-        var method = typeof(AppRunner).GetMethod("CalculateNetExponentialBackoffDelay", BindingFlags.Instance | BindingFlags.NonPublic)!;
-
-        var result = (TimeSpan)method.Invoke(app, [TimeSpan.FromMilliseconds(1500)])!;
+        var result = app.CalculateNetExponentialBackoffDelay(TimeSpan.FromMilliseconds(1500));
 
         Assert.Equal(TimeSpan.FromMilliseconds(3000), result);
     }
