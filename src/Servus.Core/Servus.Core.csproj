@@ -13,9 +13,7 @@
   </PropertyGroup>
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-        <LangVersion>12</LangVersion>
-        <Nullable>enable</Nullable>
+        <IsPackable>true</IsPackable>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -25,17 +23,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.*"/>
-        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.*"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
     </ItemGroup>
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App"/>
     </ItemGroup>
     <ItemGroup>
-        <None Include="../../README.md" Pack="true" PackagePath="\"/>
-        <None Include="../../docs/public/logo.png" Pack="true" PackagePath="\"/>
-        <None Include="../../LICENSE" Pack="true" PackagePath="\"/>
-        <None Include="../../.github/workflows/build-and-release.yml"/>
+        <None Include="../../README.md" Pack="true" Visible="false" PackagePath="\"/>
+        <None Include="../../docs/public/logo.png" Visible="false" Pack="true" PackagePath="\"/>
+        <None Include="../../LICENSE" Pack="true" Visible="false" PackagePath="\"/>
     </ItemGroup>
     <Target Name="ServusLogo" BeforeTargets="Build">
         <Message Text=" " Importance="high"/>
