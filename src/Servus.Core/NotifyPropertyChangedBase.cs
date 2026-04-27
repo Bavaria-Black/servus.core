@@ -34,7 +34,7 @@ public abstract class NotifyPropertyChangedBase : INotifyPropertyChanged
     /// </example>
     protected bool ChangeProperty<T>(T value, ref T target, [CallerMemberName] string propertyName = "")
     {
-        if (value == null || value.Equals(target)) return false;
+        if (EqualityComparer<T>.Default.Equals(value, target)) return false;
 
         target = value;
         OnPropertyChanged(propertyName);
@@ -69,7 +69,7 @@ public abstract class NotifyPropertyChangedBase : INotifyPropertyChanged
     /// </example>
     protected bool ChangeProperty<T>(T value, ref T target, Action changedCallback, [CallerMemberName] string propertyName = "")
     {
-        if (value == null || value.Equals(target)) return false;
+        if (EqualityComparer<T>.Default.Equals(value, target)) return false;
         target = value;
         OnPropertyChanged(propertyName);
         changedCallback?.Invoke();

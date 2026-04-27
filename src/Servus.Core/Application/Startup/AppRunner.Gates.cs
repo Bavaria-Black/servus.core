@@ -24,8 +24,8 @@ public partial class AppRunner
 
             // Wait with exponential backoff
             await Task.Delay(delay, cancellationToken);
-            var delayMs = CalculateNetExponentialBackoffDelay(delay).Milliseconds;
-            delay = TimeSpan.FromMilliseconds(Math.Min(delayMs, maxDelay.Milliseconds));
+            var delayMs = CalculateNetExponentialBackoffDelay(delay).TotalMilliseconds;
+            delay = TimeSpan.FromMilliseconds(Math.Min(delayMs, maxDelay.TotalMilliseconds));
 
             logger?.LogWarning("Not all startup gates are clear. Next retry in [{CurrentDelay}]", delay);
         }

@@ -24,6 +24,8 @@ public static partial class StringExtensions
             .Select(part => SnakeCaseRegex().Replace(part, delimiter).ToLower());
 
         var result = string.Join(delimiter, parts);
+        if (string.IsNullOrEmpty(result))
+            return string.Empty;
 
         return char.IsDigit(result[0]) ? delimiter + result : result;
     }

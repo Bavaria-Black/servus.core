@@ -111,6 +111,26 @@ public class NotifyPropertyChangedBaseTests
         Assert.True(testClass.PropertyWithCallbackCalled);
     }
 
+    [Fact]
+    public void ChangeProperty_AllowsSettingNullablePropertyToNull()
+    {
+        var testClass = new NullableTestClass();
+        var changedEvents = 0;
+        testClass.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(NullableTestClass.Name))
+            {
+                changedEvents++;
+            }
+        };
+
+        testClass.Name = "servus";
+        testClass.Name = null;
+
+        Assert.Null(testClass.Name);
+        Assert.Equal(2, changedEvents);
+    }
+
     private class TestClass : NotifyPropertyChangedBase
     {
         private bool _property;
@@ -150,5 +170,16 @@ public class NotifyPropertyChangedBaseTests
         }
 
         public bool PropertyWithCallbackCalled { get; private set; }
+    }
+
+    private class NullableTestClass : NotifyPropertyChangedBase
+    {
+        private string? _name;
+
+        public string? Name
+        {
+            get => _name;
+            set => ChangeProperty(value, ref _name);
+        }
     }
 }

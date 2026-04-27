@@ -27,6 +27,7 @@ public class StringExtensionsTests
     [InlineData("Multiple   Spaces", "multiple_spaces")]
     [InlineData("  SomeValue  ", "some_value")]
     [InlineData("Test123Value456End", "test_123_value_456_end")]
+    [InlineData("___", "")]
     public void ToSnakeCase_VariousInputs_ReturnsExpectedResult(string input, string expected)
     {
         // Act
@@ -57,6 +58,7 @@ public class StringExtensionsTests
     [InlineData("Multiple   Spaces", "multiple.spaces")]
     [InlineData("  SomeValue  ", "some.value")]
     [InlineData("Test123Value456End", "test.123.value.456.end")]
+    [InlineData("...", "")]
     public void ToDotCase_VariousInputs_ReturnsExpectedResult(string input, string expected)
     {
         // Act
@@ -87,6 +89,7 @@ public class StringExtensionsTests
     [InlineData("Multiple   Spaces", "multiple-spaces")]
     [InlineData("  SomeValue  ", "some-value")]
     [InlineData("Test123Value456End", "test-123-value-456-end")]
+    [InlineData("---", "")]
     public void ToKebabCase_VariousInputs_ReturnsExpectedResult(string input, string expected)
     {
         // Act

@@ -76,7 +76,7 @@ public class YubikeyOtpValidator
 
     private static void ValidateLength(string otp)
     {
-        if (otp == null || (otp.Length < 34 && otp.Length > 48))
+        if (otp == null || otp.Length < 34 || otp.Length > 48)
         {
             throw new ArgumentException("otp has to be between 34 and 48 characters long");
         }
