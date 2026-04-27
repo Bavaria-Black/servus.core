@@ -15,6 +15,22 @@ public class YubikeyOtpValidatorTests
     }
 
     [Fact]
+    public void ExtractClientId_ThrowsForTooLongOtp()
+    {
+        const string otp = "cccccccccclibubjhkuttefctkgejjgerdjfihbkhtddivju1234567890";
+
+        Assert.Throws<ArgumentException>(() => YubikeyOtpValidator.ExtractClientId(otp));
+    }
+
+    [Fact]
+    public void RemoveClientId_ThrowsForTooLongOtp()
+    {
+        const string otp = "cccccccccclibubjhkuttefctkgejjgerdjfihbkhtddivju1234567890";
+
+        Assert.Throws<ArgumentException>(() => YubikeyOtpValidator.RemoveClientId(otp));
+    }
+
+    [Fact]
     public async Task ValidateAsync()
     {
         const string otp = "vvvvvvcurikvhjcvnlnbecbkubjvuittbifhndhn";

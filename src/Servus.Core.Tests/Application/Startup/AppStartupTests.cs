@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -81,5 +81,14 @@ public class AppStartupTests
             .Build();
 
         Assert.True(container.WasCalled);
+    }
+
+    [Fact]
+    public void CalculateNetExponentialBackoffDelay_DoublesDuration()
+    {
+        var app = AppBuilder.Create().Build();
+        var result = app.CalculateNetExponentialBackoffDelay(TimeSpan.FromMilliseconds(1500));
+
+        Assert.Equal(TimeSpan.FromMilliseconds(3000), result);
     }
 }
