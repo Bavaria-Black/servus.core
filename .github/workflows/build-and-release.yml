@@ -7,6 +7,7 @@ on:
 
 env:
   GLOBAL_JSON_PATH: './src/global.json'
+  DOTNET_VERSION: '10.0.x'
   PROJECT_PATH: './src/Servus.sln'
   PACKAGE_OUTPUT_DIRECTORY: './packages'
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -28,9 +29,16 @@ jobs:
       
       # Install the .NET Core workload
       - name: Install .NET Core
+        if: ${{ hashFiles(env.GLOBAL_JSON_PATH) != '' }}
         uses: actions/setup-dotnet@v4
         with:
           global-json-file: ${{ env.GLOBAL_JSON_PATH }}
+
+      - name: Install .NET Core (fallback)
+        if: ${{ hashFiles(env.GLOBAL_JSON_PATH) == '' }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v1.1.1
@@ -94,9 +102,16 @@ jobs:
           path: ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
 
       - name: Setup .NET Core
+        if: ${{ hashFiles(env.GLOBAL_JSON_PATH) != '' }}
         uses: actions/setup-dotnet@v4
         with:
           global-json-file: ${{ env.GLOBAL_JSON_PATH }}
+
+      - name: Setup .NET Core (fallback)
+        if: ${{ hashFiles(env.GLOBAL_JSON_PATH) == '' }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Publish to NuGet
         run: |
