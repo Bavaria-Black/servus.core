@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Servus.Core.Diagnostics;
@@ -9,11 +10,19 @@ namespace Servus.Core.Diagnostics;
 /// <see cref="Configure"/> is called once at startup before any worker threads exist,
 /// so the thread-creation happens-before guarantees visibility without barriers.
 /// </summary>
-public static class ServusTrace
+public class ServusTrace
 {
+    public static readonly ServusTrace Instance = new();
+    
     private static TraceConfig? _config;
-    private static readonly ConcurrentDictionary<string, TraceChannel> _channels = new();
+    private static readonly ConcurrentDictionary<string, TraceChannel> Channels = new();
+    public ActivitySource Source { get; } = new("Servus", ServusInfo.Version);
 
+    private ServusTrace()
+    {
+        
+    }
+    
     /// <summary>
     /// Enables tracing with the specified listener, minimum level, and optional category filter.
     /// Pass a predicate to restrict tracing to categories for which the predicate returns <see langword="true"/>;
@@ -42,7 +51,7 @@ public static class ServusTrace
     /// <code>private static readonly ServusTraceChannel _http = ServusTrace.For("Http");</code>
     /// </summary>
     public static TraceChannel For(string categoryName) =>
-        _channels.GetOrAdd(categoryName, static name => new TraceChannel(name));
+        Channels.GetOrAdd(categoryName, static name => new TraceChannel(name));
 
     /// <summary>
     /// Disables tracing. All subsequent trace calls become no-ops.
