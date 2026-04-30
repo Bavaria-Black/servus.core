@@ -8,7 +8,7 @@ namespace Servus.Core.Tests.Diagnostics;
 public sealed class OTelCollection;
 
 [Collection("OTEL")]
-public sealed class LoggerServusTraceListenerSpec : IDisposable
+public sealed class TraceLoggerSpec : IDisposable
 {
     private sealed class CapturingLogger : ILogger
     {
@@ -60,39 +60,39 @@ public sealed class LoggerServusTraceListenerSpec : IDisposable
     [Fact(Timeout = 5000)]
     public void IsEnabled_should_return_false_when_level_below_minimum()
     {
-        var listener = new LoggerServusTraceListener(_factory, ServusTraceLevel.Warning);
+        var listener = new TraceLogger(_factory, TraceLevel.Warning);
 
-        Assert.False(listener.IsEnabled(ServusTraceLevel.Debug, "Connection"));
-        Assert.False(listener.IsEnabled(ServusTraceLevel.Info, "Pool"));
+        Assert.False(listener.IsEnabled(TraceLevel.Debug, "Connection"));
+        Assert.False(listener.IsEnabled(TraceLevel.Info, "Pool"));
     }
 
     [Fact(Timeout = 5000)]
     public void IsEnabled_should_return_false_when_category_not_enabled()
     {
         var listener =
-            new LoggerServusTraceListener(_factory, ServusTraceLevel.Trace, x => x == "Connection");
+            new TraceLogger(_factory, TraceLevel.Trace, x => x == "Connection");
 
-        Assert.False(listener.IsEnabled(ServusTraceLevel.Debug, "Dns"));
-        Assert.False(listener.IsEnabled(ServusTraceLevel.Error, "Pool"));
+        Assert.False(listener.IsEnabled(TraceLevel.Debug, "Dns"));
+        Assert.False(listener.IsEnabled(TraceLevel.Error, "Pool"));
     }
 
     [Fact(Timeout = 5000)]
     public void IsEnabled_should_return_true_when_level_and_category_match()
     {
-        var listener = new LoggerServusTraceListener(_factory);
+        var listener = new TraceLogger(_factory);
 
-        Assert.True(listener.IsEnabled(ServusTraceLevel.Debug, "Connection"));
-        Assert.True(listener.IsEnabled(ServusTraceLevel.Error, "Tls"));
+        Assert.True(listener.IsEnabled(TraceLevel.Debug, "Connection"));
+        Assert.True(listener.IsEnabled(TraceLevel.Error, "Tls"));
     }
 
     [Fact(Timeout = 5000)]
     public void Write_should_route_Connection_event_to_correct_logger()
     {
-        var listener = new LoggerServusTraceListener(_factory);
+        var listener = new TraceLogger(_factory);
         var source = new object();
-        var evt = new ServusTraceEvent(
+        var evt = new TraceEvent(
             System.Diagnostics.Stopwatch.GetTimestamp(),
-            ServusTraceLevel.Debug,
+            TraceLevel.Debug,
             "Connection",
             source.GetType().Name, source.GetHashCode(), "Connected to {0}:{1}", "localhost", 443);
 
@@ -107,11 +107,11 @@ public sealed class LoggerServusTraceListenerSpec : IDisposable
     [Fact(Timeout = 5000)]
     public void Write_should_route_Dns_event_to_Dns_logger()
     {
-        var listener = new LoggerServusTraceListener(_factory);
+        var listener = new TraceLogger(_factory);
         var source = new object();
-        var evt = new ServusTraceEvent(
+        var evt = new TraceEvent(
             System.Diagnostics.Stopwatch.GetTimestamp(),
-            ServusTraceLevel.Warning,
+            TraceLevel.Warning,
             "Dns",
             source.GetType().Name, source.GetHashCode(), "DNS failed");
 
@@ -125,11 +125,11 @@ public sealed class LoggerServusTraceListenerSpec : IDisposable
     [Fact(Timeout = 5000)]
     public void Write_should_route_Pool_event_to_Pool_logger()
     {
-        var listener = new LoggerServusTraceListener(_factory);
+        var listener = new TraceLogger(_factory);
         var source = new object();
-        var evt = new ServusTraceEvent(
+        var evt = new TraceEvent(
             System.Diagnostics.Stopwatch.GetTimestamp(),
-            ServusTraceLevel.Info,
+            TraceLevel.Info,
             "Pool",
             source.GetType().Name, source.GetHashCode(), "Pool evicted");
 
@@ -142,19 +142,19 @@ public sealed class LoggerServusTraceListenerSpec : IDisposable
     [Fact(Timeout = 5000)]
     public void Write_should_map_ServusTraceLevel_to_LogLevel_correctly()
     {
-        var listener = new LoggerServusTraceListener(_factory, ServusTraceLevel.Trace);
+        var listener = new TraceLogger(_factory, TraceLevel.Trace);
         var source = new object();
 
-        void Send(ServusTraceLevel level) =>
-            listener.Write(new ServusTraceEvent(
+        void Send(TraceLevel level) =>
+            listener.Write(new TraceEvent(
                 System.Diagnostics.Stopwatch.GetTimestamp(), level, "Tls",
                 source.GetType().Name, source.GetHashCode(), "msg"));
 
-        Send(ServusTraceLevel.Trace);
-        Send(ServusTraceLevel.Debug);
-        Send(ServusTraceLevel.Info);
-        Send(ServusTraceLevel.Warning);
-        Send(ServusTraceLevel.Error);
+        Send(TraceLevel.Trace);
+        Send(TraceLevel.Debug);
+        Send(TraceLevel.Info);
+        Send(TraceLevel.Warning);
+        Send(TraceLevel.Error);
 
         var logger = _factory.GetLogger("Servus.Trace.Tls");
         Assert.Equal(5, logger.Entries.Count);

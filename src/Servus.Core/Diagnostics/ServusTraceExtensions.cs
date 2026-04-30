@@ -11,13 +11,13 @@ public static class ServusTraceExtensions
 {
     public static IServiceCollection AddServusLoggerTracing(
         this IServiceCollection services,
-        ServusTraceLevel minimumLevel = ServusTraceLevel.Debug,
+        TraceLevel minimumLevel = TraceLevel.Debug,
         params string[] categories)
     {
         services.AddSingleton<IServusTraceListener>(sp =>
         {
             var loggerFactory = sp.GetRequiredService<ILoggerFactory>();
-            var listener = new LoggerServusTraceListener(loggerFactory, minimumLevel, categories.Contains);
+            var listener = new TraceLogger(loggerFactory, minimumLevel, categories.Contains);
             ServusTrace.Configure(listener, minimumLevel, categories.Contains);
             return listener;
         });
@@ -26,13 +26,13 @@ public static class ServusTraceExtensions
 
     public static IServiceCollection AddServusLoggerTracing(
         this IServiceCollection services,
-        ServusTraceLevel minimumLevel = ServusTraceLevel.Debug,
+        TraceLevel minimumLevel = TraceLevel.Debug,
         Func<string, bool>? categoryFilter = null)
     {
         services.AddSingleton<IServusTraceListener>(sp =>
         {
             var loggerFactory = sp.GetRequiredService<ILoggerFactory>();
-            var listener = new LoggerServusTraceListener(loggerFactory, minimumLevel, categoryFilter);
+            var listener = new TraceLogger(loggerFactory, minimumLevel, categoryFilter);
             ServusTrace.Configure(listener, minimumLevel, categoryFilter);
             return listener;
         });
@@ -42,7 +42,7 @@ public static class ServusTraceExtensions
     public static IServiceCollection AddServusTraceListener(
         this IServiceCollection services,
         IServusTraceListener listener,
-        ServusTraceLevel minimumLevel = ServusTraceLevel.Debug,
+        TraceLevel minimumLevel = TraceLevel.Debug,
         params string[] categories)
     {
         ArgumentNullException.ThrowIfNull(listener);
@@ -54,7 +54,7 @@ public static class ServusTraceExtensions
     public static IServiceCollection AddServusTraceListener(
         this IServiceCollection services,
         IServusTraceListener listener,
-        ServusTraceLevel minimumLevel = ServusTraceLevel.Debug,
+        TraceLevel minimumLevel = TraceLevel.Debug,
         Func<string, bool>? categoryFilter = null)
     {
         ArgumentNullException.ThrowIfNull(listener);
