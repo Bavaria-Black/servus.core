@@ -1,5 +1,4 @@
-﻿using System;
-using Servus.Core.Application;
+﻿using Servus.Core.Application;
 using Xunit;
 
 namespace Servus.Core.Tests.Application;
