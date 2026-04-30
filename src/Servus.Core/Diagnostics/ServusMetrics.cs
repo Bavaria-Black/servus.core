@@ -20,11 +20,9 @@ namespace Servus.Core.Diagnostics;
 /// </example>
 public class ServusMetrics
 {
-    public static readonly ServusMetrics Servus = new("Servus");
+    public Meter Meter { get; } = new Meter("Servus", ServusInfo.Version);
 
-    public Meter Meter { get; }
-
-    private ServusMetrics(string meterName)
+    internal ServusMetrics()
     {
     }
 }
