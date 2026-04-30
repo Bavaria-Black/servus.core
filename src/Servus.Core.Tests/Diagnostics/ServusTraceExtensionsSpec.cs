@@ -15,7 +15,7 @@ public sealed class ServusTraceExtensionsSpec : IDisposable
 
     public void Dispose()
     {
-        ServusTrace.Disable();
+        Servus.Tracing.Disable();
     }
 
     [Fact(Timeout = 5000)]
@@ -41,10 +41,10 @@ public sealed class ServusTraceExtensionsSpec : IDisposable
 
         var provider = services.BuildServiceProvider();
 
-        Assert.False(ServusTrace.ShouldTrace("Connection", TraceLevel.Debug));
+        Assert.False(Servus.Tracing.ShouldTrace("Connection", TraceLevel.Debug));
         _ = provider.GetRequiredService<IServusTraceListener>();
 
-        Assert.True(ServusTrace.ShouldTrace("Connection", TraceLevel.Debug));
+        Assert.True(Servus.Tracing.ShouldTrace("Connection", TraceLevel.Debug));
     }
 
     [Fact(Timeout = 5000)]
@@ -54,7 +54,7 @@ public sealed class ServusTraceExtensionsSpec : IDisposable
         var services = new ServiceCollection();
         services.AddServusTraceListener(listener);
 
-        Assert.True(ServusTrace.ShouldTrace("Connection", TraceLevel.Debug));
+        Assert.True(Servus.Tracing.ShouldTrace("Connection", TraceLevel.Debug));
     }
 
     [Fact(Timeout = 5000)]
@@ -75,7 +75,7 @@ public sealed class ServusTraceExtensionsSpec : IDisposable
         var provider = services.BuildServiceProvider();
         _ = provider.GetRequiredService<IServusTraceListener>();
 
-        Assert.True(ServusTrace.ShouldTrace("Connection", TraceLevel.Debug));
-        Assert.False(ServusTrace.ShouldTrace("Dns", TraceLevel.Debug));
+        Assert.True(Servus.Tracing.ShouldTrace("Connection", TraceLevel.Debug));
+        Assert.False(Servus.Tracing.ShouldTrace("Dns", TraceLevel.Debug));
     }
 }
