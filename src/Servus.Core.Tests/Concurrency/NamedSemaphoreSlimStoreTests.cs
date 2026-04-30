@@ -1,6 +1,5 @@
 ﻿using Servus.Core.Concurrency;
 using Xunit;
-using System;
 
 namespace Servus.Core.Tests.Concurrency;
 

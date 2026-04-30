@@ -1,6 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using Xunit;
+﻿using Xunit;
 using Servus.Core.Conversion;
 
 namespace Servus.Core.Tests.Conversion

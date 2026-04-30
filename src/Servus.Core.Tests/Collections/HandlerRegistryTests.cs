@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Xunit;
+﻿using Xunit;
 using Servus.Core.Collections;
 
 namespace Servus.Core.Tests.Collections;

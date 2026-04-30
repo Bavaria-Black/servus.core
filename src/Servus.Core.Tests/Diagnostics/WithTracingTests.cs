@@ -1,4 +1,3 @@
-﻿using System;
 using System.Diagnostics;
 using Xunit;
 using Servus.Core.Diagnostics;
@@ -7,9 +6,9 @@ namespace Servus.Core.Tests.Diagnostics;
 
 public class WithTracingTests : IDisposable
 {
-    private TestTracingClass _testObject = null!;
-    private ActivitySource _activitySource = null!;
-    private ActivityListener _activityListener = null!;
+    private readonly TestTracingClass _testObject;
+    private readonly ActivitySource _activitySource;
+    private readonly ActivityListener _activityListener;
 
     public WithTracingTests()
     {
@@ -20,7 +19,7 @@ public class WithTracingTests : IDisposable
         _activityListener = new ActivityListener
         {
             ShouldListenTo = _ => true,
-            Sample = (ref ActivityCreationOptions<ActivityContext> options) => ActivitySamplingResult.AllData
+            Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllData
         };
 
         ActivitySource.AddActivityListener(_activityListener);
@@ -57,7 +56,7 @@ public class WithTracingTests : IDisposable
     [InlineData("", "")]
     [InlineData(null, "1234567890123456")]
     [InlineData("12345678901234567890123456789012", null)]
-    public void GetContext_WithNullOrEmptyIds_GeneratesRandomIds(string traceId, string spanId)
+    public void GetContext_WithNullOrEmptyIds_GeneratesRandomIds(string? traceId, string? spanId)
     {
         // Arrange
         _testObject.TraceId = traceId;
@@ -94,7 +93,7 @@ public class WithTracingTests : IDisposable
     [InlineData("", "")]
     [InlineData(null, "1234567890123456")]
     [InlineData("12345678901234567890123456789012", null)]
-    public void AddTracing_WithNullOrEmptyIds_GeneratesRandomIds(string traceId, string spanId)
+    public void AddTracing_WithNullOrEmptyIds_GeneratesRandomIds(string? traceId, string? spanId)
     {
         // Act
         ((IWithTracing)_testObject).AddTracing(traceId, spanId);
@@ -148,8 +147,8 @@ public class WithTracingTests : IDisposable
     public void AddTracing_FromCurrentActivity_UsesActivityIds()
     {
         // Arrange
-        using var activity = _activitySource.StartActivity("TestActivity");
-
+        using var activity = _activitySource.StartActivity();
+        
         // Act
         ((IWithTracing)_testObject).AddTracing();
 

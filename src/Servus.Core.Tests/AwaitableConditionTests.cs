@@ -1,6 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Xunit;
+﻿using Xunit;
 
 namespace Servus.Core.Tests;
 

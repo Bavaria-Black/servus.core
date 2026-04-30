@@ -1,5 +1,4 @@
-﻿using System;
-using Servus.Core.Reflection;
+﻿using Servus.Core.Reflection;
 using Xunit;
 
 namespace Servus.Core.Tests.Reflection

@@ -37,6 +37,19 @@
         <None Include="../../LICENSE" Pack="true" PackagePath="\"/>
         <None Include="../../.github/workflows/build-and-release.yml"/>
     </ItemGroup>
+    <Target Name="GenerateVersionConst" BeforeTargets="CoreCompile">
+        <PropertyGroup>
+            <_VersionString>$(InformationalVersion)</_VersionString>
+            <_VersionString Condition="'$(_VersionString)' == ''">$(Version)</_VersionString>
+        </PropertyGroup>
+        <WriteLinesToFile
+            File="$(IntermediateOutputPath)BuildInfo.g.cs"
+            Lines="namespace Servus.Core.Diagnostics%3B&#10;internal static class ServusInfo { internal const string Version = &quot;$(_VersionString)&quot;%3B }"
+            Overwrite="true" />
+        <ItemGroup>
+            <Compile Include="$(IntermediateOutputPath)BuildInfo.g.cs" />
+        </ItemGroup>
+    </Target>
     <Target Name="ServusLogo" BeforeTargets="Build">
         <Message Text=" " Importance="high"/>
         <Message Text=" " Importance="high"/>
