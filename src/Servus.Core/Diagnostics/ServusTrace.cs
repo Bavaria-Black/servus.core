@@ -12,8 +12,8 @@ namespace Servus.Core.Diagnostics;
 /// </summary>
 public class ServusTrace
 {
-    private static TraceConfig? _config;
-    private static readonly ConcurrentDictionary<string, TraceChannel> Channels = new();
+    private TraceConfig? _config;
+    private readonly ConcurrentDictionary<string, TraceChannel> _channels = new();
     public ActivitySource Source { get; } = new("Servus", ServusInfo.Version);
 
     internal ServusTrace()
@@ -35,7 +35,7 @@ public class ServusTrace
     /// An optional predicate that determines whether tracing is enabled for a category.
     /// If <see langword="null"/>, tracing is enabled for all categories.
     /// </param>
-    public static void Configure(
+    public void Configure(
         IServusTraceListener listener,
         TraceLevel minimumLevel = TraceLevel.Trace,
         Func<string, bool>? categoryFilter = null)
@@ -48,28 +48,36 @@ public class ServusTrace
     /// Store the result in a static field for zero-allocation reuse:
     /// <code>private static readonly ServusTraceChannel _http = ServusTrace.For("Http");</code>
     /// </summary>
-    public static TraceChannel For(string categoryName) =>
-        Channels.GetOrAdd(categoryName, static name => new TraceChannel(name));
+    public TraceChannel For(string categoryName) =>
+        _channels.GetOrAdd(categoryName, static name => new TraceChannel(name));
 
     /// <summary>
     /// Disables tracing. All subsequent trace calls become no-ops.
     /// </summary>
-    public static void Disable()
+    public void Disable()
     {
         _config = null;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static bool ShouldTrace(string category, TraceLevel level)
+    internal bool ShouldTrace(string category, TraceLevel level)
     {
         var cfg = _config;
         if (cfg is null) return false;
         if (level < cfg.MinimumLevel) return false;
-        if (!cfg.CategoryFilter.Invoke(category)) return false;
-        return cfg.Listener.IsEnabled(level, category);
+        
+        return cfg.CategoryFilter.Invoke(category) 
+               && cfg.Listener.IsEnabled(level, category);
+    }
+    
+    public void Trace(TraceLevel traceLevel, string category, object source, string message, long? ticks = null, params object?[] args)
+    {
+        if (!ShouldTrace(category, traceLevel)) return;
+        WriteEvent(new TraceEvent(ticks ?? Stopwatch.GetTimestamp(), traceLevel, category,
+            source.GetType().Name, source.GetHashCode(), message, args));
     }
 
-    internal static void WriteEvent(in TraceEvent evt)
+    private void WriteEvent(in TraceEvent evt)
     {
         _config?.Listener.Write(in evt);
     }

@@ -54,7 +54,7 @@ public sealed class TraceLoggerSpec : IDisposable
 
     public void Dispose()
     {
-        ServusTrace.Disable();
+        Servus.Tracing.Disable();
     }
 
     [Fact(Timeout = 5000)]

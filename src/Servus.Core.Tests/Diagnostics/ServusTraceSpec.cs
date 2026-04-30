@@ -19,12 +19,12 @@ public sealed class ServusTraceSpec : IDisposable
 
     public ServusTraceSpec()
     {
-        ServusTrace.Disable();
+        Servus.Tracing.Disable();
     }
 
     public void Dispose()
     {
-        ServusTrace.Disable();
+        Servus.Tracing.Disable();
     }
 
     [Fact(Timeout = 5000)]
@@ -50,44 +50,44 @@ public sealed class ServusTraceSpec : IDisposable
     [Fact(Timeout = 5000)]
     public void ShouldTrace_should_return_false_when_disabled()
     {
-        Assert.False(ServusTrace.ShouldTrace("Connection", TraceLevel.Debug));
-        Assert.False(ServusTrace.ShouldTrace("Pool", TraceLevel.Error));
+        Assert.False(Servus.Tracing.ShouldTrace("Connection", TraceLevel.Debug));
+        Assert.False(Servus.Tracing.ShouldTrace("Pool", TraceLevel.Error));
     }
 
     [Fact(Timeout = 5000)]
     public void ShouldTrace_should_return_true_when_configured()
     {
-        ServusTrace.Configure(_mock);
+        Servus.Tracing.Configure(_mock);
 
-        Assert.True(ServusTrace.ShouldTrace("Connection", TraceLevel.Debug));
-        Assert.True(ServusTrace.ShouldTrace("Pool", TraceLevel.Warning));
+        Assert.True(Servus.Tracing.ShouldTrace("Connection", TraceLevel.Debug));
+        Assert.True(Servus.Tracing.ShouldTrace("Pool", TraceLevel.Warning));
     }
 
     [Fact(Timeout = 5000)]
     public void ShouldTrace_should_respect_category_filter()
     {
-        ServusTrace.Configure(_mock, TraceLevel.Trace, x => x == "Connection");
+        Servus.Tracing.Configure(_mock, TraceLevel.Trace, x => x == "Connection");
 
-        Assert.True(ServusTrace.ShouldTrace("Connection", TraceLevel.Debug));
-        Assert.False(ServusTrace.ShouldTrace("Dns", TraceLevel.Debug));
-        Assert.False(ServusTrace.ShouldTrace("Pool", TraceLevel.Debug));
+        Assert.True(Servus.Tracing.ShouldTrace("Connection", TraceLevel.Debug));
+        Assert.False(Servus.Tracing.ShouldTrace("Dns", TraceLevel.Debug));
+        Assert.False(Servus.Tracing.ShouldTrace("Pool", TraceLevel.Debug));
     }
 
     [Fact(Timeout = 5000)]
     public void ShouldTrace_should_respect_minimum_level()
     {
-        ServusTrace.Configure(_mock, TraceLevel.Warning);
+        Servus.Tracing.Configure(_mock, TraceLevel.Warning);
 
-        Assert.False(ServusTrace.ShouldTrace("Connection", TraceLevel.Debug));
-        Assert.True(ServusTrace.ShouldTrace("Connection", TraceLevel.Warning));
-        Assert.True(ServusTrace.ShouldTrace("Connection", TraceLevel.Error));
+        Assert.False(Servus.Tracing.ShouldTrace("Connection", TraceLevel.Debug));
+        Assert.True(Servus.Tracing.ShouldTrace("Connection", TraceLevel.Warning));
+        Assert.True(Servus.Tracing.ShouldTrace("Connection", TraceLevel.Error));
     }
 
     [Fact(Timeout = 5000)]
     public void Connection_Debug_should_emit_event_when_configured()
     {
-        ServusTrace.Configure(_mock);
-        var connection = ServusTrace.For("Connection");
+        Servus.Tracing.Configure(_mock);
+        var connection = Servus.Tracing.For("Connection");
         connection.Debug(this, "tcp connected to {0}:{1}", "localhost", 443);
 
         Assert.Single(_mock.Events);
@@ -101,8 +101,8 @@ public sealed class ServusTraceSpec : IDisposable
     [Fact(Timeout = 5000)]
     public void Dns_Warning_should_emit_event_when_configured()
     {
-        ServusTrace.Configure(_mock);
-        var dns = ServusTrace.For("Dns");
+        Servus.Tracing.Configure(_mock);
+        var dns = Servus.Tracing.For("Dns");
         dns.Warning(this, "DNS '{0}' failed: {1}", "badhost", "NXDOMAIN");
 
         Assert.Single(_mock.Events);
@@ -115,8 +115,8 @@ public sealed class ServusTraceSpec : IDisposable
     [Fact(Timeout = 5000)]
     public void Tls_Debug_should_not_emit_when_category_not_enabled()
     {
-        ServusTrace.Configure(_mock, TraceLevel.Trace, x => x == "Connection");
-        var tls = ServusTrace.For("Tls");
+        Servus.Tracing.Configure(_mock, TraceLevel.Trace, x => x == "Connection");
+        var tls = Servus.Tracing.For("Tls");
         tls.Debug(this, "TLS handshake starting");
 
         Assert.Empty(_mock.Events);
@@ -125,7 +125,7 @@ public sealed class ServusTraceSpec : IDisposable
     [Fact(Timeout = 5000)]
     public void Pool_Debug_should_not_emit_when_disabled()
     {
-        var pool = ServusTrace.For("Pool");
+        var pool = Servus.Tracing.For("Pool");
         pool.Debug(this, "Establishing connection");
 
         Assert.Empty(_mock.Events);
@@ -134,11 +134,11 @@ public sealed class ServusTraceSpec : IDisposable
     [Fact(Timeout = 5000)]
     public void Disable_should_stop_subsequent_trace_calls()
     {
-        ServusTrace.Configure(_mock);
+        Servus.Tracing.Configure(_mock);
 
-        var connection = ServusTrace.For("Connection");
+        var connection = Servus.Tracing.For("Connection");
         connection.Debug(this, "first event");
-        ServusTrace.Disable();
+        Servus.Tracing.Disable();
         connection.Debug(this, "after disable");
 
         Assert.Single(_mock.Events);
@@ -148,8 +148,8 @@ public sealed class ServusTraceSpec : IDisposable
     [Fact(Timeout = 5000)]
     public void Connection_no_args_overload_should_emit_plain_message()
     {
-        ServusTrace.Configure(_mock);
-        var connection = ServusTrace.For("Connection");
+        Servus.Tracing.Configure(_mock);
+        var connection = Servus.Tracing.For("Connection");
         connection.Debug(this, "connection disposed");
 
         Assert.Single(_mock.Events);
