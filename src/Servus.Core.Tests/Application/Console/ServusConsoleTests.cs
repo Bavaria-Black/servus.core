@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Servus.Core.Application.Console;
+﻿using Servus.Core.Application.Console;
 using Xunit;
 
 namespace Servus.Core.Tests.Application.Console;

@@ -1,5 +1,4 @@
 ﻿using Servus.Core.Security.Hardware.Yubikey;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Servus.Core.Tests.Security.Hardware.Yubikey;

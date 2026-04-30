@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Servus.Core.Threading;
+﻿using Servus.Core.Threading;
 using Xunit;
 
 namespace Servus.Core.Tests.Threading;

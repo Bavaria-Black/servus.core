@@ -1,6 +1,5 @@
 ﻿using Servus.Core.Parsing.Text;
 using Xunit;
-using System;
 
 namespace Servus.Core.Tests.Parsing.Text;
 
