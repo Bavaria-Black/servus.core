@@ -62,6 +62,11 @@ public sealed class TraceLoggerSpec : IDisposable
     {
         var listener = new TraceLogger(_factory, TraceLevel.Warning);
 
+        
+        Servus.Tracing
+            .For("leberkas")
+            .Debug(this, "blub");
+        
         Assert.False(listener.IsEnabled(TraceLevel.Debug, "Connection"));
         Assert.False(listener.IsEnabled(TraceLevel.Info, "Pool"));
     }

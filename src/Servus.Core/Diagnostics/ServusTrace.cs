@@ -70,16 +70,22 @@ public class ServusTrace
                && cfg.Listener.IsEnabled(level, category);
     }
     
-    public void Trace(TraceLevel traceLevel, string category, object source, string message, long? ticks = null, params object?[] args)
+    public void Trace<T>(T source, TraceLevel traceLevel, string category, string message, long? ticks = null, params object?[] args)
     {
-        if (!ShouldTrace(category, traceLevel)) return;
+        if (!ShouldTrace(category, traceLevel) || source is null) return;
         WriteEvent(new TraceEvent(ticks ?? Stopwatch.GetTimestamp(), traceLevel, category,
-            source.GetType().Name, source.GetHashCode(), message, args));
+            TypeNameCache<T>.Name, source.GetHashCode(), message, args));
     }
 
+    [MethodImpl(MethodImplOptions.NoInlining)]
     private void WriteEvent(in TraceEvent evt)
     {
         _config?.Listener.Write(in evt);
+    }
+
+    private static class TypeNameCache<T>
+    {
+        public static readonly string Name = typeof(T).Name;
     }
 
     private sealed record TraceConfig(

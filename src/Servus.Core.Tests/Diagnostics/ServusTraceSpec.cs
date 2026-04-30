@@ -155,4 +155,20 @@ public sealed class ServusTraceSpec : IDisposable
         Assert.Single(_mock.Events);
         Assert.Equal("connection disposed", _mock.Events[0].FormatMessage());
     }
+
+    [Fact(Timeout = 5000)]
+    public void SourceType_should_resolve_correct_type_name_for_different_sources()
+    {
+        Servus.Tracing.Configure(_mock);
+        var channel = Servus.Tracing.For("Test");
+
+        channel.Debug(this, "from test");
+        channel.Debug(_mock, "from mock");
+        channel.Debug("hello", "from string");
+
+        Assert.Equal(3, _mock.Events.Count);
+        Assert.Equal(nameof(ServusTraceSpec), _mock.Events[0].SourceType);
+        Assert.Equal(nameof(MockListener), _mock.Events[1].SourceType);
+        Assert.Equal(nameof(String), _mock.Events[2].SourceType);
+    }
 }
