@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 
 namespace Servus.Core.Diagnostics;
@@ -11,6 +12,7 @@ namespace Servus.Core.Diagnostics;
 public static class ServusTrace
 {
     private static TraceConfig? _config;
+    private static readonly ConcurrentDictionary<string, ServusTraceChannel> _channels = new();
 
     /// <summary>
     /// Enables tracing with the specified listener, minimum level, and optional category filter.
@@ -29,7 +31,7 @@ public static class ServusTrace
     public static void Configure(
         IServusTraceListener listener,
         ServusTraceLevel minimumLevel = ServusTraceLevel.Trace,
-        Func<ServusTraceCategory, bool>? categoryFilter = null)
+        Func<string, bool>? categoryFilter = null)
     {
         _config = new TraceConfig(listener, categoryFilter ?? (_ => true), minimumLevel);
     }
@@ -37,11 +39,10 @@ public static class ServusTrace
     /// <summary>
     /// Creates a <see cref="ServusTraceChannel"/> for a custom category.
     /// Store the result in a static field for zero-allocation reuse:
-    /// <code>private static readonly ServusTraceChannel _http = ServusTrace.For(new ServusTraceCategory("Http"));</code>
+    /// <code>private static readonly ServusTraceChannel _http = ServusTrace.For("Http");</code>
     /// </summary>
-    public static ServusTraceChannel For(ServusTraceCategory category) => new(category);
-
-    public static ServusTraceChannel For(string categoryName) => new(new ServusTraceCategory(categoryName));
+    public static ServusTraceChannel For(string categoryName) =>
+        _channels.GetOrAdd(categoryName, static name => new ServusTraceChannel(name));
 
     /// <summary>
     /// Disables tracing. All subsequent trace calls become no-ops.
@@ -52,7 +53,7 @@ public static class ServusTrace
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static bool ShouldTrace(ServusTraceCategory category, ServusTraceLevel level)
+    internal static bool ShouldTrace(string category, ServusTraceLevel level)
     {
         var cfg = _config;
         if (cfg is null) return false;
@@ -68,6 +69,6 @@ public static class ServusTrace
 
     private sealed record TraceConfig(
         IServusTraceListener Listener,
-        Func<ServusTraceCategory, bool> CategoryFilter,
+        Func<string, bool> CategoryFilter,
         ServusTraceLevel MinimumLevel);
 }

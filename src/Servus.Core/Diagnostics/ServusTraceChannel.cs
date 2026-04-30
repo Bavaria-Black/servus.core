@@ -4,11 +4,10 @@ using System.Runtime.CompilerServices;
 namespace Servus.Core.Diagnostics;
 
 /// <summary>
-/// A trace channel bound to a single <see cref="ServusTraceCategory"/>.
-/// Obtain built-in channels from the static fields on <see cref="ServusTrace"/>
-/// or create custom channels with <see cref="ServusTrace.For(ServusTraceCategory)"/>.
+/// A trace channel bound to a single category.
+/// Obtain channels with <see cref="ServusTrace.For(string)"/>.
 /// </summary>
-public readonly struct ServusTraceChannel(ServusTraceCategory category)
+public readonly struct ServusTraceChannel(string category)
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Trace(object source, string message)

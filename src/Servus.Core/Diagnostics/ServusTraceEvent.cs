@@ -16,7 +16,7 @@ public readonly struct ServusTraceEvent
     public ServusTraceLevel Level { get; }
 
     /// <summary>Category that produced this event.</summary>
-    public ServusTraceCategory Category { get; }
+    public string Category { get; }
 
     /// <summary>Short type name of the source object (from <c>GetType().Name</c>).</summary>
     public string SourceType { get; }
@@ -32,7 +32,7 @@ public readonly struct ServusTraceEvent
     internal ServusTraceEvent(
         long timestampTicks,
         ServusTraceLevel level,
-        ServusTraceCategory category,
+        string category,
         string sourceType,
         int sourceHash,
         string template,

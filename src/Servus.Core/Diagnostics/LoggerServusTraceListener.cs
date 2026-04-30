@@ -5,20 +5,20 @@ namespace Servus.Core.Diagnostics;
 
 /// <summary>
 /// Routes <see cref="ServusTraceEvent"/> instances to <see cref="ILoggerFactory"/>,
-/// creating one <see cref="ILogger"/> per <see cref="ServusTraceCategory"/> on demand.
-/// Logger names follow the pattern <c>Servus.Trace.{Category.Name}</c>.
+/// creating one <see cref="ILogger"/> per category on demand.
+/// Logger names follow the pattern <c>Servus.Trace.{Category}</c>.
 /// </summary>
 internal sealed class LoggerServusTraceListener : IServusTraceListener
 {
-    private readonly ConcurrentDictionary<ServusTraceCategory, ILogger> _loggers = new();
+    private readonly ConcurrentDictionary<string, ILogger> _loggers = new();
     private readonly ILoggerFactory _loggerFactory;
-    private readonly Func<ServusTraceCategory, bool>? _enabledCategories;
+    private readonly Func<string, bool>? _enabledCategories;
     private readonly ServusTraceLevel _minimumLevel;
 
     public LoggerServusTraceListener(
         ILoggerFactory loggerFactory,
         ServusTraceLevel minimumLevel = ServusTraceLevel.Debug,
-        Func<ServusTraceCategory, bool>? categoryFilter = null)
+        Func<string, bool>? categoryFilter = null)
     {
         ArgumentNullException.ThrowIfNull(loggerFactory);
         _loggerFactory = loggerFactory;
@@ -27,7 +27,7 @@ internal sealed class LoggerServusTraceListener : IServusTraceListener
     }
 
     /// <inheritdoc />
-    public bool IsEnabled(ServusTraceLevel level, ServusTraceCategory category)
+    public bool IsEnabled(ServusTraceLevel level, string category)
     {
         return level >= _minimumLevel && (_enabledCategories is null || _enabledCategories.Invoke(category));
     }
@@ -37,7 +37,7 @@ internal sealed class LoggerServusTraceListener : IServusTraceListener
     {
         var logLevel = (LogLevel)evt.Level;
         var logger = _loggers.GetOrAdd(evt.Category,
-            c => _loggerFactory.CreateLogger($"Servus.Trace.{c.Name}"));
+            c => _loggerFactory.CreateLogger($"Servus.Trace.{c}"));
         if (!logger.IsEnabled(logLevel)) return;
         var message = evt.FormatMessage();
         logger.Log(logLevel, "[{SourceType}#{SourceHash:X8}] {Message}",
