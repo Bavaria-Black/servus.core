@@ -1,5 +1,4 @@
 using System.Diagnostics.Metrics;
-using System.Reflection;
 
 namespace Servus.Core.Diagnostics;
 
@@ -21,20 +20,11 @@ namespace Servus.Core.Diagnostics;
 /// </example>
 public class ServusMetrics
 {
-    public const string MeterName = "Servus";
-
-    private static readonly string Version =
-        typeof(ServusMetrics).Assembly
-            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
-        ?? typeof(ServusMetrics).Assembly.GetName().Version?.ToString()
-        ?? "0.0.0";
-
-    public static readonly ServusMetrics Instance = new(MeterName);
+    public static readonly ServusMetrics Servus = new("Servus");
 
     public Meter Meter { get; }
 
-    protected ServusMetrics(string meterName)
+    private ServusMetrics(string meterName)
     {
-        Meter = new Meter(meterName, Version);
     }
 }

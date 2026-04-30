@@ -6,9 +6,9 @@ namespace Servus.Core.Diagnostics;
 /// Built-in HTTP-transport activity starters and semantic tag helpers
 /// for <see cref="ServusInstrumentation"/> and <see cref="Activity"/>.
 /// </summary>
-public static class ServusInstrumentationExtensions
+public static class ServusTraceExternalExtensions
 {
-    public static Activity? StartConnect(this ServusInstrumentation instr, Uri uri)
+    public static Activity? StartConnect(this ServusTrace instr, Uri uri)
     {
         if (!instr.Source.HasListeners()) return null;
         var activity = instr.Source.StartActivity("connect", ActivityKind.Client);
@@ -20,7 +20,7 @@ public static class ServusInstrumentationExtensions
         return activity;
     }
 
-    public static Activity? StartDnsLookup(this ServusInstrumentation instr, string hostname)
+    public static Activity? StartDnsLookup(this ServusTrace instr, string hostname)
     {
         if (!instr.Source.HasListeners()) return null;
         var activity = instr.Source.StartActivity("dns.lookup", ActivityKind.Client);
@@ -35,7 +35,7 @@ public static class ServusInstrumentationExtensions
     /// <param name="port">The peer port number.</param>
     /// <param name="transport">The transport protocol: <c>"tcp"</c>, <c>"udp"</c>, or <c>"unix"</c>.</param>
     /// <param name="networkType">The network type: <c>"ipv4"</c> or <c>"ipv6"</c>. Null for non-IP transports.</param>
-    public static Activity? StartSocketConnect(this ServusInstrumentation instr, string address, int port,
+    public static Activity? StartSocketConnect(this ServusTrace instr, string address, int port,
         string transport = "tcp", string? networkType = null)
     {
         if (!instr.Source.HasListeners()) return null;
@@ -50,7 +50,7 @@ public static class ServusInstrumentationExtensions
         return activity;
     }
 
-    public static Activity? StartTlsHandshake(this ServusInstrumentation instr, string host)
+    public static Activity? StartTlsHandshake(this ServusTrace instr, string host)
     {
         if (!instr.Source.HasListeners()) return null;
         var activity = instr.Source.StartActivity("tls.handshake", ActivityKind.Client);
@@ -60,7 +60,7 @@ public static class ServusInstrumentationExtensions
         return activity;
     }
 
-    public static Activity? StartWaitForConnection(this ServusInstrumentation instr, string address, int port)
+    public static Activity? StartWaitForConnection(this ServusTrace instr, string address, int port)
     {
         if (!instr.Source.HasListeners()) return null;
         var activity = instr.Source.StartActivity("connection.wait", ActivityKind.Client);
