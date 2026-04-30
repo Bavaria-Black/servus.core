@@ -11,7 +11,7 @@ public interface IServusTraceListener
     /// at the given <paramref name="level"/> in the given <paramref name="category"/>.
     /// Called inside <see cref="ServusTrace.ShouldTrace"/> on the hot path.
     /// </summary>
-    bool IsEnabled(ServusTraceLevel level, ServusTraceCategory category);
+    bool IsEnabled(ServusTraceLevel level, string category);
 
     /// <summary>
     /// Receives a single trace event. Called only when

@@ -12,7 +12,7 @@ public static class ServusTraceExtensions
     public static IServiceCollection AddServusLoggerTracing(
         this IServiceCollection services,
         ServusTraceLevel minimumLevel = ServusTraceLevel.Debug,
-        params ServusTraceCategory[] categories)
+        params string[] categories)
     {
         services.AddSingleton<IServusTraceListener>(sp =>
         {
@@ -27,7 +27,7 @@ public static class ServusTraceExtensions
     public static IServiceCollection AddServusLoggerTracing(
         this IServiceCollection services,
         ServusTraceLevel minimumLevel = ServusTraceLevel.Debug,
-        Func<ServusTraceCategory, bool>? categoryFilter = null)
+        Func<string, bool>? categoryFilter = null)
     {
         services.AddSingleton<IServusTraceListener>(sp =>
         {
@@ -43,7 +43,7 @@ public static class ServusTraceExtensions
         this IServiceCollection services,
         IServusTraceListener listener,
         ServusTraceLevel minimumLevel = ServusTraceLevel.Debug,
-        params ServusTraceCategory[] categories)
+        params string[] categories)
     {
         ArgumentNullException.ThrowIfNull(listener);
         ServusTrace.Configure(listener, minimumLevel, categories.Contains);
@@ -55,7 +55,7 @@ public static class ServusTraceExtensions
         this IServiceCollection services,
         IServusTraceListener listener,
         ServusTraceLevel minimumLevel = ServusTraceLevel.Debug,
-        Func<ServusTraceCategory, bool>? categoryFilter = null)
+        Func<string, bool>? categoryFilter = null)
     {
         ArgumentNullException.ThrowIfNull(listener);
         ServusTrace.Configure(listener, minimumLevel, categoryFilter);
