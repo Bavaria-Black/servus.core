@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
 using Servus.Core.Application.Startup;
 using Xunit;
@@ -32,12 +32,18 @@ public class HostBuilderSetupContainer : IHostBuilderSetupContainer
 
 public class AppStartupTests
 {
+    private static AppBuilder CreateTestAppBuilder()
+    {
+        var builder = WebApplication.CreateBuilder(["--urls", "http://127.0.0.1:0"]);
+        return AppBuilder.Create(builder, b => b.Build());
+    }
+
     [Fact]
     public async Task SuccessfulStartup()
     {
         var gateIsOpen = false;
         var cts = new CancellationTokenSource();
-        var app = AppBuilder.Create()
+        var app = CreateTestAppBuilder()
             .WithSetup<AppConfigurationTestBase>()
             .WithStartupGate(() =>
             {
@@ -59,7 +65,7 @@ public class AppStartupTests
     {
         var cts = new CancellationTokenSource();
 
-        var app = AppBuilder.Create()
+        var app = CreateTestAppBuilder()
             .WithSetup<AppConfigurationTestBase>()
             .WithSetup<FailureAppConfigurationTestBase>()
             .WithStartupGate(() => Task.FromResult(true))
