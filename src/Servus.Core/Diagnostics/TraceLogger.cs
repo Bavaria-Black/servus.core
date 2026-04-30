@@ -4,20 +4,20 @@ using Microsoft.Extensions.Logging;
 namespace Servus.Core.Diagnostics;
 
 /// <summary>
-/// Routes <see cref="ServusTraceEvent"/> instances to <see cref="ILoggerFactory"/>,
+/// Routes <see cref="TraceEvent"/> instances to <see cref="ILoggerFactory"/>,
 /// creating one <see cref="ILogger"/> per category on demand.
 /// Logger names follow the pattern <c>Servus.Trace.{Category}</c>.
 /// </summary>
-internal sealed class LoggerServusTraceListener : IServusTraceListener
+internal sealed class TraceLogger : IServusTraceListener
 {
     private readonly ConcurrentDictionary<string, ILogger> _loggers = new();
     private readonly ILoggerFactory _loggerFactory;
     private readonly Func<string, bool>? _enabledCategories;
-    private readonly ServusTraceLevel _minimumLevel;
+    private readonly TraceLevel _minimumLevel;
 
-    public LoggerServusTraceListener(
+    public TraceLogger(
         ILoggerFactory loggerFactory,
-        ServusTraceLevel minimumLevel = ServusTraceLevel.Debug,
+        TraceLevel minimumLevel = TraceLevel.Debug,
         Func<string, bool>? categoryFilter = null)
     {
         ArgumentNullException.ThrowIfNull(loggerFactory);
@@ -27,13 +27,13 @@ internal sealed class LoggerServusTraceListener : IServusTraceListener
     }
 
     /// <inheritdoc />
-    public bool IsEnabled(ServusTraceLevel level, string category)
+    public bool IsEnabled(TraceLevel level, string category)
     {
         return level >= _minimumLevel && (_enabledCategories is null || _enabledCategories.Invoke(category));
     }
 
     /// <inheritdoc />
-    public void Write(in ServusTraceEvent evt)
+    public void Write(in TraceEvent evt)
     {
         var logLevel = (LogLevel)evt.Level;
         var logger = _loggers.GetOrAdd(evt.Category,

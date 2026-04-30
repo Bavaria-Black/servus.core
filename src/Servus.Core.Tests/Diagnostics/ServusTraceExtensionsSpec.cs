@@ -9,8 +9,8 @@ public sealed class ServusTraceExtensionsSpec : IDisposable
 {
     private sealed class MockListener : IServusTraceListener
     {
-        public bool IsEnabled(ServusTraceLevel level, string category) => true;
-        public void Write(in ServusTraceEvent evt) { }
+        public bool IsEnabled(TraceLevel level, string category) => true;
+        public void Write(in TraceEvent evt) { }
     }
 
     public void Dispose()
@@ -29,7 +29,7 @@ public sealed class ServusTraceExtensionsSpec : IDisposable
         var listener = provider.GetService<IServusTraceListener>();
 
         Assert.NotNull(listener);
-        Assert.IsType<LoggerServusTraceListener>(listener);
+        Assert.IsType<TraceLogger>(listener);
     }
 
     [Fact(Timeout = 5000)]
@@ -37,14 +37,14 @@ public sealed class ServusTraceExtensionsSpec : IDisposable
     {
         var services = new ServiceCollection();
         services.AddLogging();
-        services.AddServusLoggerTracing(ServusTraceLevel.Debug, "Connection");
+        services.AddServusLoggerTracing(TraceLevel.Debug, "Connection");
 
         var provider = services.BuildServiceProvider();
 
-        Assert.False(ServusTrace.ShouldTrace("Connection", ServusTraceLevel.Debug));
+        Assert.False(ServusTrace.ShouldTrace("Connection", TraceLevel.Debug));
         _ = provider.GetRequiredService<IServusTraceListener>();
 
-        Assert.True(ServusTrace.ShouldTrace("Connection", ServusTraceLevel.Debug));
+        Assert.True(ServusTrace.ShouldTrace("Connection", TraceLevel.Debug));
     }
 
     [Fact(Timeout = 5000)]
@@ -54,7 +54,7 @@ public sealed class ServusTraceExtensionsSpec : IDisposable
         var services = new ServiceCollection();
         services.AddServusTraceListener(listener);
 
-        Assert.True(ServusTrace.ShouldTrace("Connection", ServusTraceLevel.Debug));
+        Assert.True(ServusTrace.ShouldTrace("Connection", TraceLevel.Debug));
     }
 
     [Fact(Timeout = 5000)]
@@ -70,12 +70,12 @@ public sealed class ServusTraceExtensionsSpec : IDisposable
     {
         var services = new ServiceCollection();
         services.AddLogging();
-        services.AddServusLoggerTracing(ServusTraceLevel.Debug, "Connection");
+        services.AddServusLoggerTracing(TraceLevel.Debug, "Connection");
 
         var provider = services.BuildServiceProvider();
         _ = provider.GetRequiredService<IServusTraceListener>();
 
-        Assert.True(ServusTrace.ShouldTrace("Connection", ServusTraceLevel.Debug));
-        Assert.False(ServusTrace.ShouldTrace("Dns", ServusTraceLevel.Debug));
+        Assert.True(ServusTrace.ShouldTrace("Connection", TraceLevel.Debug));
+        Assert.False(ServusTrace.ShouldTrace("Dns", TraceLevel.Debug));
     }
 }

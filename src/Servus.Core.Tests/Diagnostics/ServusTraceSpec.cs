@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Servus.Core.Diagnostics;
 using Xunit;
+using TraceLevel = Servus.Core.Diagnostics.TraceLevel;
 
 namespace Servus.Core.Tests.Diagnostics;
 
@@ -9,9 +10,9 @@ public sealed class ServusTraceSpec : IDisposable
 {
     private sealed class MockListener : IServusTraceListener
     {
-        public List<ServusTraceEvent> Events { get; } = [];
-        public bool IsEnabled(ServusTraceLevel level, string category) => true;
-        public void Write(in ServusTraceEvent evt) => Events.Add(evt);
+        public List<TraceEvent> Events { get; } = [];
+        public bool IsEnabled(TraceLevel level, string category) => true;
+        public void Write(in TraceEvent evt) => Events.Add(evt);
     }
 
     private readonly MockListener _mock = new();
@@ -29,8 +30,8 @@ public sealed class ServusTraceSpec : IDisposable
     [Fact(Timeout = 5000)]
     public void ServusTraceEvent_FormatMessage_should_return_template_when_no_args()
     {
-        var evt = new ServusTraceEvent(
-            Stopwatch.GetTimestamp(), ServusTraceLevel.Debug, "Connection",
+        var evt = new TraceEvent(
+            Stopwatch.GetTimestamp(), TraceLevel.Debug, "Connection",
             "Test", 0, "Hello world");
 
         Assert.Equal("Hello world", evt.FormatMessage());
@@ -39,8 +40,8 @@ public sealed class ServusTraceSpec : IDisposable
     [Fact(Timeout = 5000)]
     public void ServusTraceEvent_FormatMessage_should_format_args_correctly()
     {
-        var evt = new ServusTraceEvent(
-            Stopwatch.GetTimestamp(), ServusTraceLevel.Debug, "Pool",
+        var evt = new TraceEvent(
+            Stopwatch.GetTimestamp(), TraceLevel.Debug, "Pool",
             "Test", 0, "Key={0} Value={1}", "host", 443);
 
         Assert.Equal("Key=host Value=443", evt.FormatMessage());
@@ -49,8 +50,8 @@ public sealed class ServusTraceSpec : IDisposable
     [Fact(Timeout = 5000)]
     public void ShouldTrace_should_return_false_when_disabled()
     {
-        Assert.False(ServusTrace.ShouldTrace("Connection", ServusTraceLevel.Debug));
-        Assert.False(ServusTrace.ShouldTrace("Pool", ServusTraceLevel.Error));
+        Assert.False(ServusTrace.ShouldTrace("Connection", TraceLevel.Debug));
+        Assert.False(ServusTrace.ShouldTrace("Pool", TraceLevel.Error));
     }
 
     [Fact(Timeout = 5000)]
@@ -58,28 +59,28 @@ public sealed class ServusTraceSpec : IDisposable
     {
         ServusTrace.Configure(_mock);
 
-        Assert.True(ServusTrace.ShouldTrace("Connection", ServusTraceLevel.Debug));
-        Assert.True(ServusTrace.ShouldTrace("Pool", ServusTraceLevel.Warning));
+        Assert.True(ServusTrace.ShouldTrace("Connection", TraceLevel.Debug));
+        Assert.True(ServusTrace.ShouldTrace("Pool", TraceLevel.Warning));
     }
 
     [Fact(Timeout = 5000)]
     public void ShouldTrace_should_respect_category_filter()
     {
-        ServusTrace.Configure(_mock, ServusTraceLevel.Trace, x => x == "Connection");
+        ServusTrace.Configure(_mock, TraceLevel.Trace, x => x == "Connection");
 
-        Assert.True(ServusTrace.ShouldTrace("Connection", ServusTraceLevel.Debug));
-        Assert.False(ServusTrace.ShouldTrace("Dns", ServusTraceLevel.Debug));
-        Assert.False(ServusTrace.ShouldTrace("Pool", ServusTraceLevel.Debug));
+        Assert.True(ServusTrace.ShouldTrace("Connection", TraceLevel.Debug));
+        Assert.False(ServusTrace.ShouldTrace("Dns", TraceLevel.Debug));
+        Assert.False(ServusTrace.ShouldTrace("Pool", TraceLevel.Debug));
     }
 
     [Fact(Timeout = 5000)]
     public void ShouldTrace_should_respect_minimum_level()
     {
-        ServusTrace.Configure(_mock, ServusTraceLevel.Warning);
+        ServusTrace.Configure(_mock, TraceLevel.Warning);
 
-        Assert.False(ServusTrace.ShouldTrace("Connection", ServusTraceLevel.Debug));
-        Assert.True(ServusTrace.ShouldTrace("Connection", ServusTraceLevel.Warning));
-        Assert.True(ServusTrace.ShouldTrace("Connection", ServusTraceLevel.Error));
+        Assert.False(ServusTrace.ShouldTrace("Connection", TraceLevel.Debug));
+        Assert.True(ServusTrace.ShouldTrace("Connection", TraceLevel.Warning));
+        Assert.True(ServusTrace.ShouldTrace("Connection", TraceLevel.Error));
     }
 
     [Fact(Timeout = 5000)]
@@ -91,7 +92,7 @@ public sealed class ServusTraceSpec : IDisposable
 
         Assert.Single(_mock.Events);
         var evt = _mock.Events[0];
-        Assert.Equal(ServusTraceLevel.Debug, evt.Level);
+        Assert.Equal(TraceLevel.Debug, evt.Level);
         Assert.Equal("Connection", evt.Category);
         Assert.Equal(GetType().Name, evt.SourceType);
         Assert.Equal("tcp connected to localhost:443", evt.FormatMessage());
@@ -106,7 +107,7 @@ public sealed class ServusTraceSpec : IDisposable
 
         Assert.Single(_mock.Events);
         var evt = _mock.Events[0];
-        Assert.Equal(ServusTraceLevel.Warning, evt.Level);
+        Assert.Equal(TraceLevel.Warning, evt.Level);
         Assert.Equal("Dns", evt.Category);
         Assert.Equal("DNS 'badhost' failed: NXDOMAIN", evt.FormatMessage());
     }
@@ -114,7 +115,7 @@ public sealed class ServusTraceSpec : IDisposable
     [Fact(Timeout = 5000)]
     public void Tls_Debug_should_not_emit_when_category_not_enabled()
     {
-        ServusTrace.Configure(_mock, ServusTraceLevel.Trace, x => x == "Connection");
+        ServusTrace.Configure(_mock, TraceLevel.Trace, x => x == "Connection");
         var tls = ServusTrace.For("Tls");
         tls.Debug(this, "TLS handshake starting");
 

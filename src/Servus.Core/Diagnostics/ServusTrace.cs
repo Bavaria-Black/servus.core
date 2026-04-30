@@ -12,7 +12,7 @@ namespace Servus.Core.Diagnostics;
 public static class ServusTrace
 {
     private static TraceConfig? _config;
-    private static readonly ConcurrentDictionary<string, ServusTraceChannel> _channels = new();
+    private static readonly ConcurrentDictionary<string, TraceChannel> _channels = new();
 
     /// <summary>
     /// Enables tracing with the specified listener, minimum level, and optional category filter.
@@ -30,19 +30,19 @@ public static class ServusTrace
     /// </param>
     public static void Configure(
         IServusTraceListener listener,
-        ServusTraceLevel minimumLevel = ServusTraceLevel.Trace,
+        TraceLevel minimumLevel = TraceLevel.Trace,
         Func<string, bool>? categoryFilter = null)
     {
         _config = new TraceConfig(listener, categoryFilter ?? (_ => true), minimumLevel);
     }
 
     /// <summary>
-    /// Creates a <see cref="ServusTraceChannel"/> for a custom category.
+    /// Creates a <see cref="TraceChannel"/> for a custom category.
     /// Store the result in a static field for zero-allocation reuse:
     /// <code>private static readonly ServusTraceChannel _http = ServusTrace.For("Http");</code>
     /// </summary>
-    public static ServusTraceChannel For(string categoryName) =>
-        _channels.GetOrAdd(categoryName, static name => new ServusTraceChannel(name));
+    public static TraceChannel For(string categoryName) =>
+        _channels.GetOrAdd(categoryName, static name => new TraceChannel(name));
 
     /// <summary>
     /// Disables tracing. All subsequent trace calls become no-ops.
@@ -53,7 +53,7 @@ public static class ServusTrace
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static bool ShouldTrace(string category, ServusTraceLevel level)
+    internal static bool ShouldTrace(string category, TraceLevel level)
     {
         var cfg = _config;
         if (cfg is null) return false;
@@ -62,7 +62,7 @@ public static class ServusTrace
         return cfg.Listener.IsEnabled(level, category);
     }
 
-    internal static void WriteEvent(in ServusTraceEvent evt)
+    internal static void WriteEvent(in TraceEvent evt)
     {
         _config?.Listener.Write(in evt);
     }
@@ -70,5 +70,5 @@ public static class ServusTrace
     private sealed record TraceConfig(
         IServusTraceListener Listener,
         Func<string, bool> CategoryFilter,
-        ServusTraceLevel MinimumLevel);
+        TraceLevel MinimumLevel);
 }

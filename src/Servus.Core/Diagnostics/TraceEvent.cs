@@ -7,13 +7,13 @@ namespace Servus.Core.Diagnostics;
 /// Stores the template and arguments; <see cref="FormatMessage"/>
 /// allocates a formatted string only when called.
 /// </summary>
-public readonly struct ServusTraceEvent
+public readonly struct TraceEvent
 {
     /// <summary>Timestamp from <see cref="Stopwatch.GetTimestamp"/>.</summary>
     public long TimestampTicks { get; }
 
     /// <summary>Severity level of this event.</summary>
-    public ServusTraceLevel Level { get; }
+    public TraceLevel Level { get; }
 
     /// <summary>Category that produced this event.</summary>
     public string Category { get; }
@@ -29,9 +29,9 @@ public readonly struct ServusTraceEvent
 
     private readonly object?[] _args;
 
-    internal ServusTraceEvent(
+    internal TraceEvent(
         long timestampTicks,
-        ServusTraceLevel level,
+        TraceLevel level,
         string category,
         string sourceType,
         int sourceHash,
