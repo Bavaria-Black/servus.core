@@ -12,13 +12,11 @@ namespace Servus.Core.Diagnostics;
 /// </summary>
 public class ServusTrace
 {
-    public static readonly ServusTrace Instance = new();
-    
     private static TraceConfig? _config;
     private static readonly ConcurrentDictionary<string, TraceChannel> Channels = new();
     public ActivitySource Source { get; } = new("Servus", ServusInfo.Version);
 
-    private ServusTrace()
+    internal ServusTrace()
     {
         
     }
