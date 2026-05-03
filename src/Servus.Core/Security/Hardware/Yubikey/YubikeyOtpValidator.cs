@@ -3,9 +3,10 @@ using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 
-[assembly: InternalsVisibleTo("Servus.Core.Tests")]
+
 namespace Servus.Core.Security.Hardware.Yubikey;
 
+[Obsolete("Will not be supported after migration from Servus.Core to Servus lib.")]
 public class YubikeyOtpValidator
 {
     private readonly int _apiId;
