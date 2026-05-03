@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace Servus.Core;
 
+[Obsolete("Will not be supported after migration from Servus.Core to Servus lib.")]
 public abstract class NotifyPropertyChangedBase : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;

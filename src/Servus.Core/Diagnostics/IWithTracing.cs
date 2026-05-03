@@ -2,6 +2,8 @@
 
 namespace Servus.Core.Diagnostics;
 
+
+[Obsolete("Will not be supported after migration from Servus.Core to Servus lib.")]
 public interface IWithTracing
 {
     string? TraceId { get; set; }

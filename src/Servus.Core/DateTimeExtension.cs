@@ -12,9 +12,7 @@ public static class DateTimeExtension
         if (lowerBound > upperBound)
         {
             // for those who switch those two
-            var lowerBound1 = lowerBound;
-            lowerBound = upperBound;
-            upperBound = lowerBound1;
+            (lowerBound, upperBound) = (upperBound, lowerBound);
         }
 
         return lowerBound <= dateTime && dateTime <= upperBound;
@@ -27,7 +25,7 @@ public static class DateTimeExtension
 
     public static bool IsWeekend(this DateTime dateTime)
     {
-        return dateTime.DayOfWeek == DayOfWeek.Sunday || dateTime.DayOfWeek == DayOfWeek.Saturday;
+        return dateTime.DayOfWeek is DayOfWeek.Sunday or DayOfWeek.Saturday;
     }
 
     public static bool IsInFuture(this DateTime dateTime)

@@ -5,6 +5,7 @@ using Servus.Core.Text;
 
 namespace Servus.Core.Diagnostics;
 
+[Obsolete("Will not be supported after migration from Servus.Core to Servus lib.")]
 public static class ActivitySourceRegistry
 {
     private sealed record ExtendedEntry(string Name, ActivitySource Source);
